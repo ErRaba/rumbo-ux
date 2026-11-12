@@ -94,6 +94,7 @@
     if (!c || c.denied || fStr(c, "persona") !== p) return { why: "codigo" };
     const a = await fsReq("activos/" + p);
     if (!fUids(a).includes(s.uid)) return { why: "otro" };
+    if (s.persona !== p) { s.persona = p; save(s); }
     return { why: "ok", s };
   }
   const MSG = { codigo: "Tu código de acceso ha cambiado. Escribe el nuevo.", otro: "Tu código se ha usado en otro dispositivo y este ha dejado de estar activo. Escríbelo de nuevo para recuperarlo." };
@@ -110,7 +111,24 @@
     s.ok = Date.now(); delete s.why; save(s);
     fsReq(`devices/${s.uid}?updateMask.fieldPaths=visto`, { method: "PATCH", body: JSON.stringify({ fields: { visto: { timestampValue: new Date().toISOString() } } }) }).catch(() => {});
     if (!background && !(await openApp(s.key))) { const t = st(); delete t.key; save(t); throw new Error("descifrado"); }
+    sync(true);
   }
+  /* ---------- uso: resumen de estadísticas para el panel del administrador ----------
+     Se guarda siempre en el dispositivo; se envía cuando hay conexión (al abrir, al salir y cada 5 min). */
+  let lastSync = 0;
+  async function sync(force) {
+    if (!started || typeof window.RUMBO_USO !== "function" || !navigator.onLine) return;
+    if (!force && Date.now() - lastSync < 5 * 60e3) return;
+    lastSync = Date.now();
+    try {
+      const s = await token(); if (!s.persona) return;
+      await fetch(BASE + "uso/" + s.uid, { method: "PATCH", keepalive: true,
+        headers: { Authorization: "Bearer " + s.tok, "Content-Type": "application/json" },
+        body: JSON.stringify({ fields: { persona: { stringValue: s.persona }, actualizado: { timestampValue: new Date().toISOString() },
+          ua: { stringValue: navigator.userAgent.slice(0, 180) }, datos: { stringValue: JSON.stringify(window.RUMBO_USO()).slice(0, 60000) } } }) });
+    } catch (e) {}
+  }
+  setInterval(() => { if (!document.hidden) sync(false); }, 60e3);
   async function activate(raw) {
     const code = norm(raw);
     if (code.length < 6) return "Escribe el código completo.";
@@ -165,5 +183,5 @@
     }
     check();
   })();
-  document.addEventListener("visibilitychange", () => { if (!document.hidden && started) verify(true).catch(() => {}); });
+  document.addEventListener("visibilitychange", () => { if (!started) return; if (document.hidden) sync(true); else verify(true).catch(() => {}); });
 })();

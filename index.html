@@ -664,6 +664,24 @@ const MASTER=3;
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 
+/* ============ USO (tiempo activo y resumen; acceso.js lo envía al panel cuando hay conexión) ============ */
+S.uso=Object.assign({ms:0,ses:0,tr:0,desde:Date.now(),at:0},S.uso);
+const D=()=>S.days[today()]||(S.days[today()]={seen:0,ok:0});
+let lastIn=Date.now(),lastTick=Date.now();
+["pointerdown","keydown","wheel","touchstart"].forEach(e=>addEventListener(e,()=>{lastIn=Date.now()},{passive:true,capture:true}));
+setInterval(()=>{const n=Date.now(),dt=Math.min(n-lastTick,20000);lastTick=n;if(document.hidden||n-lastIn>120000)return;
+  S.uso.ms+=dt;S.uso.at=n;const d=D();d.ms=(d.ms||0)+dt;save()},15000);
+document.addEventListener("visibilitychange",()=>{lastTick=Date.now();if(!document.hidden)lastIn=Date.now();else save()});
+window.RUMBO_USO=()=>{let ok=0,ko=0,vistas=0,dom=0,apr=0,fal=0,last=S.uso.at||0;
+  Q.forEach(q=>{const c=S.cards[q.id];if(!c)return;vistas++;ok+=c.ok;ko+=c.ko;last=Math.max(last,c.last||0);if(c.box>=MASTER)dom++;else if(c.box>0)apr++;else fal++});
+  const ts=topicStats(),dias={};
+  for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d),v=S.days[k];if(v&&(v.seen||v.ms))dias[k]={n:v.seen||0,ok:v.ok||0,ko:v.ko||0,ms:v.ms||0,ses:v.ses||0}}
+  return{v:1,ms:S.uso.ms,ses:S.uso.ses,tr:S.uso.tr,desde:S.uso.desde,ultimo:last,total:Q.length,vistas,ok,ko,dominadas:dom,aprendiendo:apr,falladas:fal,
+    progreso:Math.round(progress()*1000)/10,racha:streak(),combo:S.bestCombo,objetivo:S.goal,diasActivos:Object.values(S.days).filter(v=>v.seen||v.ms).length,dias,
+    temas:Object.keys(ts).filter(t=>ts[t].ok+ts[t].ko).map(t=>({c:tCode(t),n:tName(t),ok:ts[t].ok,ko:ts[t].ko,tot:ts[t].total,dom:ts[t].mast})),
+    dificiles:Q.filter(q=>S.cards[q.id]?.ko).sort((a,b)=>S.cards[b.id].ko-S.cards[a.id].ko).slice(0,8).map(q=>({t:tCode(q.t),q:String(q.q).slice(0,160),ko:S.cards[q.id].ko,ok:S.cards[q.id].ok})),
+    ajustes:{modo:S.settings.mode,len:S.settings.len,timer:S.settings.timer,tema:S.settings.theme}}};
+
 /* rosa de los vientos: marcas */
 (()=>{let s="";for(let i=0;i<72;i++){const a=i*5*Math.PI/180,r1=i%2?92:88;s+=`<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+96*Math.sin(a)}" y2="${100-96*Math.cos(a)}"/>`}$("ticks").innerHTML=s})();
 
@@ -814,6 +832,7 @@ function pool(){const st=S.settings,d=st.deck,sel=st.topics[d]||[];let p=Q.filte
 function startSession(custom,len){
   const p=Array.isArray(custom)?custom:pool();if(!p.length)return;
   ses={f0:progress(),pool:p,n:0,ok:0,ko:0,combo:0,best:0,relearn:[],recent:[],mastered:0,len:len??S.settings.len,cur:null,flipped:false,locked:false};
+  S.uso.ses++;const dd=D();dd.ses=(dd.ses||0)+1;save();
   go("study");$("combo").className="combo";$("prog").style.width="0";$("clock").classList.toggle("off",!S.settings.timer);
   ac();setTimeout(nextCard,180);
 }
@@ -913,13 +932,13 @@ function bindCard(el){
 function grade(ok){
   if(!ses||ses.locked)return;ses.locked=true;stopTimer();
   const q=ses.cur,c=C(q.id),wasMast=c.box>=MASTER,stBefore=stageIdx(progress());
-  c.seen++;c.last=Date.now();const d=S.days[today()]||(S.days[today()]={seen:0,ok:0});d.seen++;ses.n++;
+  c.seen++;c.last=Date.now();const d=D();d.seen++;ses.n++;
   const cm=$("combo");ses.lastOk=ok;
   if(ok){c.ok++;d.ok++;c.box=Math.min(c.box+1,5);ses.ok++;ses.combo++;ses.best=Math.max(ses.best,ses.combo);
     if(!wasMast&&c.box>=MASTER)ses.mastered++;sOk();buzz(12);
     if(ses.combo>=2){cm.textContent=`racha ×${ses.combo}`;cm.className="combo show";void cm.offsetWidth;cm.classList.add("pop")}
     if(ses.combo%5===0){setTimeout(()=>sCombo(ses.combo),150);floatTxt(`×${ses.combo} seguidas`);confetti(22)}
-  }else{c.ko++;c.box=0;ses.ko++;ses.combo=0;sKo();buzz([25,40,25]);cm.className="combo";
+  }else{c.ko++;d.ko=(d.ko||0)+1;c.box=0;ses.ko++;ses.combo=0;sKo();buzz([25,40,25]);cm.className="combo";
     ses.relearn.push({q,at:ses.n+3});}
   if(ses.best>S.bestCombo)S.bestCombo=ses.best;save();
   $("prog").style.width=(ses.len?Math.min(100,ses.n/ses.len*100):(ses.n%10)*10)+"%";
@@ -933,7 +952,7 @@ function advance(dir){if(!ses||!ses.flipped||ses.leaving)return;ses.leaving=true
 /* traducción al castellano mientras se mantiene pulsado (solo tarjetas traducidas) */
 const TRAD=window.TRAD||{};let trOn=false;
 function trReset(){trOn=false;$("trBtn").classList.remove("on");$("trBtn").classList.toggle("off",!TRAD[ses.cur.id])}
-function trSet(on){if(!ses||!ses.cur||on===trOn)return;const t=TRAD[ses.cur.id];if(!t)return;trOn=on;
+function trSet(on){if(!ses||!ses.cur||on===trOn)return;const t=TRAD[ses.cur.id];if(!t)return;trOn=on;if(on)S.uso.tr++;
   const q=ses.cur,c=$("stage").firstChild,src=on?t:q,put=(sel,txt,f=esc)=>{const n=c&&c.querySelector(sel);if(n&&txt!=null){n.innerHTML=f(txt);n.animate&&n.animate([{opacity:.2},{opacity:1}],{duration:200,easing:"ease-out"})}};
   put(".front .q",src.q,qHTML);c.querySelectorAll(".op .tx").forEach((n,i)=>put(`.op[data-i="${i}"] .tx`,src.o[i]));
   put(".back .qmini",src.q);put(".back .a span:last-child",src.o[q.a]);if(ses.choice!=null)put(".bkKick s",src.o[ses.choice]);

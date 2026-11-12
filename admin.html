@@ -48,16 +48,15 @@ button.ko{color:var(--terra);box-shadow:0 0 0 1px rgba(222,143,123,.35) inset}
   <section id="panel" class="hide">
     <div class="row small"><span class="grow" id="who"></span><button id="btnOut">Salir</button></div>
 
-    <h2>Solicitudes pendientes <span class="tag" id="nPend">0</span></h2>
-    <div id="pend"></div>
-
-    <h2>Personas y dispositivos autorizados</h2>
+    <h2>Personas y códigos de acceso</h2>
+    <p class="small" style="margin:-4px 2px 14px">Da a cada persona su código. Lo escribe una vez en la app y entra; si lo usa en más dispositivos de los permitidos, el más antiguo deja de funcionar.</p>
     <div id="pers"></div>
     <div class="card row">
       <input class="grow" id="newName" placeholder="Nueva persona (p. ej. Borja)" maxlength="40">
       <input type="number" id="newMax" value="1" min="1" max="10" title="Dispositivos a la vez">
       <button id="btnAddP">Añadir</button>
     </div>
+    <div id="legacy"></div>
 
     <h2>Clave de cifrado</h2>
     <div class="card">
@@ -78,10 +77,16 @@ const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "
 const toast = t => { const m = $("msg"); m.textContent = t; m.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => m.classList.remove("on"), 2600); };
 const when = ts => ts ? ts.toDate().toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
 const devName = ua => /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Mac/.test(ua) ? "Mac" : /Windows/.test(ua) ? "Windows" : "Dispositivo";
+const show = c => c ? c.replace(/^([A-Z]+)([A-Z0-9]{6})$/, "$1-$2") : "";
+function newCode(nombre) {
+  const base = (nombre || "X").normalize("NFD").replace(/[^A-Za-z]/g, "").toUpperCase().slice(0, 8) || "RUMBO";
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r = crypto.getRandomValues(new Uint8Array(6));
+  return base + Array.from(r, x => A[x % 32]).join("");
+}
 
 firebase.initializeApp(window.RUMBO_FB);
 const auth = firebase.auth(), db = firebase.firestore();
-let devices = [], personas = [];
+let devices = [], personas = [], activos = {};
 
 $("btnLogin").onclick = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => toast("No se pudo entrar: " + e.code));
 $("btnOut").onclick = () => auth.signOut();
@@ -90,8 +95,10 @@ auth.onAuthStateChanged(u => {
   $("login").classList.toggle("hide", !!admin); $("panel").classList.toggle("hide", !admin);
   if (!admin) return;
   $("who").textContent = u.email;
-  db.collection("devices").onSnapshot(s => { devices = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); }, e => toast("Sin permiso de administrador"));
-  db.collection("personas").onSnapshot(s => { personas = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.nombre.localeCompare(b.nombre)); render(); });
+  const err = e => toast("Sin permiso de administrador (" + e.code + ")");
+  db.collection("devices").onSnapshot(s => { devices = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); }, err);
+  db.collection("personas").onSnapshot(s => { personas = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.nombre.localeCompare(b.nombre)); render(); }, err);
+  db.collection("activos").onSnapshot(s => { activos = {}; s.docs.forEach(d => activos[d.id] = d.data().uids || []); render(); }, err);
   db.doc("config/key").get().then(d => {
     $("keyState").innerHTML = d.exists ? 'Clave instalada ✓ No hay que volver a pegarla. <a href="#" id="keyChg" style="color:var(--gold)">Cambiar</a>' : "Falta instalar la clave: sin ella nadie puede abrir la app.";
     $("keyRow").classList.toggle("hide", d.exists);
@@ -100,46 +107,78 @@ auth.onAuthStateChanged(u => {
 });
 
 function render() {
-  const pend = devices.filter(d => !d.ok).sort((a, b) => (b.creado?.seconds || 0) - (a.creado?.seconds || 0));
-  $("nPend").textContent = pend.length;
-  const opts = personas.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join("");
-  $("pend").innerHTML = pend.length ? pend.map(d => `<div class="card row">
-      <div class="grow"><div class="code">${esc(d.code)}</div><div class="small">${esc(d.nombre)} · ${devName(d.ua || "")} · ${when(d.creado)}</div></div>
-      ${personas.length ? `<select id="sel-${d.id}">${opts}</select><button class="ok" onclick="approve('${d.id}')">Autorizar</button>` : `<span class="small">Crea antes una persona ↓</span>`}
-      <button class="ko" onclick="removeDev('${d.id}','¿Rechazar esta solicitud?')">Rechazar</button></div>`).join("")
-    : `<div class="empty">No hay solicitudes. Cuando alguien abra la app por primera vez y la pida, aparecerá aquí con su código.</div>`;
   $("pers").innerHTML = personas.length ? personas.map(p => {
-    const ds = devices.filter(d => d.ok && d.persona === p.id).sort((a, b) => (a.aprobado?.seconds || 0) - (b.aprobado?.seconds || 0));
-    return `<div class="card"><div class="row"><div class="grow" style="font:350 20px Fraunces,serif">${esc(p.nombre)}</div>
+    const ids = activos[p.id] || [], ds = ids.map(id => devices.find(d => d.id === id) || { id }).reverse();
+    return `<div class="card">
+      <div class="row"><div class="grow" style="font:350 22px Fraunces,serif">${esc(p.nombre)}</div>
         <span class="small">Dispositivos a la vez</span><input type="number" min="1" max="10" value="${p.max}" onchange="setMax('${p.id}',this.value)">
         <button class="ko" onclick="removePerson('${p.id}')">Eliminar</button></div>
-        ${ds.length ? ds.map(d => `<div class="row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--hair)">
-          <div class="grow"><span class="code" style="font-size:14px">${esc(d.code)}</span> <span class="small">· ${devName(d.ua || "")} · última conexión ${when(d.visto || d.aprobado)}</span></div>
-          <button class="ko" onclick="removeDev('${d.id}','¿Revocar el acceso de este dispositivo? Se bloqueará en cuanto se conecte (o como máximo en 15 días sin conexión).')">Revocar</button></div>`).join("")
-          : `<div class="empty" style="margin-top:8px">Sin dispositivos autorizados.</div>`}</div>`;
+      <div class="row" style="margin-top:14px">
+        ${p.codigo ? `<div class="grow"><div class="k" style="margin-bottom:4px">Código de acceso</div><span class="code" style="font-size:22px">${show(p.codigo)}</span></div>
+          <button onclick="copyCode('${p.id}')">Copiar</button><button onclick="regen('${p.id}')">Nuevo código</button>`
+        : `<div class="grow small">Sin código todavía.</div><button class="ok" onclick="regen('${p.id}')">Generar código</button>`}
+      </div>
+      ${ds.length ? ds.map((d, i) => `<div class="row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--hair)">
+          <div class="grow"><span style="font-weight:600">${devName(d.ua || "")}</span>
+          <span class="small"> · activado ${when(d.creado)} · última conexión ${when(d.visto || d.creado)}</span></div>
+          <button class="ko" onclick="revoke('${p.id}','${d.id}')">Revocar</button></div>`).join("")
+        : `<div class="empty" style="margin-top:10px">Ningún dispositivo activo.</div>`}
+    </div>`;
   }).join("") : `<div class="empty">Todavía no hay personas.</div>`;
+  const old = devices.filter(d => !d.codigo);
+  $("legacy").innerHTML = old.length ? `<div class="card row" style="margin-top:6px"><div class="grow small">${old.length} autorización(es) del sistema anterior, ya sin uso.</div>
+    <button onclick="cleanLegacy()">Borrar</button></div>` : "";
 }
 
-async function approve(id) {
-  const pid = $("sel-" + id).value, p = personas.find(x => x.id === pid);
-  const act = devices.filter(d => d.ok && d.persona === pid).sort((a, b) => (a.aprobado?.seconds || 0) - (b.aprobado?.seconds || 0));
-  const excess = act.length - (p.max || 1) + 1;
-  if (excess > 0 && !confirm(`${p.nombre} ya tiene ${act.length} dispositivo(s) (máximo ${p.max}). Se revocará${excess > 1 ? "n los " + excess + " más antiguos" : " el más antiguo"}. ¿Continuar?`)) return;
-  const b = db.batch();
-  act.slice(0, Math.max(0, excess)).forEach(d => b.delete(db.doc("devices/" + d.id)));
-  b.update(db.doc("devices/" + id), { ok: true, persona: pid, aprobado: firebase.firestore.FieldValue.serverTimestamp() });
-  await b.commit(); toast("Autorizado");
+async function regen(pid) {
+  const p = personas.find(x => x.id === pid);
+  if (p.codigo && !confirm(`¿Crear un código nuevo para ${p.nombre}? El actual dejará de funcionar y sus dispositivos tendrán que escribir el nuevo.`)) return;
+  const code = newCode(p.nombre), b = db.batch();
+  if (p.codigo) b.delete(db.doc("codigos/" + p.codigo));
+  b.set(db.doc("codigos/" + code), { persona: pid, max: p.max || 1 });
+  b.update(db.doc("personas/" + pid), { codigo: code });
+  if (p.codigo) b.set(db.doc("activos/" + pid), { uids: [] });
+  await b.commit(); toast("Código: " + show(code));
 }
-async function removeDev(id, q) { if (confirm(q)) { await db.doc("devices/" + id).delete(); toast("Hecho"); } }
-async function setMax(id, v) { await db.doc("personas/" + id).update({ max: Math.max(1, Math.min(10, +v || 1)) }); toast("Guardado"); }
-async function removePerson(id) {
-  const ds = devices.filter(d => d.persona === id);
-  if (!confirm(`¿Eliminar a esta persona${ds.length ? " y revocar sus " + ds.length + " dispositivo(s)" : ""}?`)) return;
-  const b = db.batch(); ds.forEach(d => b.delete(db.doc("devices/" + d.id))); b.delete(db.doc("personas/" + id)); await b.commit(); toast("Eliminada");
+async function copyCode(pid) {
+  const p = personas.find(x => x.id === pid);
+  try { await navigator.clipboard.writeText(show(p.codigo)); toast("Código copiado"); } catch (e) { prompt("Copia el código:", show(p.codigo)); }
+}
+async function setMax(pid, v) {
+  const p = personas.find(x => x.id === pid), max = Math.max(1, Math.min(10, +v || 1)), ids = activos[pid] || [];
+  const b = db.batch();
+  b.update(db.doc("personas/" + pid), { max });
+  if (p.codigo) b.set(db.doc("codigos/" + p.codigo), { persona: pid, max });
+  if (ids.length > max) b.set(db.doc("activos/" + pid), { uids: ids.slice(-max) });
+  await b.commit(); toast("Guardado");
+}
+async function revoke(pid, id) {
+  if (!confirm("¿Revocar este dispositivo? Se bloqueará en cuanto se conecte (o como máximo en 15 días sin conexión). Podrá volver a entrar con el código.")) return;
+  const b = db.batch();
+  b.set(db.doc("activos/" + pid), { uids: (activos[pid] || []).filter(x => x !== id) });
+  b.delete(db.doc("devices/" + id));
+  await b.commit(); toast("Revocado");
+}
+async function removePerson(pid) {
+  const p = personas.find(x => x.id === pid), ds = devices.filter(d => d.persona === pid);
+  if (!confirm(`¿Eliminar a ${p.nombre}? Su código dejará de funcionar y sus dispositivos perderán el acceso.`)) return;
+  const b = db.batch();
+  ds.forEach(d => b.delete(db.doc("devices/" + d.id)));
+  if (p.codigo) b.delete(db.doc("codigos/" + p.codigo));
+  b.delete(db.doc("activos/" + pid)); b.delete(db.doc("personas/" + pid));
+  await b.commit(); toast("Eliminada");
+}
+async function cleanLegacy() {
+  const b = db.batch(); devices.filter(d => !d.codigo).forEach(d => b.delete(db.doc("devices/" + d.id)));
+  await b.commit(); toast("Hecho");
 }
 $("btnAddP").onclick = async () => {
   const n = $("newName").value.trim(); if (!n) return;
-  await db.collection("personas").add({ nombre: n, max: Math.max(1, +$("newMax").value || 1) }); $("newName").value = ""; toast("Persona añadida");
+  const max = Math.max(1, Math.min(10, +$("newMax").value || 1)), ref = db.collection("personas").doc(), code = newCode(n), b = db.batch();
+  b.set(ref, { nombre: n, max, codigo: code });
+  b.set(db.doc("codigos/" + code), { persona: ref.id, max });
+  b.set(db.doc("activos/" + ref.id), { uids: [] });
+  await b.commit(); $("newName").value = ""; toast("Código de " + n + ": " + show(code));
 };
 $("btnKey").onclick = async () => {
   const k = $("keyIn").value.trim();

@@ -274,6 +274,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .front .q .sts{margin-top:12px;display:flex;flex-direction:column;gap:7px}
 .front .q .st{display:flex;gap:11px;align-items:baseline;font-family:var(--sans);font-size:14.5px;line-height:1.38;letter-spacing:0;color:rgba(244,239,230,.82);font-variation-settings:normal}
 .front .q .st b{flex:none;min-width:14px;font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--gold)}
+.front .q .st.dot b{width:5px;min-width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.8;align-self:center;margin:0 4px}
+.front .q .blank{display:inline-block;width:2.6em;height:.95em;vertical-align:-.12em;border-bottom:1.5px solid var(--gold);margin:0 .15em}
+.front .q .sts .st.tail{font-size:.92em;line-height:1.28;margin-top:8px;color:var(--ivory)}
 .front .q .st.tail{display:block;margin-top:4px;font-family:var(--serif);font-size:inherit;color:var(--ivory)}
 .front.dense .q .st{font-size:13.5px}.front.xdense .q .st,.front.xxdense .q .st{font-size:12.5px;line-height:1.3}.front.xxdense .q .sts{gap:4px;margin-top:8px}
 .front .flag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-bottom:16px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
@@ -636,8 +639,12 @@ const deckTopics=d=>Object.keys(DECKS[d]?.topics||{});
 const QBY={};Q.forEach(q=>QBY[q.id]=q);
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").split(String.fromCharCode(10)).join("<br>");
 /* enunciado con lista de afirmaciones "1. …": la pregunta en serif y cada afirmación con su número en dorado */
+const blank=h=>h.replace(/_{3,}/g,'<span class="blank"></span>');
 const qHTML=s=>{const L=String(s).split(String.fromCharCode(10)),out=[],items=[];
-  for(const l of L){const m=l.match(/^\s*(\d{1,2})\.\s+(.*)$/);if(m)items.push(`<div class="st"><b>${m[1]}</b><span>${esc(m[2])}</span></div>`);else if(items.length)items.push(`<div class="st tail">${esc(l)}</div>`);else out.push(esc(l))}
+  for(const l of L){const m=l.match(/^\s*(\d{1,2})\.\s+(.*)$/),d=l.match(/^\s*[•·\-\*]\s+(.*)$/);
+    if(m)items.push(`<div class="st"><b>${m[1]}</b><span>${blank(esc(m[2]))}</span></div>`);
+    else if(d)items.push(`<div class="st dot"><b></b><span>${blank(esc(d[1]))}</span></div>`);
+    else if(items.length)items.push(`<div class="st tail">${blank(esc(l))}</div>`);else out.push(blank(esc(l)))}
   return out.join("<br>")+(items.length?`<div class="sts">${items.join("")}</div>`:"")};
 
 /* ============ ESTADO ============ */

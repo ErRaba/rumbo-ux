@@ -62,7 +62,7 @@ button.ko{color:var(--terra);box-shadow:0 0 0 1px rgba(222,143,123,.35) inset}
     <h2>Clave de cifrado</h2>
     <div class="card">
       <p class="small" id="keyState">Comprobando…</p>
-      <div class="row" style="margin-top:10px"><input class="grow" id="keyIn" placeholder="Pega aquí el contenido de herramientas/clave.txt"><button id="btnKey">Guardar clave</button></div>
+      <div class="row hide" id="keyRow" style="margin-top:10px"><input class="grow" id="keyIn" placeholder="Pega aquí el contenido de herramientas/clave.txt"><button id="btnKey">Guardar clave</button></div>
     </div>
   </section>
 </main>
@@ -92,7 +92,11 @@ auth.onAuthStateChanged(u => {
   $("who").textContent = u.email;
   db.collection("devices").onSnapshot(s => { devices = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); }, e => toast("Sin permiso de administrador"));
   db.collection("personas").onSnapshot(s => { personas = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.nombre.localeCompare(b.nombre)); render(); });
-  db.doc("config/key").get().then(d => $("keyState").textContent = d.exists ? "Clave instalada ✓ (solo hace falta volver a pegarla si se genera una nueva)" : "Falta instalar la clave: sin ella nadie puede abrir la app.").catch(() => {});
+  db.doc("config/key").get().then(d => {
+    $("keyState").innerHTML = d.exists ? 'Clave instalada ✓ No hay que volver a pegarla. <a href="#" id="keyChg" style="color:var(--gold)">Cambiar</a>' : "Falta instalar la clave: sin ella nadie puede abrir la app.";
+    $("keyRow").classList.toggle("hide", d.exists);
+    const c = $("keyChg"); if (c) c.onclick = e => { e.preventDefault(); $("keyRow").classList.remove("hide"); };
+  }).catch(e => { $("keyState").textContent = "No se pudo leer la clave (" + e.code + ")."; $("keyRow").classList.remove("hide"); });
 });
 
 function render() {
@@ -140,7 +144,8 @@ $("btnAddP").onclick = async () => {
 $("btnKey").onclick = async () => {
   const k = $("keyIn").value.trim();
   if (!/^[A-Za-z0-9+/]{43}=$/.test(k)) return toast("La clave no tiene el formato correcto");
-  await db.doc("config/key").set({ k }); $("keyIn").value = ""; $("keyState").textContent = "Clave instalada ✓"; toast("Clave guardada");
+  try { await db.doc("config/key").set({ k }); } catch (e) { return toast("No se pudo guardar: " + e.code); }
+  $("keyIn").value = ""; $("keyRow").classList.add("hide"); $("keyState").textContent = "Clave instalada ✓ No hay que volver a pegarla."; toast("Clave guardada");
 };
 </script>
 </body>

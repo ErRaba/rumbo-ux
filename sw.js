@@ -1,5 +1,5 @@
 /* Rumbo UX · funciona sin conexión: guarda la app entera la primera vez */
-const V = "rumboux-a4d26566df";
+const V = "rumboux-fc5fcde723";
 const FILES = ["./","index.html","acceso.js","firebase-config.js","datos.bin","manifest.webmanifest","fuentes/Fraunces-italic-latin-1.woff2","fuentes/Fraunces-italic-latin-ext-0.woff2","fuentes/Fraunces-normal-latin-3.woff2","fuentes/Fraunces-normal-latin-ext-2.woff2","fuentes/fuentes.css","fuentes/JetBrainsMono-normal-latin-5.woff2","fuentes/JetBrainsMono-normal-latin-ext-4.woff2","fuentes/Manrope-normal-latin-7.woff2","fuentes/Manrope-normal-latin-ext-6.woff2","iconos/icono-180.png","iconos/icono-192.png","iconos/icono-512.png"];
 self.addEventListener("install", e => e.waitUntil(caches.open(V).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())));

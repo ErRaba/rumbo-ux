@@ -645,6 +645,8 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     <div class="sect"><span class="label">Apariencia</span></div>
     <div class="seg" id="segTheme"><span class="pill"></span><button data-v="auto">Automático</button><button data-v="day">Día</button><button data-v="night">Noche</button></div>
     <p class="themenote" id="themeNote"></p>
+    <div class="sect"><span class="label">Copia de seguridad</span></div>
+    <p class="themenote" id="bkNote"></p>
   </div>
   <div class="footer"><button class="cta" id="startBtn" onclick="startSession()"><span>Despegar<small id="startSub"></small></span><span class="arrow"><svg><use href="#plane"/></svg></span></button></div>
 </section>
@@ -927,7 +929,7 @@ function renderSetup(){
   seg("segDeck","deck",String,()=>renderSetup());
   $("varSub").classList.toggle("open",d==="b737");if(d==="b737")setTimeout(()=>seg("segVar","variant",String,()=>renderSetup()),30);
   seg("segMode","mode");seg("segNew","newDay",Number);seg("segLen","len",Number);seg("segTime","time",Number);
-  sw("swTimer","timer",v=>{$("timerSub").classList.toggle("open",v);if(v)setTimeout(()=>seg("segTime","time",Number),30)});sw("swSound","sound");sw("swHaptic","haptic");seg("segTheme","theme",String,()=>applyTheme(true));themeNote();updStart();
+  sw("swTimer","timer",v=>{$("timerSub").classList.toggle("open",v);if(v)setTimeout(()=>seg("segTime","time",Number),30)});sw("swSound","sound");sw("swHaptic","haptic");seg("segTheme","theme",String,()=>applyTheme(true));themeNote();bkNote();updStart();
 }
 const varOk=q=>S.settings.deck!=="b737"||S.settings.variant==="all"||!q.v||q.v===S.settings.variant;
 const availTopics=d=>deckTopics(d).filter(t=>Q.some(q=>q.t===t&&varOk(q)));
@@ -1187,6 +1189,33 @@ function startTimer(){stopTimer();if(!S.settings.timer)return;
 }
 function stopTimer(){if(!tState)return;cancelAnimationFrame(tState.raf);clearTimeout(tState.to);tState=null}
 
+/* ============ COPIA DEL PROGRESO ============
+   acceso.js sube el progreso completo (comprimido) a la nube de cada persona y, al abrir la app en otro
+   dispositivo o tras reinstalarla, lo fusiona: de cada tarjeta se queda la versión más reciente. */
+function bkNote(){const n=$("bkNote");if(!n)return;let m={};try{m=JSON.parse(localStorage.getItem("rumbo.prog")||"{}")}catch(e){}
+  const ago=t=>{const x=(Date.now()-t)/6e4;return x<2?"hace un momento":x<60?`hace ${Math.round(x)} min`:x<1440?`hace ${Math.round(x/60)} h`:`hace ${Math.round(x/1440)} días`};
+  n.textContent=m.up?`Tu progreso se guarda en la nube automáticamente al tener conexión. Última copia: ${ago(m.up)}. Si cambias de iPhone o reinstalas la app, se recupera solo al entrar con tu código.`
+    :"Tu progreso se guardará en la nube automáticamente en cuanto haya conexión. Si cambias de iPhone o reinstalas la app, se recupera solo al entrar con tu código."}
+window.RUMBO_PROG={
+  ver:()=>{let n=0;for(const id in S.cards)n+=S.cards[id].seen||0;return n+"/"+(S.exams||[]).length+"/"+(S.resetT||0)+"/"+JSON.stringify(S.settings).length},
+  get:()=>JSON.stringify(S),
+  busy:()=>!!(ses&&$("study").classList.contains("active")),
+  saved:()=>bkNote(),
+  merge(txt,rt){let R;try{R=JSON.parse(txt)}catch(e){return true}if(!R||typeof R!=="object")return true;
+    if(S.resetT&&rt<S.resetT)return true;                      // copia anterior a un reinicio: se ignora
+    if(R.resetT&&R.resetT>(S.resetT||0)){S.cards={};S.days={};S.log=[];S.exams=[];S.pm={};S.bestCombo=0;S.resetT=R.resetT}
+    const empty=!Object.keys(S.cards).length,t=dayN();let got=0;
+    for(const id in R.cards||{}){if(!QBY[id])continue;const l=S.cards[id],r=R.cards[id];
+      if(!l||(r.last||0)>(l.last||0)){if(r.iv==null&&r.seen){r.iv=r.box>=MASTER?3:r.box?1:0;r.dd=t+(r.box?1:0)}S.cards[id]=r;got++}}
+    for(const k in R.days||{}){const l=S.days[k],r=R.days[k];if(!l)S.days[k]=r;else if((r.seen||0)>(l.seen||0))S.days[k]=Object.assign({},l,r,{ms:Math.max(l.ms||0,r.ms||0)})}
+    const ex=new Map();[...(R.exams||[]),...(S.exams||[])].forEach(e=>ex.set(e.t,e));S.exams=[...ex.values()].sort((a,b)=>a.t-b.t).slice(-40);
+    if(R.log&&R.log.length){if(!S.log||!S.log.length)S.log=R.log.slice();else{const f=S.log[0][0];S.log=R.log.filter(e=>e[0]<f).concat(S.log).slice(-8000)}}
+    S.pm=Object.assign({},R.pm||{},S.pm||{});S.bestCombo=Math.max(S.bestCombo||0,R.bestCombo||0);
+    if(empty){if(R.settings)S.settings=Object.assign({},S.settings,R.settings);if(R.goal)S.goal=R.goal;if(R.rtn){S.rtk=R.rtk;S.rtn=R.rtn}
+      if(R.uso&&R.uso.desde)S.uso.desde=Math.min(S.uso.desde,R.uso.desde)}
+    save();if($("home").classList.contains("active"))renderHome();
+    if(empty&&got)floatTxt(`Progreso recuperado · ${got} tarjetas`);return true}};
+
 /* ============ MÉTRICAS HONESTAS ============
    Retención estimada de una tarjeta: probabilidad de acertarla hoy. Vale 90 % el día que le toca repaso
    y cae con el tiempo sin repasar (curva del olvido). Fallada la última vez: 30 %. Nueva: 0. */
@@ -1328,7 +1357,7 @@ function renderStats(){
    <p class="themenote" style="margin-top:12px">El % de cada asignatura es el acierto de los últimos 30 días (si aún hay pocos datos, el de tu última respuesta a cada tarjeta). La flecha compara esta semana con la anterior.</p>
    <div class="sect"><span class="label">Tus puntos negros</span></div>
    ${hard.length?hard.map(q=>`<div class="hard"><div class="row between"><span class="label">${tCode(q.t)} · ${tName(q.t)}</span><span class="x">✕ ${S.cards[q.id].ko}</span></div><div class="q">${esc(q.q)}</div></div>`).join(""):'<div class="empty">Ninguna tarjeta se te resiste. Impecable.</div>'}
-   <button class="danger" onclick="if(confirm('¿Borrar todo el progreso?')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}">REINICIAR PROGRESO</button>`;
+   <button class="danger" onclick="if(confirm('¿Borrar todo el progreso? También se sustituirá la copia de la nube.')){try{localStorage.setItem(KEY,JSON.stringify({resetT:Date.now()}))}catch(e){}location.reload()}">REINICIAR PROGRESO</button>`;
   initMorph(progress());
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     document.querySelectorAll("#statsBody [data-h]").forEach(e=>e.style.height=e.dataset.h+"%");

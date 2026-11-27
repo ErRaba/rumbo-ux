@@ -111,7 +111,7 @@
     s.ok = Date.now(); delete s.why; save(s);
     fsReq(`devices/${s.uid}?updateMask.fieldPaths=visto`, { method: "PATCH", body: JSON.stringify({ fields: { visto: { timestampValue: new Date().toISOString() } } }) }).catch(() => {});
     if (!background && !(await openApp(s.key))) { const t = st(); delete t.key; save(t); throw new Error("descifrado"); }
-    sync(true);
+    sync(true); progSync(true);
   }
   /* ---------- uso: resumen de estadísticas para el panel del administrador ----------
      Se guarda siempre en el dispositivo; se envía cuando hay conexión (al abrir, al salir y cada 5 min). */
@@ -129,6 +129,47 @@
     } catch (e) {}
   }
   setInterval(() => { if (!document.hidden) sync(false); }, 60e3);
+
+  /* ---------- copia del progreso completo (por persona) ----------
+     Al abrir con conexión: si en la nube hay una copia más reciente hecha desde otro dispositivo
+     (o desde esta misma app antes de reinstalarla), se fusiona. Después, si hay cambios, se sube. */
+  const PK = "rumbo.prog";
+  const pm = () => { try { return JSON.parse(localStorage.getItem(PK)) || {}; } catch (e) { return {}; } };
+  const pmSave = m => { try { localStorage.setItem(PK, JSON.stringify(m)); } catch (e) {} };
+  async function gz(str) {
+    const b = new Uint8Array(await new Response(new Blob([str]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer());
+    let s = ""; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s);
+  }
+  const gunz = z => new Response(new Blob([b64(z)]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  let progBusy = false, lastProg = 0;
+  async function progSync(pull) {
+    const P = window.RUMBO_PROG;
+    if (progBusy || !started || !P || !navigator.onLine || typeof CompressionStream === "undefined") return;
+    progBusy = true;
+    try {
+      const s = await token(); if (!s.persona) return;
+      const m = pm();
+      if (pull) {
+        const d = await fsReq("progreso/" + s.persona);
+        if (d && !d.denied && d.fields && d.fields.z) {
+          const rt = Date.parse(d.fields.t.timestampValue);
+          if (rt > (m.rt || 0) && fStr(d, "uid") !== s.uid) {
+            if (P.busy()) return;                                   // en mitad de una sesión: se fusiona la próxima vez
+            if (P.merge(await gunz(d.fields.z.stringValue), rt)) { m.rt = rt; pmSave(m); }
+          }
+        }
+      }
+      const ver = P.ver();
+      if (ver === m.ver) return;
+      const z = await gz(P.get()), now = new Date();
+      const r = await fetch(BASE + "progreso/" + s.persona, { method: "PATCH",
+        headers: { Authorization: "Bearer " + s.tok, "Content-Type": "application/json" },
+        body: JSON.stringify({ fields: { z: { stringValue: z }, t: { timestampValue: now.toISOString() }, uid: { stringValue: s.uid },
+          n: { stringValue: ver } } }) });
+      if (r.ok) { Object.assign(m, { ver, up: now.getTime(), rt: Math.max(m.rt || 0, now.getTime()) }); pmSave(m); P.saved && P.saved(); }
+    } catch (e) {} finally { progBusy = false; lastProg = Date.now(); }
+  }
+  setInterval(() => { if (!document.hidden && Date.now() - lastProg > 5 * 60e3) progSync(false); }, 60e3);
   async function activate(raw) {
     const code = norm(raw);
     if (code.length < 6) return "Escribe el código completo.";
@@ -183,5 +224,5 @@
     }
     check();
   })();
-  document.addEventListener("visibilitychange", () => { if (!started) return; if (document.hidden) sync(true); else verify(true).catch(() => {}); });
+  document.addEventListener("visibilitychange", () => { if (!started) return; if (document.hidden) { sync(true); progSync(false); } else verify(true).catch(() => {}); });
 })();

@@ -720,6 +720,11 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .rz-serie{font-family:var(--mono);font-size:21px;letter-spacing:.06em;color:var(--ivory);
   margin-top:14px;text-align:center;line-height:1.6}
 .rz-serie i{color:var(--gold2);font-style:normal}
+.rz-serie.larga{font-size:16px;letter-spacing:.02em;line-height:1.75}
+.rz-fila{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:18px}
+.rz-fila .rz-cel{flex:1 1 0;min-width:0;border-radius:9px;padding:3px}
+.rz-fila .rz-cel svg{width:100%;height:auto}
+.rz-fila .rz-int{flex:0 0 auto;font-size:26px}
 .ap-q small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--mute2);margin-top:5px}
 .rz-fig,.rz-dom,.rz-bal{display:block;overflow:visible}
@@ -740,6 +745,9 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .rz-ana small{font-family:var(--sans);font-size:11.5px;color:var(--mute2)}
 .rz-ana i{color:var(--gold2);font-style:normal}
 .ap-ops.figs{grid-template-columns:repeat(2,1fr);gap:10px}
+/* las intrusas van con cinco figuras: la que sobra se pone a lo ancho
+   en vez de quedarse huérfana en media fila */
+.ap-ops.figs>.ap-op:last-child:nth-child(odd){grid-column:1/-1}
 .ap-op.figop{height:auto;min-height:104px;padding:12px;display:grid;place-items:center}
 .ap-op.figop svg{width:auto;height:auto;max-width:100%;max-height:84px}
 .ap-op.figop .rz-dom{max-height:98px}
@@ -1697,14 +1705,15 @@ const APTEX={
     tips:["Responde por tanteo antes de calcular: descarta las opciones imposibles por magnitud.",
           "Interioriza las reglas de pulgar (3:1, GS×5, ISA) hasta que no las pienses.",
           "Vale más mantener el ritmo que acertar la difícil: cada segundo parado son dos preguntas perdidas."]},
-  razona:{n:"Razonamiento",s:"Series, matrices, figuras, balanzas, silogismos y verbal",ic:"grid",
+  razona:{n:"Razonamiento",s:"Series, matrices, dominós, balanzas, silogismos y verbal",ic:"grid",
     unit:"% de acierto",
     cfg:[["foco","Enfoque",[["todo","Todo"],["series","Series"],["figuras","Figuras"],["logica","Lógica"],["verbal","Verbal"]],"todo"],
          ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
          ["lim","Límite",[[0,"Sin límite"],[45,"45 s"],[30,"30 s"]],45]],
     tips:["Busca la regla antes de mirar las opciones: si empiezas por ellas, te arrastran a la que más se parece.",
           "En las series, si el crecimiento es lento piensa en sumas o restas; si se dispara, en multiplicaciones o potencias.",
-          "En las figuras, mira una sola propiedad cada vez: lados, giro, relleno. Intentar verlas todas a la vez es lo que satura.",
+          "En las figuras casi nunca se mueve una sola cosa: mira una propiedad cada vez —lados, giro, relleno, puntos— y luego comprueba que la opción cumple TODAS. La trampa de siempre es la que sigue bien una y se olvida de la otra.",
+          "En los dominós, cada mitad lleva su propia cuenta y el 6 empalma con el 0: cuenta por separado arriba y abajo antes de mirar las fichas.",
           "Si una pregunta se te atasca, déjala. En un psicotécnico el reloj castiga más que un fallo suelto."]},
   inst:{n:"Lectura de instrumentos",s:"Altímetro de tres agujas, horizonte, rumbo, IAS y V/S",ic:"dial",
     unit:"% de acierto",
@@ -3349,15 +3358,24 @@ function figSVG(f,s){s=s||70;const c=s/2,r=s*.34;
   if(f.relleno===1)t+='<defs><clipPath id="'+id+'"><rect x="0" y="0" width="'+c+'" height="'+s+'"/></clipPath></defs>';
   t+='<path d="'+d+'" fill="'+(f.relleno===2?RZ.fill:"none")+'" stroke="'+RZ.line+'" stroke-width="2" stroke-linejoin="round"/>';
   if(f.relleno===1)t+='<path d="'+d+'" fill="'+RZ.fill+'" clip-path="url(#'+id+')"/>';
-  /* Marca de orientación. Sin ella el giro sería invisible: un polígono regular de n
-     lados se dibuja igual girado 360/n, así que un cuadrado a 0° y a 90° son idénticos
-     y la regla de la matriz desaparece. */
-  const am=((f.giro||0)-90)*Math.PI/180;
-  t+='<line x1="'+c+'" y1="'+c+'" x2="'+(c+r*.62*Math.cos(am)).toFixed(1)+'" y2="'+(c+r*.62*Math.sin(am)).toFixed(1)+
-     '" stroke="'+(f.relleno===2?RZ.bg:RZ.line)+'" stroke-width="2" stroke-linecap="round"/>';
-  for(let k=0;k<(f.puntos||0);k++){const a=(k/Math.max(1,f.puntos)*360+90)*Math.PI/180,rr=f.puntos>1?r*.46:0;
-    t+='<circle cx="'+(c+rr*Math.cos(a)).toFixed(1)+'" cy="'+(c+rr*Math.sin(a)).toFixed(1)+'" r="2.6" fill="'+
-      (f.relleno===2?RZ.bg:RZ.line)+'"/>'}
+  /* Marca de orientación, SÓLO si el giro cuenta en este ejercicio (f.marca).
+     Sin ella el giro sería invisible —un polígono regular de n lados se dibuja
+     igual girado 360/n, así que un cuadrado a 0° y a 90° son idénticos— pero
+     puesta donde el giro no varía es ruido, y encima se confunde con los puntos. */
+  if(f.marca){const am=((f.giro||0)-90)*Math.PI/180;
+    t+='<line x1="'+c+'" y1="'+c+'" x2="'+(c+r*.62*Math.cos(am)).toFixed(1)+'" y2="'+(c+r*.62*Math.sin(am)).toFixed(1)+
+      '" stroke="'+(f.relleno===2?RZ.bg:RZ.line)+'" stroke-width="2" stroke-linecap="round"/>'}
+  /* Los puntos van en fila y un poco por debajo del centro: así se cuentan de un
+     golpe de vista y no se cruzan con la marca de orientación, que sale hacia arriba.
+     El paso es .36 del radio porque con .42 el punto de la izquierda se sale del
+     triángulo girado 90°, que es el caso más estrecho. */
+  const np=f.puntos||0;
+  for(let k=0;k<np;k++){const px=c+(np>1?(k-(np-1)/2)*r*.36:0),py=c+r*.16;
+    /* el color va punto a punto: con la figura rellena a medias (la mitad
+       izquierda), un punto marfil sobre marfil no se ve */
+    const dentro=f.relleno===2||(f.relleno===1&&px<c);
+    t+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(s*.035).toFixed(1)+'" fill="'+
+      (dentro?RZ.bg:RZ.line)+'"/>'}
   return t+'</svg>'}
 const figIgual=(a,b)=>a.lados===b.lados&&a.giro===b.giro&&a.relleno===b.relleno&&(a.puntos||0)===(b.puntos||0);
 
@@ -3410,103 +3428,305 @@ function balSVG(izq,der,s){s=s||150;const w=s,h=s*.72,cx=w/2,ejeY=h*.62;
   t+=fila(izq,w*.26)+fila(der,w*.74);
   return t+'</svg>'}
 
-/* ============ SERIES ============ */
+/* ============ SERIES ============
+   Tres cosas separan una serie de selección de una de pasatiempos:
+   que la regla sea de segundo orden (la diferencia es a su vez una
+   serie), que haya dos hilos intercalados, y que el hueco no esté
+   siempre al final. Las tres están aquí.
+   Y un distractor sólo sirve si nace de una regla equivocada CREÍBLE:
+   el ±1 no engaña a nadie; la extrapolación lineal, sí. */
 const ABC="ABCDEFGHIJKLMNOPQRSTUVWXYZ";          /* 26 letras: se dice en el enunciado */
+const seqR=(n,f)=>{const a=[];for(let i=0;i<n;i++)a.push(f(i));return a};
+const sumCif=n=>String(Math.abs(n)).split("").reduce((a,c)=>a+(+c),0);
+
 function rzOpts(ok,malos){const o=[ok];
-  for(const m of malos)if(o.length<4&&o.indexOf(m)<0)o.push(m);
+  for(const m of malos)if(o.length<4&&m!==null&&m!==undefined&&o.indexOf(m)<0)o.push(m);
   let d=1;while(o.length<4){const v=typeof ok==="number"?ok+d*7:ok+"·";if(o.indexOf(v)<0)o.push(v);d++}
   const s=shuf(o.slice());return{o:s,ok:s.indexOf(ok)}}
 
-function rzSerNum(){const t=pickR(["sum","mul","mulsum","cuad","fib","dif2","alt","primos"]);
-  let s=[],ok,reg;
-  if(t==="sum"){const a=R(3,40),d=pickR([3,4,6,7,8,9,11,12])*pickR([1,-1]);
-    for(let i=0;i<5;i++)s.push(a+i*d);ok=a+5*d;reg="se suma "+d+" cada vez"}
-  else if(t==="mul"){const a=R(2,6),k=pickR([2,3]);let v=a;
-    for(let i=0;i<5;i++){s.push(v);v*=k}ok=v;reg="se multiplica por "+k}
-  else if(t==="mulsum"){const a=R(1,5),k=2,c=pickR([1,2,3]);let v=a;
-    for(let i=0;i<5;i++){s.push(v);v=v*k+c}ok=v;reg="se multiplica por "+k+" y se suma "+c}
-  else if(t==="cuad"){const a=R(2,6);for(let i=0;i<5;i++)s.push((a+i)*(a+i));ok=(a+5)*(a+5);
-    reg="son cuadrados consecutivos desde "+a+"²"}
-  else if(t==="fib"){let x=R(1,6),y=R(2,9);for(let i=0;i<5;i++){s.push(x);const z=x+y;x=y;y=z}ok=x;
-    reg="cada término es la suma de los dos anteriores"}
-  else if(t==="dif2"){const a=R(2,12),d0=pickR([2,3]),p=pickR([1,2,3]);let v=a,d=d0;
-    for(let i=0;i<5;i++){s.push(v);v+=d;d+=p}ok=v;reg="la diferencia crece de "+p+" en "+p}
-  else if(t==="alt"){const a=R(2,9),b=R(20,40),d1=pickR([3,4,5]),d2=pickR([3,4,5]);
-    for(let i=0;i<3;i++){s.push(a+i*d1);s.push(b-i*d2)}ok=a+3*d1;
-    reg="hay dos series intercaladas: una sube de "+d1+" y la otra baja de "+d2}
-  else{const P=[2,3,5,7,11,13,17,19,23,29,31],i=R(0,4);
-    for(let k=0;k<5;k++)s.push(P[i+k]);ok=P[i+5];reg="son números primos consecutivos"}
-  const d=s[s.length-1]-s[s.length-2];
-  const op=rzOpts(ok,[ok+d,ok-d,s[s.length-1]+d,ok+1,ok-1,Math.round(ok*1.5)]);
-  return{fam:"Series",q:"¿Qué número sigue?",cuerpo:'<div class="rz-serie">'+s.join(" · ")+' · <i>?</i></div>',
-    o:op.o.map(String),ok:op.ok,exp:"La regla: <b>"+reg+"</b>. El siguiente es <b>"+ok+"</b>."}}
+/* --- el hueco: al final la mitad de las veces, dentro la otra mitad --- */
+function rzHueco(len,min){const m=Math.max(min||3,3);
+  if(Math.random()<.5)return len-1;
+  const h=len-1-R(1,2);return h<m?len-1:h}
+function rzPinta(t,h){const txt=t.map((v,i)=>i===h?'<i>?</i>':v).join(" · ");
+  /* una serie larga a 21 px se sale de un teléfono: baja el cuerpo, no la parte */
+  return '<div class="rz-serie'+(txt.length>30?' larga':'')+'">'+txt+'</div>'}
 
-function rzSerLetra(){const t=pickR(["salto","alterno","atras","vocales"]);
-  let s=[],ok,reg;
-  if(t==="salto"){const i=R(0,8),k=pickR([2,3,4]);
-    for(let n=0;n<4;n++)s.push(ABC[i+n*k]);ok=ABC[i+4*k];reg="se avanzan "+k+" letras cada vez"}
-  else if(t==="alterno"){const i=R(0,6),a=pickR([1,2]),b=pickR([3,4]);let p=i;
-    for(let n=0;n<4;n++){s.push(ABC[p]);p+=n%2?b:a}ok=ABC[p];reg="los saltos alternan "+a+" y "+b}
-  else if(t==="atras"){const i=R(14,25),k=pickR([2,3]);
-    for(let n=0;n<4;n++)s.push(ABC[i-n*k]);ok=ABC[i-4*k];reg="se retrocede "+k+" letras cada vez"}
-  else{const V="AEIOU",i=R(0,0);for(let n=0;n<4;n++)s.push(V[n]);ok=V[4];reg="son las vocales en orden"}
-  const li=ABC.indexOf(ok);
-  const op=rzOpts(ok,[ABC[li+1],ABC[li-1],ABC[li+2],ABC[li-2],ABC[(li+5)%26]].filter(Boolean));
-  return{fam:"Series",q:"¿Qué letra sigue? <small>Alfabeto de 26 letras, sin Ñ</small>",
-    cuerpo:'<div class="rz-serie">'+s.join(" · ")+' · <i>?</i></div>',
-    o:op.o,ok:op.ok,exp:"La regla: <b>"+reg+"</b>. Sigue la <b>"+ok+"</b>."}}
+/* ============ numéricas ============ */
+const RZSERN=[
+ function(){const a=R(4,70),d=pickR([6,7,8,9,11,12,13,14])*pickR([1,-1]);
+   return{t:seqR(7,i=>a+i*d),reg:"se suma "+d+" cada vez"}},
+ function(){const a=R(2,5),k=pickR([2,3]);
+   return{t:seqR(6,i=>a*Math.pow(k,i)),reg:"cada término es el anterior por "+k}},
+ function(){const a=R(1,5),k=pickR([2,3]),c=pickR([1,2,3,-1,-2]);let v=a;
+   return{t:seqR(6,function(){const x=v;v=v*k+c;return x}),
+     reg:"cada término es el anterior por "+k+(c<0?" menos "+(-c):" más "+c)}},
+ function(){const a=R(2,14),d0=pickR([2,3,4]),p=pickR([2,3,4]);let v=a,d=d0;
+   return{t:seqR(7,function(){const x=v;v+=d;d+=p;return x}),
+     reg:"la diferencia arranca en "+d0+" y crece de "+p+" en "+p}},
+ function(){const a=R(1,9),d0=pickR([2,3]);let v=a,d=d0;
+   return{t:seqR(6,function(){const x=v;v+=d;d*=2;return x}),
+     reg:"la diferencia se duplica: "+d0+", "+(d0*2)+", "+(d0*4)+"…"}},
+ function(){let x=R(1,7),y=R(2,11);
+   return{t:seqR(7,function(){const z=x,n=x+y;x=y;y=n;return z}),
+     reg:"cada término es la suma de los dos anteriores"}},
+ function(){let x=R(1,6),y=R(2,8);const c=pickR([1,2]);
+   return{t:seqR(7,function(){const z=x,n=x+y+c;x=y;y=n;return z}),
+     reg:"cada término es la suma de los dos anteriores más "+c}},
+ function(){const a=R(2,8),c=pickR([0,1,-1,2]);
+   return{t:seqR(6,i=>(a+i)*(a+i)+c),
+     reg:c===0?"son los cuadrados desde "+a+"²":"son los cuadrados desde "+a+"² "+(c<0?"menos "+(-c):"más "+c)}},
+ function(){const a=R(2,8);
+   return{t:seqR(6,i=>(a+i)*(a+i+1)),
+     reg:"cada término es el producto de dos enteros seguidos: "+a+"×"+(a+1)+", "+(a+1)+"×"+(a+2)+"…"}},
+ function(){const a=R(1,4);
+   return{t:seqR(6,i=>Math.pow(a+i,3)),reg:"son los cubos desde "+a+"³"}},
+ function(){const a=R(2,4);
+   return{t:seqR(6,i=>Math.pow(2,a+i)-1),reg:"son las potencias de 2 menos una unidad"}},
+ function(){const P=[2,3,5,7,11,13,17,19,23,29,31,37,41],i=R(0,6);
+   return{t:seqR(7,k=>P[i+k]),reg:"son números primos consecutivos"}},
+ function(){const P=[2,3,5,7,11,13,17],a=R(3,25),i=R(0,1);let v=a,k=i;
+   return{t:seqR(6,function(){const x=v;v+=P[k++];return x}),
+     reg:"las diferencias son primos seguidos: "+P[i]+", "+P[i+1]+", "+P[i+2]+"…"}},
+ function(){let v=R(12,45);
+   return{t:seqR(6,function(){const x=v;v+=sumCif(v);return x}),
+     reg:"a cada término se le suma la suma de sus propias cifras"}},
+ function(){const a=R(2,12),b=R(55,95),d1=pickR([4,5,6,7]),d2=pickR([6,7,8,9]);
+   return{t:seqR(8,i=>i%2?b-((i-1)/2)*d2:a+(i/2)*d1),
+     reg:"hay dos series intercaladas: los términos en posición impar suben de "+d1+
+       " y los de posición par bajan de "+d2}},
+ function(){const a=R(2,6),k=pickR([2,3]),b=R(7,25),d=pickR([5,6,7,8]);
+   return{t:seqR(8,i=>i%2?b+((i-1)/2)*d:a*Math.pow(k,i/2)),
+     reg:"hay dos series intercaladas: la de posición impar se multiplica por "+k+
+       " y la de posición par suma "+d}},
+ function(){const x0=R(2,9),y0=R(3,14),k=pickR([2,3]);
+   return{t:seqR(6,i=>(i%2?y0:x0)*Math.pow(k,Math.floor(i/2))),
+     reg:"cada término es el de dos puestos antes multiplicado por "+k}}
+];
 
-function rzSerAlfa(){const t=pickR(["pos","par"]);let s=[],ok,reg;
-  if(t==="pos"){const i=R(0,10),k=pickR([2,3]);
-    for(let n=0;n<4;n++){const L=ABC[i+n*k];s.push(L+(i+n*k+1))}
-    const L=ABC[i+4*k];ok=L+(i+4*k+1);reg="cada número es la posición de su letra en el alfabeto, y la letra avanza "+k}
-  else{const i=R(0,10),k=pickR([2,3]),n0=R(1,4),dn=pickR([1,2]);
-    for(let n=0;n<4;n++)s.push(ABC[i+n*k]+(n0+n*dn));
-    ok=ABC[i+4*k]+(n0+4*dn);reg="la letra avanza "+k+" y el número sube de "+dn+" en "+dn}
-  const L=ok[0],num=+ok.slice(1),li=ABC.indexOf(L);
-  const op=rzOpts(ok,[ABC[li+1]+num,L+(num+1),ABC[li-1]+num,L+(num-1),ABC[li+2]+(num+1)].filter(x=>x&&x.indexOf("undefined")<0));
-  return{fam:"Series",q:"¿Qué sigue en la serie?",cuerpo:'<div class="rz-serie">'+s.join(" · ")+' · <i>?</i></div>',
-    o:op.o,ok:op.ok,exp:"La regla: <b>"+reg+"</b>. Sigue <b>"+ok+"</b>."}}
+function rzSerNum(){let r,t,h,ok,g=0;
+  do{r=pickR(RZSERN)();t=r.t;h=rzHueco(t.length,t.length>6?4:3);ok=t[h];g++}
+  while(g<12&&!(Number.isFinite(ok)&&Math.abs(ok)<1e7));
+  const d=t[h-1]-t[h-2];
+  const lin=t[h-1]+d;                             /* seguir la última diferencia: el error clásico */
+  const med=h<t.length-1?Math.round((t[h-1]+t[h+1])/2):null;
+  const hilo=h>=4?t[h-2]+(t[h-2]-t[h-4]):null;    /* el hilo correcto, un paso corto */
+  const malos=[lin,med,hilo,ok+d,ok-d,2*t[h-1],ok+1,ok-1,ok+10]
+    .filter(v=>v!==null&&Number.isFinite(v)&&v!==ok);
+  const op=rzOpts(ok,malos);
+  return{fam:"Series",q:h===t.length-1?"¿Qué número sigue?":"¿Qué número falta?",
+    cuerpo:rzPinta(t,h),o:op.o.map(String),ok:op.ok,
+    exp:"La regla: <b>"+r.reg+"</b>. El término que falta es <b>"+ok+"</b>."}}
 
-/* ============ FIGURAS ============ */
-const PROPS=[["lados",[3,4,5,6,7,8]],["relleno",[0,1,2]],["giro",[0,45,90]],["puntos",[0,1,2]]];
+/* ============ de letras y alfanuméricas ============
+   Los distractores salen de perturbar el resultado trozo a trozo:
+   una letra arriba o abajo, un número de más, las dos mitades del par
+   cambiadas. Son los fallos que se cometen de verdad con el reloj encima. */
+function rzVariantes(s){
+  const tr=s.match(/[A-Z]+|\d+/g)||[s],out=[];
+  const arm=(i,v)=>{const c=tr.slice();c[i]=v;return c.join("")};
+  tr.forEach(function(p,i){
+    if(/^\d+$/.test(p)){const n=+p;[n+1,n-1,n+2,n*2].forEach(function(v){
+      if(v>0)out.push(arm(i,String(v)))})}
+    else{const li=ABC.indexOf(p[p.length-1]);
+      /* hasta ±5: con la respuesta pegada a la A o a la Z, ±1 y ±2 no dan
+         tres distractores y había que rellenar la cuarta opción con basura */
+      [li+1,li-1,li+2,li-2,li+3,li-3,li+5,li-5].forEach(function(v){
+        if(v>=0&&v<26)out.push(arm(i,p.slice(0,-1)+ABC[v]))})}});
+  if(tr.length===2)out.push(tr[1]+tr[0]);
+  return shuf(out).filter(v=>v!==s)}
+
+const RZSERL=[
+ function(){const k=pickR([2,3,4,5]),i=R(0,25-4*k);
+   return{t:seqR(5,n=>ABC[i+n*k]),reg:"se avanzan "+k+" letras cada vez"}},
+ function(){const d=pickR([1,2]),i=R(0,25-10*d);let p=i;
+   return{t:seqR(5,function(n){const L=ABC[p];p+=d*(n+1);return L}),
+     reg:"el salto crece: "+d+", "+(2*d)+", "+(3*d)+", "+(4*d)+"…"}},
+ function(){const k=pickR([2,3,4]),i=R(4*k,25);
+   return{t:seqR(5,n=>ABC[i-n*k]),reg:"se retroceden "+k+" letras cada vez"}},
+ function(){const a=pickR([1,2,3]),b=pickR([4,5]),i=R(0,25-2*(a+b));let p=i;
+   return{t:seqR(5,function(n){const L=ABC[p];p+=n%2?b:a;return L}),
+     reg:"los saltos alternan "+a+" y "+b}},
+ function(){const k=pickR([2,3]),m=pickR([2,3]),i=R(0,25-3*k),j=R(3*m,25);
+   return{t:seqR(6,n=>n%2?ABC[j-((n-1)/2)*m]:ABC[i+(n/2)*k]),
+     reg:"hay dos series intercaladas: una avanza "+k+" y la otra retrocede "+m}},
+ function(){const C="BCDFGHJKLMNPQRSTVWXYZ",i=R(0,C.length-6);
+   return{t:seqR(5,n=>C[i+n]),reg:"son consonantes consecutivas: las vocales no cuentan"}},
+ function(){const P=[2,3,5,7],i=R(0,8);let p=i,k=0;
+   return{t:seqR(5,function(){const L=ABC[p];p+=P[k++]||11;return L}),
+     reg:"los saltos son los primeros primos: 2, 3, 5, 7…"}},
+ function(){const k=pickR([1,2]),m=pickR([1,2]),i=R(0,25-4*k),j=R(4*m,25);
+   return{t:seqR(5,n=>ABC[i+n*k]+ABC[j-n*m]),
+     reg:"en cada pareja la primera letra avanza "+k+" y la segunda retrocede "+m}},
+ function(){const k=pickR([1,2]),m=pickR([2,3].filter(v=>v!==k)),
+     i=R(0,25-4*k),j=R(0,25-4*m);
+   return{t:seqR(5,n=>ABC[i+n*k]+ABC[j+n*m]),
+     reg:"en cada pareja la primera avanza "+k+" y la segunda avanza "+m}}
+];
+
+const RZSERA=[
+ function(){const k=pickR([2,3,4]),i=R(0,25-4*k);
+   return{t:seqR(5,n=>ABC[i+n*k]+(i+n*k+1)),
+     reg:"el número es la posición de la letra en el alfabeto, y la letra avanza "+k}},
+ function(){const k=pickR([2,3]),i=R(0,25-4*k),dn=pickR([3,4,5])*pickR([1,-1]),
+     n0=dn<0?R(1-4*dn,9-4*dn):R(2,9);
+   return{t:seqR(5,n=>ABC[i+n*k]+(n0+n*dn)),
+     reg:"la letra avanza "+k+" y el número "+(dn<0?"baja de "+(-dn)+" en "+(-dn):"sube de "+dn+" en "+dn)}},
+ function(){const k=pickR([2,3]),i=R(0,25-4*k),a=pickR([1,2,3]);
+   return{t:seqR(5,n=>ABC[i+n*k]+(a*Math.pow(2,n))),
+     reg:"la letra avanza "+k+" y el número se duplica"}},
+ function(){const k=pickR([2,3]),i=R(0,25-4*k);
+   return{t:seqR(5,n=>ABC[i+n*k]+2*(i+n*k+1)),
+     reg:"el número es el doble de la posición de la letra, y la letra avanza "+k}},
+ function(){const k=pickR([1,2]),i=R(0,25-4*k),a=R(1,4);
+   return{t:seqR(5,n=>((a+n)*(a+n))+ABC[i+n*k]),
+     reg:"el número va por cuadrados desde "+a+"² y la letra avanza "+k}},
+ function(){const k=pickR([2,3]),i=R(4*k,25),n0=R(1,4),dn=pickR([2,3]);
+   return{t:seqR(5,n=>ABC[i-n*k]+(n0+n*dn)),
+     reg:"la letra retrocede "+k+" y el número sube de "+dn+" en "+dn}},
+ function(){const k=pickR([1,2]),m=pickR([1,2]),i=R(0,25-4*k),j=R(4*m,25),
+     n0=R(1,5),dn=pickR([2,3]);
+   return{t:seqR(5,n=>ABC[i+n*k]+(n0+n*dn)+ABC[j-n*m]),
+     reg:"la primera letra avanza "+k+", el número sube "+dn+" y la última retrocede "+m}}
+];
+
+function rzSerStr(reglas,fam,q,nota){const r=pickR(reglas)(),t=r.t,
+    h=rzHueco(t.length,t.length>5?4:3),ok=t[h];
+  const op=rzOpts(ok,rzVariantes(ok));
+  return{fam:fam,q:(h===t.length-1?q:"¿Qué falta en la serie?")+(nota||""),
+    cuerpo:rzPinta(t,h),o:op.o,ok:op.ok,
+    exp:"La regla: <b>"+r.reg+"</b>. Falta <b>"+ok+"</b>."}}
+
+function rzSerLetra(){return rzSerStr(RZSERL,"Series","¿Qué letra sigue?",
+  " <small>Alfabeto de 26 letras, sin Ñ</small>")}
+function rzSerAlfa(){return rzSerStr(RZSERA,"Series","¿Qué sigue en la serie?",
+  " <small>Alfabeto de 26 letras, sin Ñ</small>")}
+
+/* ============ FIGURAS ============
+   Lo que sube el nivel aquí es ENCADENAR: que no cambie una propiedad
+   por regla, sino dos o tres a la vez. Y el distractor que de verdad
+   duele es el que sigue bien una propiedad y se olvida de la otra:
+   ese es el fallo que se comete con el reloj encima.
+   Los lados se quedan en 3..6 a propósito: contar siete u ocho lados
+   en una pantalla de teléfono no mide razonamiento, mide vista. */
+const PROPS=[["lados",[3,4,5,6]],["relleno",[0,1,2]],["giro",[0,45,90]],["puntos",[0,1,2,3]]];
+const NOMPROP={lados:"el número de lados",relleno:"el relleno",
+  giro:"la orientación",puntos:"los puntos interiores"};
+const PBASE={lados:4,relleno:0,giro:0,puntos:0};
+
+/* --- matriz: dos propiedades por los ejes y, a menudo, una tercera
+       que avanza en diagonal (se repite en cada diagonal de la matriz) --- */
 function rzMatriz(){
-  const ps=shuf(PROPS.slice()).slice(0,2),fila=ps[0],col=ps[1];
-  const base={lados:4,relleno:0,giro:0,puntos:0};
-  const vf=shuf(fila[1].slice()).slice(0,3),vc=shuf(col[1].slice()).slice(0,3);
-  const cel=(i,j)=>{const f=Object.assign({},base);f[fila[0]]=vf[i];f[col[0]]=vc[j];return f};
+  /* el giro y los puntos nunca en la misma matriz: la marca de orientación,
+     cuando queda tumbada, pasa por encima de la fila de puntos y deja de
+     saberse qué se está contando. Fuera uno de los dos y quedan tres. */
+  /* el sorteo va FUERA del filtro: dentro se evaluaba una vez por propiedad
+     y había tiradas en las que no se quitaba ninguna de las dos */
+  const fuera=Math.random()<.5?"giro":"puntos";
+  const ps=shuf(PROPS.filter(x=>x[0]!==fuera)),
+    fila=ps[0],col=ps[1],dia=Math.random()<.55?ps[2]:null;
+  /* ps son las tres propiedades en juego; los distractores salen SÓLO de
+     ellas, porque tocar una que no varía delata la opción y, de paso,
+     vuelve a juntar la marca de giro con los puntos */
+  const vf=shuf(fila[1].slice()).slice(0,3),vc=shuf(col[1].slice()).slice(0,3),
+        vd=dia?shuf(dia[1].slice()).slice(0,3):null;
+  const giroVaria=[fila[0],col[0],dia?dia[0]:""].indexOf("giro")>=0;
+  const cel=function(i,j){const f=Object.assign({},PBASE,{marca:giroVaria});
+    f[fila[0]]=vf[i];f[col[0]]=vc[j];if(dia)f[dia[0]]=vd[(i+j)%3];return f};
   const sol=cel(2,2);
   let g='<div class="rz-mat">';
   for(let i=0;i<3;i++)for(let j=0;j<3;j++)
-    g+=(i===2&&j===2)?'<div class="rz-cel falta">?</div>':'<div class="rz-cel">'+figSVG(cel(i,j),66)+'</div>';
+    g+=(i===2&&j===2)?'<div class="rz-cel falta">?</div>'
+      :'<div class="rz-cel">'+figSVG(cel(i,j),66)+'</div>';
   g+='</div>';
-  const malos=[];
-  PROPS.forEach(function(p){const otros=p[1].filter(v=>v!==sol[p[0]]);
-    const f=Object.assign({},sol);f[p[0]]=pickR(otros);malos.push(f)});
-  const cand=[sol].concat(shuf(malos)).filter(function(f,i,a){return a.findIndex(x=>figIgual(x,f))===i}).slice(0,4);
+  /* un distractor por cada propiedad que SÍ varía: son las trampas reales */
+  const vary=[fila,col].concat(dia?[dia]:[]),malos=[];
+  vary.forEach(function(p){const f=Object.assign({},sol);
+    f[p[0]]=pickR(p[1].filter(v=>v!==sol[p[0]]));malos.push(f)});
+  ps.forEach(function(p){if(malos.length<4&&vary.indexOf(p)<0){
+    const f=Object.assign({},sol);f[p[0]]=pickR(p[1].filter(v=>v!==sol[p[0]]));malos.push(f)}});
+  /* si aún faltan, se repite una propiedad que sí varía con otro valor */
+  let v2=0;while(malos.length<3&&v2<12){const p=pickR(vary),f=Object.assign({},sol);
+    f[p[0]]=pickR(p[1].filter(x=>x!==sol[p[0]]));
+    if(!malos.some(x=>figIgual(x,f)))malos.push(f);v2++}
+  const cand=[sol].concat(shuf(malos))
+    .filter(function(f,i,a){return a.findIndex(x=>figIgual(x,f))===i}).slice(0,4);
   const o=shuf(cand);
   return{fam:"Figuras",q:"¿Qué figura completa la matriz?",cuerpo:g,tipoOp:"fig",
     o:o.map(f=>figSVG(f,78)),ok:o.findIndex(f=>figIgual(f,sol)),solFig:sol,figs:o,
-    exp:"En las filas cambia <b>"+fila[0]+"</b> y en las columnas cambia <b>"+col[0]+
-      "</b>. El hueco necesita "+fila[0]+" = "+vf[2]+" y "+col[0]+" = "+vc[2]+"."}}
+    exp:"Por filas cambia <b>"+NOMPROP[fila[0]]+"</b> y por columnas <b>"+NOMPROP[col[0]]+"</b>"+
+      (dia?", y encima <b>"+NOMPROP[dia[0]]+"</b> avanza en diagonal: se repite a lo largo de cada diagonal":"")+
+      ". Las "+(dia?"tres":"dos")+" condiciones tienen que cumplirse a la vez."}}
 
-function rzIntrusa(){let fs,intr,g=0;
-  do{const lados=pickR([3,4,5,6]),otro=pickR([3,4,5,6,7,8].filter(v=>v!==lados));
+/* --- serie de figuras: dos propiedades con periodos distintos (3 y 4),
+       así que no basta con seguir una --- */
+const PG3=[PROPS[1],PROPS[2]],PG4=[PROPS[0],PROPS[3]];
+function rzSerieFig(){
+  const A=pickR(PG3),B=A[0]==="giro"?PROPS[0]:pickR(PG4);   /* giro con puntos, nunca */
+  const ca=R(0,1)?A[1].slice():A[1].slice().reverse();
+  const cb=R(0,1)?B[1].slice():B[1].slice().reverse();
+  const fig=function(i){const f=Object.assign({},PBASE,{marca:A[0]==="giro"});
+    f[A[0]]=ca[i%3];f[B[0]]=cb[i%4];return f};
+  const sol=fig(5);
+  let g='<div class="rz-fila">';
+  for(let i=0;i<5;i++)g+='<div class="rz-cel">'+figSVG(fig(i),58)+'</div>';
+  g+='<span class="rz-int">?</span></div>';
+  /* los tres fallos de verdad: seguir sólo A, seguir sólo B, pasarse de paso */
+  const d1=Object.assign({},sol);d1[B[0]]=cb[4%4];
+  const d2=Object.assign({},sol);d2[A[0]]=ca[4%3];
+  const d3=Object.assign({},sol);d3[A[0]]=ca[6%3];d3[B[0]]=cb[6%4];
+  const cand=[sol,d1,d2,d3]
+    .filter(function(f,i,a){return a.findIndex(x=>figIgual(x,f))===i});
+  let extra=0;
+  while(cand.length<4&&extra<20){const f=Object.assign({},sol);
+    f[B[0]]=pickR(B[1].filter(v=>v!==sol[B[0]]));
+    if(!cand.some(x=>figIgual(x,f)))cand.push(f);extra++}
+  const o=shuf(cand);
+  return{fam:"Figuras",q:"¿Qué figura sigue?",cuerpo:g,tipoOp:"fig",
+    o:o.map(f=>figSVG(f,78)),ok:o.findIndex(f=>figIgual(f,sol)),solFig:sol,figs:o,
+    exp:"Van encadenadas dos cosas a la vez: <b>"+NOMPROP[A[0]]+"</b> se repite cada tres figuras y <b>"+
+      NOMPROP[B[0]]+"</b> cada cuatro. Si sólo sigues una, caes en una de las otras opciones."}}
+
+/* --- intrusa: o por número de lados, o por una RELACIÓN entre dos
+       propiedades, que es donde empieza el nivel de verdad --- */
+function rzIntrusa(){return Math.random()<.45?rzIntrusaLados():rzIntrusaRel()}
+
+function rzIntrusaLados(){let fs,intr,g=0;
+  do{const lados=pickR([3,4,5]),otro=pickR([3,4,5,6].filter(v=>v!==lados));
     /* cinco combinaciones DISTINTAS de giro y relleno: así no salen dos figuras
        iguales y, de paso, ninguna de esas dos propiedades puede repartirse 4 a 1
        y crear una segunda regla válida */
     const combos=[];
     [0,45,90].forEach(gi=>[0,1,2].forEach(re=>combos.push({giro:gi,relleno:re})));
     const c5=shuf(combos).slice(0,5);
-    fs=c5.map((c,i)=>({lados:i===4?otro:lados,giro:c.giro,relleno:c.relleno,puntos:0}));
+    fs=c5.map((c,i)=>({lados:i===4?otro:lados,giro:c.giro,relleno:c.relleno,puntos:0,marca:true}));
     shuf(fs);intr=fs.findIndex(f=>f.lados===otro);
     g++}
   while(g<40&&!rzUnica(fs,intr));
-  const o=fs;
   return{fam:"Figuras",q:"¿Cuál no encaja con las demás?",cuerpo:"",tipoOp:"fig",
-    o:o.map(f=>figSVG(f,78)),ok:intr,figs:fs,
-    exp:"Las otras cuatro tienen el mismo número de lados; esa no. El giro y el relleno cambian en todas, "+
-      "así que no sirven de regla."}}
+    o:fs.map(f=>figSVG(f,78)),ok:intr,figs:fs,modo:"lados",
+    exp:"Las otras cuatro tienen el mismo número de lados; esa no. El giro y el relleno "+
+      "cambian en todas, así que no sirven de regla."}}
+
+function rzIntrusaRel(){
+  /* en cuatro de ellas los puntos son los lados menos tres: triángulo sin
+     puntos, cuadrado con uno, pentágono con dos, hexágono con tres */
+  /* aquí los puntos SON la regla: el giro se queda a cero y la marca apagada,
+     porque una raya más dentro de la figura se confunde con un punto. El
+     camuflaje lo pone el relleno, que nunca llega a repartirse cuatro contra una. */
+  const rell=shuf([0,1,2,pickR([0,1,2]),pickR([0,1,2])]);
+  const buenos=shuf([3,4,5,6]).map((L,i)=>({lados:L,puntos:L-3,giro:0,relleno:rell[i],marca:false}));
+  const Li=pickR([3,4,5,6]),malos=[0,1,2,3].filter(v=>v!==Li-3);
+  const intruso={lados:Li,puntos:pickR(malos),giro:0,relleno:rell[4],marca:false};
+  const fs=shuf(buenos.concat([intruso]));
+  const intr=fs.findIndex(f=>f.puntos!==f.lados-3);
+  return{fam:"Figuras",q:"¿Cuál no encaja con las demás?",cuerpo:"",tipoOp:"fig",
+    o:fs.map(f=>figSVG(f,78)),ok:intr,figs:fs,modo:"rel",
+    exp:"En cuatro de ellas los puntos del interior son los lados menos tres: el triángulo "+
+      "sin ninguno, el cuadrado con uno, el pentágono con dos y el hexágono con tres. "+
+      "Esa rompe la cadena: tiene "+fs[intr].lados+" lados y "+fs[intr].puntos+" punto"+
+      (fs[intr].puntos===1?"":"s")+"."}}
+
 /* la regla tiene que ser ÚNICA: ninguna otra propiedad puede repartirse 4 contra 1 */
 function rzUnica(fs,intr){
   for(const p of ["giro","relleno","puntos"]){
@@ -3515,32 +3735,73 @@ function rzUnica(fs,intr){
   const c={};fs.forEach(f=>c[f.lados]=(c[f.lados]||0)+1);
   return c[fs[intr].lados]===1&&Object.keys(c).length===2}
 
-const TETRA={S:[[0,1],[1,1],[1,0],[2,0]],Z:[[0,0],[1,0],[1,1],[2,1]],
-  L:[[0,0],[0,1],[0,2],[1,2]],J:[[1,0],[1,1],[1,2],[0,2]],
-  T:[[0,0],[1,0],[2,0],[1,1]],O:[[0,0],[1,0],[0,1],[1,1]]};
+/* --- giro contra espejo: piezas de cuatro y de cinco casillas,
+       todas con su pareja quiral (el espejo NO se alcanza girando) --- */
+const PIEZAS={
+ S:[[0,1],[1,1],[1,0],[2,0]],              Z:[[0,0],[1,0],[1,1],[2,1]],
+ L:[[0,0],[0,1],[0,2],[1,2]],              J:[[1,0],[1,1],[1,2],[0,2]],
+ T:[[0,0],[1,0],[2,0],[1,1]],              O:[[0,0],[1,0],[0,1],[1,1]],
+ F:[[1,0],[2,0],[0,1],[1,1],[1,2]],        Fe:[[0,0],[1,0],[1,1],[2,1],[1,2]],
+ N:[[0,0],[1,0],[1,1],[1,2],[2,2]],        Ne:[[2,0],[1,0],[1,1],[1,2],[0,2]],
+ P:[[0,0],[1,0],[0,1],[1,1],[0,2]],        Pe:[[0,0],[1,0],[0,1],[1,1],[1,2]]};
+const PARESQ=[["S","Z"],["L","J"],["F","Fe"],["N","Ne"],["P","Pe"]];
 function rzRotacion(){
-  const par=pickR([["S","Z"],["L","J"]]),base=TETRA[par[0]],esp=TETRA[par[1]];
-  const giro=R(1,3),ok=giraFig(base,giro);
-  const malos=[giraFig(esp,R(0,3)),giraFig(TETRA.T,R(0,3)),giraFig(TETRA.L===base?TETRA.S:TETRA.L,R(0,3))];
-  const cand=[ok].concat(malos).filter(function(f,i,a){return a.findIndex(x=>normFig(x)===normFig(f))===i});
-  while(cand.length<4)cand.push(giraFig(TETRA.O,R(0,3)));
-  const o=shuf(cand.slice(0,4));
-  return{fam:"Figuras",q:"¿Cuál es la misma figura, girada?",cuerpo:'<div class="rz-uno">'+poliSVG(base,104)+'</div>',
-    tipoOp:"fig",o:o.map(f=>poliSVG(f,80)),ok:o.findIndex(f=>normFig(f)===normFig(ok)),base:base,ops:o,
-    exp:"Girar no cambia la figura; <b>reflejarla sí</b>. Una de las opciones es su imagen en espejo: "+
-      "parece igual, pero no se puede llegar a ella girando sobre el papel."}}
+  const par=pickR(PARESQ),base=PIEZAS[par[0]],esp=PIEZAS[par[1]];
+  const ok=giraFig(base,R(1,3)),n=base.length;
+  const rots=[0,1,2,3].map(k=>normFig(giraFig(base,k)));
+  /* cualquier cosa que no sea un giro del original: el espejo (en sus cuatro
+     posiciones) y otras piezas del mismo número de casillas */
+  let pool=[0,1,2,3].map(k=>giraFig(esp,k));
+  Object.keys(PIEZAS).forEach(function(k){
+    if(PIEZAS[k].length===n&&k!==par[0]&&k!==par[1])
+      [0,1,2,3].forEach(r=>pool.push(giraFig(PIEZAS[k],r)))});
+  pool=shuf(pool).filter(f=>rots.indexOf(normFig(f))<0)
+    .filter(function(f,i,a){return a.findIndex(x=>normFig(x)===normFig(f))===i});
+  const o=shuf([ok].concat(pool.slice(0,3)));
+  return{fam:"Figuras",q:"¿Cuál es la misma figura, girada?",
+    cuerpo:'<div class="rz-uno">'+poliSVG(base,104)+'</div>',
+    tipoOp:"fig",o:o.map(f=>poliSVG(f,80)),ok:o.findIndex(f=>normFig(f)===normFig(ok)),
+    base:base,ops:o,
+    exp:"Girar no cambia la figura; <b>reflejarla sí</b>. Una de las opciones es su imagen "+
+      "en espejo: parece igual, pero no se llega a ella girando sobre el papel."}}
 
-function rzDomino(){const p=pickR([1,2,3,5]),q=pickR([1,2,4,6]),a0=R(0,6),b0=R(0,6);
-  const sec=[];for(let i=0;i<4;i++)sec.push([(a0+i*p)%7,(b0+i*q)%7]);
-  const ok=[(a0+4*p)%7,(b0+4*q)%7];
-  const cand=[ok,[(ok[0]+1)%7,ok[1]],[ok[0],(ok[1]+1)%7],[ok[1],ok[0]],[(ok[0]+p)%7,(ok[1]+q)%7]];
+/* --- dominó: siete reglas, y ninguna deja la ficha a medias --- */
+const m7=n=>((n%7)+7)%7;
+const VUELTA=" Después del 6 se vuelve al 0.";
+const RZDOM=[
+ function(){const p=pickR([1,2,3,5]),q=pickR([1,2,4,6]),a=R(0,6),b=R(0,6);
+   return{t:seqR(5,i=>[m7(a+i*p),m7(b+i*q)]),
+     reg:"cada mitad lleva su propia cuenta: arriba suma "+p+" y abajo suma "+q+"."+VUELTA}},
+ function(){const k=pickR([1,2,3]),a=R(0,6),b=R(0,6);let x=a,y=b;
+   return{t:seqR(5,function(){const f=[x,y],ny=m7(y+k);x=y;y=ny;return f}),
+     reg:"la mitad de abajo pasa a ser la de arriba en la ficha siguiente, y la nueva de abajo suma "+k+"."+VUELTA}},
+ function(){const p=pickR([1,2,3]),a=R(0,6);
+   return{t:seqR(5,i=>[m7(a+i*p),6-m7(a+i*p)]),
+     reg:"arriba suma "+p+" y abajo es siempre lo que falta para llegar a 6."+VUELTA}},
+ function(){const a=R(0,6),b=R(0,6);let x=a,y=b;
+   return{t:seqR(5,function(){const f=[x,y],nx=y,ny=m7(x+1);x=nx;y=ny;return f}),
+     reg:"la ficha se da la vuelta y la mitad que baja suma 1."+VUELTA}},
+ function(){const a=R(0,6),b=R(0,6);let x=a,y=b;
+   return{t:seqR(5,function(i){const f=[x,y];x=m7(x+i+1);y=m7(y-i-1);return f}),
+     reg:"el paso crece cada vez (1, luego 2, luego 3…), sumando arriba y restando abajo."+VUELTA}},
+ function(){const q=pickR([1,2,3,5]),a=R(0,6),b=R(0,6);
+   return{t:seqR(5,i=>[a,m7(b+i*q)]),
+     reg:"la mitad de arriba no se mueve y la de abajo suma "+q+"."+VUELTA}},
+ function(){const a=R(0,2),b=R(4,6);
+   return{t:seqR(5,i=>[a+i,b-i]),
+     reg:"arriba suma 1 y abajo resta 1: el total de la ficha no cambia, siempre suma "+(a+b)}}
+];
+function rzDomino(){const r=pickR(RZDOM)(),sec=r.t.slice(0,4),ok=r.t[4],pr=sec[3];
+  const cand=[ok,[pr[0],ok[1]],[ok[0],pr[1]],[ok[1],ok[0]],
+    [m7(ok[0]+1),ok[1]],[ok[0],m7(ok[1]+1)],[m7(ok[0]-1),m7(ok[1]-1)]];
   const u=cand.filter(function(c,i,a){return a.findIndex(x=>x[0]===c[0]&&x[1]===c[1])===i}).slice(0,4);
   const o=shuf(u);
   return{fam:"Figuras",q:"¿Qué ficha sigue?",
-    cuerpo:'<div class="rz-dfila">'+sec.map(d=>domSVG(d[0],d[1],44)).join("")+'<span class="rz-int">?</span></div>',
-    tipoOp:"fig",o:o.map(d=>domSVG(d[0],d[1],50)),ok:o.findIndex(c=>c[0]===ok[0]&&c[1]===ok[1]),
-    exp:"Cada mitad sigue su propia cuenta y vuelve a empezar después del 6: arriba suma <b>"+p+
-      "</b> y abajo suma <b>"+q+"</b>. La siguiente es <b>"+ok[0]+"/"+ok[1]+"</b>."}}
+    cuerpo:'<div class="rz-dfila">'+sec.map(d=>domSVG(d[0],d[1],42)).join("")+
+      '<span class="rz-int">?</span></div>',
+    tipoOp:"fig",o:o.map(d=>domSVG(d[0],d[1],50)),
+    ok:o.findIndex(c=>c[0]===ok[0]&&c[1]===ok[1]),fichas:o,sol:ok,
+    exp:"La regla: <b>"+r.reg+"</b> La siguiente es <b>"+ok[0]+"/"+ok[1]+"</b>."}}
 
 /* ============ LÓGICA ============ */
 function rzBalanza(){const m=R(2,4),n=R(2,4);
@@ -3618,16 +3879,24 @@ function rzIntrusaPal(){const ks=Object.keys(CATS),a=pickR(ks),b=pickR(ks.filter
 
 /* ============ RECORRIDO ============ */
 const RAZFAM={series:[rzSerNum,rzSerLetra,rzSerAlfa],
-  figuras:[rzMatriz,rzIntrusa,rzRotacion,rzDomino],
+  figuras:[rzMatriz,rzSerieFig,rzIntrusa,rzRotacion,rzDomino],
   logica:[rzBalanza,rzSilogismo],
   verbal:[rzAnalogia,rzIntrusaPal]};
+window.RAZ_GEN=RAZFAM;      /* para poder pintar una muestra de cada familia desde la consola */
 function razPool(){const f=aptCfg("razona","foco");
   return f==="todo"?RAZFAM.series.concat(RAZFAM.figuras,RAZFAM.logica,RAZFAM.verbal):RAZFAM[f]}
 
-function razBegin(){dr.tot=aptCfg("razona","n");dr.lim=aptCfg("razona","lim");dr.fam={};razNext()}
+function razBegin(){dr.tot=aptCfg("razona","n");dr.lim=aptCfg("razona","lim");dr.fam={};
+  /* Se REPARTE, no se sortea. Con sorteo puro y doce generadores, una familia
+     entera se quedaba fuera de una tanda de veinte casi una vez de cada cinco
+     (18 % medido): así es como desaparecían los dominós. Barajando el mazo
+     completo y repartiendo, ninguna falta. */
+  dr.baraja=[];const pool=razPool();
+  while(dr.baraja.length<dr.tot)dr.baraja=dr.baraja.concat(shuf(pool.slice()));
+  razNext()}
 function razNext(){if(!dr||dr.fin)return;
   if(dr.n>=dr.tot)return aptEnd();
-  const it=pickR(razPool())();dr.cur=it;dr.tq=Date.now();dr.lock=false;
+  const it=(dr.baraja[dr.n]||pickR(razPool()))();dr.cur=it;dr.tq=Date.now();dr.lock=false;
   aptItems(dr.n+1,dr.tot);
   $("aptStage").className="ap-stage scroll-y";
   $("aptStage").innerHTML=
@@ -3660,33 +3929,62 @@ function razAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.
     $("aptStage").scrollTop=$("aptStage").scrollHeight}}
 
 /* ============ BANCO DE PRUEBAS DEL RAZONAMIENTO ============
-   Lo que más puede romperse aquí no es el dibujo, es que una pregunta
-   tenga DOS respuestas válidas. Eso se comprueba, no se supone. */
-function razTest(n){const f=[],G={rzSerNum:rzSerNum,rzSerLetra:rzSerLetra,rzSerAlfa:rzSerAlfa,
-  rzMatriz:rzMatriz,rzIntrusa:rzIntrusa,rzRotacion:rzRotacion,rzDomino:rzDomino,
-  rzBalanza:rzBalanza,rzSilogismo:rzSilogismo,rzAnalogia:rzAnalogia,rzIntrusaPal:rzIntrusaPal};
+   Lo que más puede romperse aquí no es el dibujo: es que una pregunta
+   tenga DOS respuestas válidas, o que una letra se salga del alfabeto.
+   Eso se comprueba, no se supone. */
+function razTest(n){n=n||400;const f=[],add=s=>{if(f.indexOf(s)<0)f.push(s)};
+  const G={rzSerNum:rzSerNum,rzSerLetra:rzSerLetra,rzSerAlfa:rzSerAlfa,
+    rzMatriz:rzMatriz,rzSerieFig:rzSerieFig,rzIntrusa:rzIntrusa,rzRotacion:rzRotacion,
+    rzDomino:rzDomino,rzBalanza:rzBalanza,rzSilogismo:rzSilogismo,
+    rzAnalogia:rzAnalogia,rzIntrusaPal:rzIntrusaPal};
   for(const k in G){
-    for(let i=0;i<(n||200);i++){let it;
-      try{it=G[k]()}catch(e){f.push(k+" lanzó: "+e.message);break}
-      if(!it.o||it.o.length<3)f.push(k+": pocas opciones");
-      if(!(it.ok>=0&&it.ok<it.o.length))f.push(k+": índice fuera de rango");
-      if(new Set(it.o).size!==it.o.length)f.push(k+": dos opciones idénticas");
-      if(!it.q||!it.exp)f.push(k+": falta enunciado o explicación");
-      if((it.cuerpo||"").indexOf("NaN")>=0||it.exp.indexOf("NaN")>=0||it.o.join("").indexOf("NaN")>=0)
-        f.push(k+": NaN");
-      if(it.o.join("").indexOf("undefined")>=0)f.push(k+": undefined en una opción")}}
-  /* Unicidad: que no haya DOS respuestas válidas. Esto es lo que de verdad
-     puede romper un psicotécnico generado, y no se ve mirando la pantalla. */
-  for(let i=0;i<300;i++){const it=rzIntrusa();
-    if(!rzUnica(it.figs,it.ok))f.push("rzIntrusa: la regla no es única")}
-  for(let i=0;i<300;i++){const it=rzRotacion();
+    for(let i=0;i<n;i++){let it;
+      try{it=G[k]()}catch(e){add(k+" lanzó: "+e.message);break}
+      const todo=(it.q||"")+(it.cuerpo||"")+(it.exp||"")+it.o.join("|");
+      /* 4 de normal, 5 en las intrusas (las cinco figuras SON la pregunta)
+         y 3 en el silogismo (se deduce / no se deduce / imposible) */
+      if(it.o.length<3||it.o.length>5)add(k+": "+it.o.length+" opciones");
+      if(!(it.ok>=0&&it.ok<it.o.length))add(k+": índice fuera de rango");
+      if(new Set(it.o).size!==it.o.length)add(k+": dos opciones idénticas");
+      if(!it.q||!it.exp)add(k+": falta enunciado o explicación");
+      if(/NaN/.test(todo))add(k+": NaN");
+      if(/undefined/.test(todo))add(k+": undefined");
+      if(it.o.some(v=>typeof v==="string"&&/·$/.test(v)))add(k+": opción rellenada con basura")}}
+  /* --- quiralidad: el espejo sólo engaña si NO se alcanza girando --- */
+  PARESQ.forEach(function(par){const a=PIEZAS[par[0]],b=PIEZAS[par[1]];
+    if(a.length!==b.length)add("pareja "+par.join("/")+": distinto número de casillas");
+    const rots=[0,1,2,3].map(k=>normFig(giraFig(a,k)));
+    if(rots.indexOf(normFig(b))>=0)add("pareja "+par.join("/")+": el espejo es un giro, no vale");
+    if(rots.indexOf(normFig(espejaFig(a)))>=0)add("pieza "+par[0]+": es simétrica, su espejo no engaña");
+    const espRots=[0,1,2,3].map(k=>normFig(giraFig(espejaFig(a),k)));
+    if(espRots.indexOf(normFig(b))<0)add("pareja "+par.join("/")+": la segunda no es un reflejo");
+    a.concat(b).forEach(function(c){if(c[0]<0||c[0]>2||c[1]<0||c[1]>2)
+      add("pareja "+par.join("/")+": se sale del 3×3")})});
+  /* --- unicidad: ninguna pregunta con dos respuestas válidas --- */
+  for(let i=0;i<n;i++){const it=rzRotacion();
     const rots=[0,1,2,3].map(k=>normFig(giraFig(it.base,k)));
-    const n2=it.ops.filter(c=>rots.indexOf(normFig(c))>=0).length;
-    if(n2!==1)f.push("rzRotacion: "+n2+" opciones son giros del original");
-    if(rots.indexOf(normFig(it.ops[it.ok]))<0)f.push("rzRotacion: la marcada no es un giro")}
-  for(let i=0;i<300;i++){const it=rzMatriz();
-    const n2=it.figs.filter(x=>figIgual(x,it.solFig)).length;
-    if(n2!==1)f.push("rzMatriz: "+n2+" opciones completan la matriz")}
+    const c=it.ops.filter(x=>rots.indexOf(normFig(x))>=0).length;
+    if(c!==1)add("rzRotacion: "+c+" opciones son giros del original");
+    if(rots.indexOf(normFig(it.ops[it.ok]))<0)add("rzRotacion: la marcada no es un giro")}
+  for(let i=0;i<n;i++){const it=rzMatriz();
+    const c=it.figs.filter(x=>figIgual(x,it.solFig)).length;
+    if(c!==1)add("rzMatriz: "+c+" opciones completan la matriz")}
+  for(let i=0;i<n;i++){const it=rzSerieFig();
+    const c=it.figs.filter(x=>figIgual(x,it.solFig)).length;
+    if(c!==1)add("rzSerieFig: "+c+" opciones siguen la serie")}
+  for(let i=0;i<n;i++){const it=rzIntrusaLados();
+    if(!rzUnica(it.figs,it.ok))add("rzIntrusaLados: la regla no es única")}
+  for(let i=0;i<n;i++){const it=rzIntrusaRel();
+    if(it.figs.filter(x=>x.puntos!==x.lados-3).length!==1)
+      add("rzIntrusaRel: no hay exactamente una que rompa la relación");
+    ["lados","puntos","giro","relleno"].forEach(function(p){const c={};
+      it.figs.forEach(x=>c[x[p]]=(c[x[p]]||0)+1);
+      for(const v in c)if(c[v]===4)add("rzIntrusaRel: "+p+" se reparte 4 a 1, hay dos respuestas")})}
+  for(let i=0;i<n;i++){const it=rzDomino();
+    if(it.fichas.filter(c=>c[0]===it.sol[0]&&c[1]===it.sol[1]).length!==1)
+      add("rzDomino: la ficha correcta no está exactamente una vez");
+    it.fichas.forEach(function(c){if(c[0]<0||c[0]>6||c[1]<0||c[1]>6)
+      add("rzDomino: una mitad fuera de 0..6")})}
   return f}
 window.RAZ_TEST=razTest;
 

@@ -306,6 +306,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .front .body{justify-content:flex-start;overflow-y:auto;scrollbar-width:none;padding:20px 24px 14px;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(180deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
 .front .body::-webkit-scrollbar{display:none}
+.front .body{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.front.tight .head{padding:14px 22px 6px}.front.tight .code{font-size:26px}.front.tight .meta .label{display:none}
+.front.scrolls .body{padding-bottom:58px}.front.tight .tbar{padding-bottom:6px}.front.tight .tbar .nums{display:none}.front.tight .body{padding-top:14px}
 .front .body>*,.back .body>*{flex-shrink:0}
 .front .q{font-size:23px;line-height:1.28;text-wrap:pretty}
 .front.dense .q{font-size:19.5px}
@@ -322,6 +325,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .front .more{position:absolute;left:50%;bottom:62px;transform:translate(-50%,8px);z-index:3;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;
   font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#14110a;background:var(--gold2);padding:8px 14px;border-radius:16px;box-shadow:0 8px 20px -6px rgba(0,0,0,.7);white-space:nowrap}
 .front .more.show{opacity:1;pointer-events:auto;transform:translate(-50%,0);animation:nudge 1.6s ease-in-out infinite}
+.front .more.show.up{animation:none;background:rgba(240,214,166,.92)}
 @keyframes nudge{50%{transform:translate(-50%,4px)}}
 .op:active .lt,.op.picked .lt{background:var(--gold);color:#14110a}
 .op.picked .tx{color:var(--ivory)}
@@ -991,7 +995,7 @@ function nextCard(){
   el.querySelectorAll(".op").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();choose(+b.dataset.i)}));
   const fg=el.querySelector(".fig");if(fg)fg.addEventListener("click",e=>{e.stopPropagation();openFig(fg.dataset.fig)});
   const body=el.querySelector(".front .body"),more=document.createElement("button");more.className="more";more.innerHTML="MÁS OPCIONES ↓";
-  more.addEventListener("click",e=>{e.stopPropagation();body.scrollBy({top:body.clientHeight*.7,behavior:"smooth"})});
+  more.addEventListener("click",e=>{e.stopPropagation();more.classList.contains("up")?body.scrollTo({top:0,behavior:"smooth"}):body.scrollBy({top:body.clientHeight*.7,behavior:"smooth"})});
   el.querySelector(".front").appendChild(more);
   fitCard(el);requestAnimationFrame(()=>fitCard(el));setTimeout(()=>fitCard(el),120);document.fonts&&document.fonts.ready.then(()=>fitCard(el));
   body.addEventListener("scroll",()=>moreState(el),{passive:true});
@@ -1001,9 +1005,14 @@ function nextCard(){
 function fitCard(el){const f=el.querySelector(".front"),b=f.querySelector(".body"),lv=["","dense","xdense","xxdense"];
   let i=Math.max(0,lv.indexOf([...f.classList].find(c=>lv.includes(c))||""));
   while(b.scrollHeight>b.clientHeight+2&&i<lv.length-1){if(lv[i])f.classList.remove(lv[i]);i++;f.classList.add(lv[i])}
+  if(b.scrollHeight>b.clientHeight+2)f.classList.add("tight");   // aún no cabe: cabecera compacta para ganar espacio
+  if(b.scrollHeight>b.clientHeight+2)f.classList.add("scrolls");  // sigue sin caber: se desliza; hueco final para que el botón no tape texto
   moreState(el)}
 function moreState(el){const b=el.querySelector(".front .body"),m=el.querySelector(".more");if(!m)return;
-  const hidden=b.scrollHeight-b.scrollTop-b.clientHeight>14;m.classList.toggle("show",hidden)}
+  // se puede deslizar con el dedo arriba y abajo; el botón lleva a las opciones o devuelve a la pregunta
+  const below=b.scrollHeight-b.scrollTop-b.clientHeight>14,above=b.scrollTop>14;
+  m.classList.toggle("show",below||above);m.classList.toggle("up",!below&&above);
+  m.innerHTML=below?"MÁS OPCIONES ↓":"↑ VER LA PREGUNTA"}
 function setHint(t){const h=$("hint");h.textContent=t;h.style.opacity=t?1:0}
 /* elegir opción: corrige al instante y gira la tarjeta */
 function choose(i){if(!ses||ses.flipped||ses.locked)return;ses.choice=i;

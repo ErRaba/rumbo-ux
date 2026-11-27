@@ -753,6 +753,31 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .ap-op.figop .rz-dom{max-height:98px}
 .raz-exp{margin-top:4px}
 
+/* --- análisis de resultados --- */
+.ap-grp{margin:-4px 0 12px;font-size:12.5px;line-height:1.55;color:var(--mute2);text-align:left}
+.ap-warn{text-align:left;color:var(--gold2)}
+.ap-mini{flex-wrap:wrap;gap:5px 14px}
+.ap-mini .flojo{flex-basis:100%}   /* a su propio renglón: partido en dos queda feo */
+.ap-mini b{display:inline}         /* .link-row b va en bloque y partía la frase */
+.ap-fam{display:grid;gap:11px;margin-top:12px}
+.ap-fam .row{display:grid;grid-template-columns:1fr auto;gap:5px 12px;align-items:baseline;
+  width:100%;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit}
+.ap-fam button.row{cursor:pointer}
+.ap-fam .row>span:first-child{font-size:13.5px;line-height:1.3;color:rgba(244,239,230,.88)}
+.ap-fam .row em{display:block;font-style:normal;font-family:var(--mono);font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--mute2);margin-top:4px}
+.ap-fam .row b{font-family:var(--mono);font-size:13px;letter-spacing:.04em;font-weight:500}
+.ap-fam .bar{grid-column:1/-1;height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
+.ap-fam .bar i{display:block;height:100%;border-radius:3px}
+.ap-fam.reco{gap:9px}
+.ap-fam.reco .row{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.025);
+  box-shadow:0 0 0 1px var(--hair2) inset}
+.ap-fam.reco .bar{margin-top:2px}
+.ap-sparkbox{display:flex;align-items:flex-end;gap:11px;margin-top:13px}
+.ap-sparkbox .ap-spark{margin-left:0;height:20px}
+.ap-sparkbox span{font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mute2);padding-bottom:2px}
+
 </style>
 </head>
 <body>
@@ -852,12 +877,12 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
     <div class="sect"><span class="label">Selección</span></div>
     <button class="link-row" onclick="aptOpen('nav')">
       <span class="ic"><svg><use href="#vor"/></svg></span>
-      <span><b>Radionavegación</b><span>VOR, HSI y RMI · cortes y entradas en espera</span></span>
+      <span><b>Radionavegación</b><span>VOR, HSI, RMI, ADF e ILS · dónde estás y cómo llegar</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <button class="link-row" onclick="go('psico')">
       <span class="ic"><svg><use href="#dial"/></svg></span>
-      <span><b>Psicotécnico</b><span id="aptSub">Cálculo, instrumentos, memoria y doble tarea</span></span>
+      <span><b>Psicotécnico</b><span id="aptSub">Cálculo, razonamiento, memoria, instrumentos y doble tarea</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
   </div>
@@ -1695,7 +1720,12 @@ document.addEventListener("keydown",e=>{if(!ses||!$("study").classList.contains(
      dual  → "Multi-tasking" (ADAPT / AON mt) · cálculo + vigilancia de indicadores
    Lo que puntúa en selección es rendir con interferencia, no acertar aislado.
    ============================================================ */
-S.apt=Object.assign({cfg:{},best:{},runs:[]},S.apt);
+S.apt=Object.assign({cfg:{},best:{},runs:[],fam:{}},S.apt);
+S.apt.fam=S.apt.fam||{};
+/* los enfoques de navegación cambiaron de nombre al separarlos en dos
+   ejes: lo guardado con los viejos ya no significa nada */
+if(S.apt.cfg.nav&&["todo","situacion","rumbos","corte"].indexOf(S.apt.cfg.nav.foco)<0)
+  delete S.apt.cfg.nav.foco;
 
 const APTEX={
   calc:{n:"Cálculo mental",s:"Aritmética y reglas de cabina contrarreloj",ic:"calc",
@@ -1710,6 +1740,7 @@ const APTEX={
     cfg:[["foco","Enfoque",[["todo","Todo"],["series","Series"],["figuras","Figuras"],["logica","Lógica"],["verbal","Verbal"]],"todo"],
          ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
          ["lim","Límite",[[0,"Sin límite"],[45,"45 s"],[30,"30 s"]],45]],
+    focoDe:{"Series":"series","Figuras":"figuras","Lógica":"logica","Verbal":"verbal"},
     tips:["Busca la regla antes de mirar las opciones: si empiezas por ellas, te arrastran a la que más se parece.",
           "En las series, si el crecimiento es lento piensa en sumas o restas; si se dispara, en multiplicaciones o potencias.",
           "En las figuras casi nunca se mueve una sola cosa: mira una propiedad cada vez —lados, giro, relleno, puntos— y luego comprueba que la opción cumple TODAS. La trampa de siempre es la que sigue bien una y se olvida de la otra.",
@@ -1729,7 +1760,7 @@ const APTEX={
     tips:["Agrupa de dos en dos y dales sonido: K7 · M4 se retiene mejor cantado que leído.",
           "No memorices el orden si no te lo piden: memoriza la pareja.",
           "Si fallas, no persigas la ronda anterior; el nivel baja solo y vuelve a subir."]},
-  vuelo:{n:"Vuelo por radial",s:"Juguete: volar un radial a mano. No entrena situación espacial",ic:"wing",
+  vuelo:{n:"Vuelo por radial",s:"Volar un radial a mano, con viento y deriva",ic:"wing",
     unit:"% en ruta",timed:true,
     cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
          ["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"]],"hsi"],
@@ -1741,17 +1772,25 @@ const APTEX={
           "Se intercepta anticipando: empieza a nivelar cuando quedan unos pocos grados, no cuando la barra ya está centrada.",
           "La puntuación es el porcentaje del tiempo TOTAL en ruta, así que capturar tarde también cuesta. No vale clavarla al final.",
           "Cuando te salga con mapa, quítalo. El modo IMC es el ejercicio de verdad: es lo que tendrás en el simulador."]},
-  nav:{n:"Radionavegación",s:"Situación espacial con VOR, HSI, CDI y RMI",ic:"vor",
+  nav:{n:"Radionavegación",s:"Dónde estás y cómo llegar · VOR, HSI, CDI, RMI, ADF e ILS",ic:"vor",
     unit:"% de acierto",
-    cfg:[         ["foco","Enfoque",[["todo","Todo"],["situacion","Dónde estoy"],["rumbo","Acercar / alejar"],["corte","Corte de ruta"],["ndb","NDB"],["ils","ILS"]],"todo"],
+    /* Dos ejes, no uno. El enfoque viejo mezclaba qué te preguntan
+       ("dónde estoy") con qué ayuda usas ("NDB"), así que la misma
+       pregunta vivía en dos sitios según el instrumento. */
+    cfg:[["foco","Qué te pregunta",[["todo","Todo"],["situacion","Dónde estoy"],["rumbos","Rumbos"],["corte","Corte de ruta"]],"todo"],
+         ["ayuda","Con qué ayuda",[["todas","Todas"],["vor","VOR"],["ndb","NDB"],["ils","ILS"]],"todas"],
          ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
          ["lim","Límite",[[0,"Sin límite"],[30,"30 s"],[20,"20 s"]],30]],
+    focoDe:{"Situación con VOR":["situacion","vor"],"Situación con NDB":["situacion","ndb"],
+      "Eje del localizador":["situacion","ils"],"Rumbo por un radial":["rumbos","vor"],
+      "QDM y QDR":["rumbos","ndb"],"Marcación tras virar":["rumbos","ndb"],
+      "Corte de ruta":["corte","vor"],"Senda de planeo":["situacion","ils"]},
     tips:["Va en horizontal: el panel es ancho y así te quedan libres los dos pulgares.",
           "No se elige entre opciones: colocas el avión, giras el bug o tecleas el rumbo. Se puntúa en grados, con ±2° bien y ±5° aceptable.",
           "Lee siempre en este orden: bandera, luego OBS, luego desvío. Si empiezas por la aguja te pierdes.",
           "El CDI convencional no sabe hacia dónde vuelas: por eso miente si vuelas a más de 90° del OBS. El HSI no, y por eso el 737 lleva HSI.",
           "TO/FROM dice de qué lado del VOR estás respecto al curso, no si te acercas. Son dos preguntas distintas.",
-          "En las esperas, Δ es rumbo menos acercamiento, siempre en ese orden, y medido al revés si los virajes son a la izquierda."]},
+          "El ejercicio va por dos ejes: qué te pregunta (dónde estás, qué rumbo pones, qué corte metes) y con qué ayuda lo resuelves. Son independientes: la misma pregunta se contesta distinto con VOR que con ADF, y ahí está la gracia."]},
   trk:{n:"Tracking psicomotor",s:"Mantener el punto centrado con el pulgar",ic:"cross",
     unit:"índice",timed:true,
     cfg:[["dur","Duración",[[90,"90 s"],[150,"2:30"],[240,"4 min"]],150],
@@ -1774,6 +1813,85 @@ const aptCfg=(ex,k)=>{const d=APTEX[ex].cfg.find(c=>c[0]===k);if(!d)return undef
   const st=S.apt.cfg[ex]||{};return st[k]!==undefined?st[k]:d[3]};
 const aptSetCfg=(ex,k,v)=>{(S.apt.cfg[ex]=S.apt.cfg[ex]||{})[k]=v;save()};
 
+/* ============================================================
+   ORDEN DE LOS MÓDULOS
+   Ocho módulos en una lista plana no dicen nada: el cálculo mental y
+   el juguete de volar un radial pesaban exactamente lo mismo, y el
+   juguete salía por delante de radionavegación. Van agrupados por lo
+   que miden, que es como los separa una selección de verdad.
+   ============================================================ */
+const APTORD=[
+  ["Aptitud","Lo que miden las baterías —COMPASS, ADAPT, cut-e—: cálculo, razonamiento y memoria con el reloj encima.",
+    ["calc","razona","mem"]],
+  ["Cabina","Atención repartida y manos. Aquí se cae la gente que lleva bien la parte de papel.",
+    ["inst","dual","trk"]],
+  ["Técnica","Conocimiento que en la entrevista se da por sabido y no se perdona.",
+    ["nav"]],
+  ["Juguetes","No entrena nada medible y no cuenta para nada. Está porque engancha.",
+    ["vuelo"]]
+];
+
+/* ============================================================
+   ANÁLISIS DE RESULTADOS
+   Cada tanda ya sabía en qué familia fallabas: lo decía en una línea
+   y lo tiraba. De una tanda entera sólo quedaban guardados la nota y
+   los minutos, así que la app no podía responder a lo único que uno
+   se pregunta al abrirla: ¿qué entreno hoy?
+   Ahora se acumula por módulo y familia CON OLVIDO: lo viejo encoge
+   en cada tanda nueva, de modo que el reparto cuenta cómo vas ahora
+   y no cómo ibas hace dos meses. Y no se enseña ningún porcentaje por
+   debajo de MINFAM respuestas, porque con dos intentos un 50 % no es
+   un dato, es una moneda.
+   ============================================================ */
+const MINFAM=6;      /* por debajo de esto no se enseña un porcentaje */
+const FAMOLV=.78;    /* lo acumulado encoge así en cada tanda nueva */
+
+/* anota una respuesta en su familia · punto: 1, .5 (a medias) o 0 */
+function aptMarca(nom,punto){if(!dr||!nom)return;
+  const f=dr.fam||(dr.fam={}),v=f[nom]||(f[nom]={n:0,ok:0});v.n++;v.ok+=punto}
+
+function aptFamGuarda(ex,fam){if(!fam)return;
+  const T=S.apt.fam[ex]=S.apt.fam[ex]||{};
+  for(const k in T){T[k].n*=FAMOLV;T[k].ok*=FAMOLV}
+  for(const k in fam)if(fam[k].n){const t=T[k]||(T[k]={n:0,ok:0});t.n+=fam[k].n;t.ok+=fam[k].ok}
+  for(const k in T)if(T[k].n<.5)delete T[k]}
+
+/* las familias de un módulo, de peor a mejor, sólo las que tienen base */
+function aptFamList(ex,min){const T=S.apt.fam[ex]||{},out=[];
+  min=min===undefined?MINFAM:min;
+  for(const k in T)if(T[k].n>=min)out.push({k:k,n:T[k].n,a:T[k].ok/T[k].n});
+  return out.sort((x,y)=>x.a-y.a)}
+
+/* lo más flojo de toda la app, para la portada de aptitudes */
+function aptFlojos(n){const out=[];
+  for(const ex in APTEX)aptFamList(ex).forEach(f=>out.push({ex:ex,k:f.k,a:f.a,n:f.n}));
+  return out.sort((x,y)=>x.a-y.a).slice(0,n||3)}
+
+/* Firma de los ajustes. Dos tandas sólo son comparables si coinciden:
+   poner un Duro de cinco minutos al lado de un Suave de noventa
+   segundos y llamar a eso "mejor marca" es mentir con números. */
+const aptFirma=ex=>APTEX[ex].cfg.map(c=>c[0]+"="+aptCfg(ex,c[0])).join("·");
+const aptMismos=(ex,firma)=>(S.apt.runs||[]).filter(x=>x.e===ex&&x.c===firma);
+
+const FAMCOL=a=>a<.5?"var(--terra)":a<.75?"var(--gold)":"var(--sage)";
+function aptFamFila(nom,sub,der,a,click){const p=Math.max(3,Math.round(a*100));
+  return (click?'<button class="row" onclick="'+click+'">':'<div class="row">')+
+    '<span>'+nom+(sub?'<em>'+sub+'</em>':'')+'</span>'+
+    '<b style="color:'+FAMCOL(a)+'">'+der+'</b>'+
+    '<span class="bar"><i style="width:'+p+'%;background:'+FAMCOL(a)+'"></i></span>'+
+    (click?'</button>':'</div>')}
+function aptFamBloque(ex,lista){const E=APTEX[ex];
+  return '<div class="ap-fam">'+lista.map(function(f){
+    const ir=E.focoDe&&E.focoDe[f.k];
+    return aptFamFila(f.k,"sobre "+Math.round(f.n)+" respuestas",Math.round(f.a*100)+" %",f.a,
+      ir?"aptEntrena('"+ex+"','"+f.k+"')":null)}).join("")+'</div>'}
+
+/* abre el módulo con el enfoque ya puesto en lo que peor llevas */
+function aptEntrena(ex,fam){const E=APTEX[ex],m=E.focoDe&&E.focoDe[fam];
+  if(m){const vs=typeof m==="string"?[m]:m,ks=E.cfg.filter(c=>c[0]==="foco"||c[0]==="ayuda").map(c=>c[0]);
+    vs.forEach(function(v,i){if(ks[i])aptSetCfg(ex,ks[i],v)})}
+  aptOpen(ex)}
+
 /* ============ utilidades ============ */
 const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pickR=a=>a[Math.floor(Math.random()*a.length)];
@@ -1793,20 +1911,37 @@ function aptNum(a,step,errs){const out=[a];
   return out.sort((x,y)=>x-y)}
 
 /* ============ pantalla de aptitudes ============ */
-function aptSpark(ex){const r=(S.apt.runs||[]).filter(x=>x.e===ex).slice(-10);
-  if(r.length<2)return "";const mx=Math.max.apply(null,r.map(x=>x.s))||1;
-  return '<span class="ap-spark">'+r.map(x=>'<i style="height:'+Math.max(3,Math.round(x.s/mx*16))+'px"></i>').join("")+'</span>'}
+/* la línea de barritas recibe ya las tandas que toca: sólo tiene
+   sentido comparar entre sí las que se hicieron con los mismos ajustes */
+function aptSpark(rs){rs=rs.slice(-14);
+  if(rs.length<2)return "";const mx=Math.max.apply(null,rs.map(x=>x.s))||1;
+  return '<span class="ap-spark">'+rs.map(x=>'<i style="height:'+Math.max(3,Math.round(x.s/mx*20))+'px"></i>').join("")+'</span>'}
+const aptHace=d=>d<=0?"hoy":d===1?"ayer":"hace "+d+" días";
 function renderPsico(){
   const runs=S.apt.runs||[];
   let h='<h1 class="display title-xl ap-head">Chequeo de<br><em>aptitudes</em></h1>'+
-    '<p class="ap-note">Los psicotécnicos de selección no miden lo que sabes: miden cómo rindes con prisa y con ruido. Eso se entrena.</p>'+
-    '<div class="sect"><span class="label">Módulos</span></div>';
-  for(const ex in APTEX){const E=APTEX[ex],rs=runs.filter(x=>x.e===ex),last=rs[rs.length-1],best=S.apt.best[ex];
-    h+='<button class="link-row" onclick="aptOpen(\''+ex+'\')">'+
-      '<span class="ic"><svg><use href="#'+E.ic+'"/></svg></span>'+
-      '<span style="flex:1"><b>'+E.n+'</b><span>'+E.s+'</span>'+
-      (last?'<span class="ap-mini"><span>Último <b>'+last.s+'</b></span><span>Mejor <b>'+best+'</b></span>'+aptSpark(ex)+'</span>':"")+
-      '</span><svg class="chev" width="16" height="16"><use href="#arrow"/></svg></button>'}
+    '<p class="ap-note">Los psicotécnicos de selección no miden lo que sabes: miden cómo rindes con prisa y con ruido. Eso se entrena.</p>';
+  /* Lo primero de la pantalla es la respuesta a "¿qué entreno hoy?".
+     Sale de lo acumulado, no de la última tanda, y cada fila abre el
+     módulo con ese enfoque ya puesto. */
+  const fl=aptFlojos(3).filter(f=>f.a<.8);
+  if(fl.length){
+    h+='<div class="sect"><span class="label">Hoy te conviene</span></div><div class="ap-fam reco">'+
+      fl.map(f=>aptFamFila(f.k,APTEX[f.ex].n,Math.round(f.a*100)+" %",f.a,
+        "aptEntrena('"+f.ex+"','"+f.k+"')")).join("")+'</div>'+
+      '<p class="ap-note ap-grp" style="margin-top:10px">Lo que peor llevas de todo, contando tus últimas respuestas. Tocas y empieza con ese enfoque.</p>'}
+  APTORD.forEach(function(G){
+    h+='<div class="sect"><span class="label">'+G[0]+'</span></div><p class="ap-grp">'+G[1]+'</p>';
+    G[2].forEach(function(ex){const E=APTEX[ex];if(!E)return;
+      const rs=runs.filter(x=>x.e===ex),last=rs[rs.length-1],peor=aptFamList(ex)[0];
+      h+='<button class="link-row" onclick="aptOpen(\''+ex+'\')">'+
+        '<span class="ic"><svg><use href="#'+E.ic+'"/></svg></span>'+
+        '<span style="flex:1"><b>'+E.n+'</b><span>'+E.s+'</span>'+
+        (last?'<span class="ap-mini"><span>'+rs.length+' tanda'+(rs.length===1?"":"s")+'</span>'+
+          '<span>'+aptHace(dayN()-last.d)+'</span>'+
+          (peor&&peor.a<.8?'<span class="flojo">flojo en <b style="color:'+FAMCOL(peor.a)+'">'+peor.k.toLowerCase()+'</b></span>':"")+
+          '</span>':"")+
+        '</span><svg class="chev" width="16" height="16"><use href="#arrow"/></svg></button>'})});
   if(runs.length){const n=runs.length,mins=Math.round(runs.reduce((s,x)=>s+(x.ms||0),0)/60000);
     h+='<div class="sect"><span class="label">Tu entrenamiento</span></div><div class="stats-grid">'+
       '<div><span class="label">Sesiones</span><b>'+n+'</b></div>'+
@@ -1823,11 +1958,7 @@ function renderAptSet(){const ex=S.apt.last||"calc",E=APTEX[ex];
   E.cfg.forEach(function(c){const k=c[0],lb=c[1],opts=c[2];
     h+='<div class="sect"><span class="label">'+lb+'</span></div><div class="seg" id="apSeg_'+k+'"><span class="pill"></span>';
     opts.forEach(function(o){h+='<button data-v="'+o[0]+'">'+o[1]+'</button>'});h+='</div>'});
-  const best=S.apt.best[ex],rs=(S.apt.runs||[]).filter(x=>x.e===ex);
-  if(best!==undefined)h+='<div class="sect"><span class="label">Tu marca</span></div><div class="stats-grid">'+
-    '<div><span class="label">Mejor</span><b>'+best+'</b></div>'+
-    '<div><span class="label">Último</span><b>'+(rs.length?rs[rs.length-1].s:"—")+'</b></div></div>'+
-    '<p class="ap-note">Medido en '+E.unit+'.</p>';
+  h+='<div id="apMark"></div>';
   h+='<div class="sect"><span class="label">Cómo se aprueba</span></div><div class="ap-tips">'+E.tips.map(t=>'<div>'+t+'</div>').join("")+'</div>';
   $("aptSetBody").innerHTML=h;
   E.cfg.forEach(function(c){const k=c[0];
@@ -1838,9 +1969,32 @@ function renderAptSet(){const ex=S.apt.last||"calc",E=APTEX[ex];
       pill.style.left="calc(4px + "+i+"*(100% - 8px)/"+bs.length+")";
       pill.style.width="calc((100% - 8px)/"+bs.length+")"};
     el.querySelectorAll("button").forEach(function(b){b.onclick=function(){
-      const raw=b.dataset.v;aptSetCfg(ex,k,/^-?\d+$/.test(raw)?+raw:raw);paint();aptSub()}});
+      const raw=b.dataset.v;aptSetCfg(ex,k,/^-?\d+$/.test(raw)?+raw:raw);paint();aptSub();aptPintaMarca()}});
     paint()});
-  aptSub()}
+  aptSub();aptPintaMarca()}
+
+/* Se repinta cada vez que tocas un ajuste, porque la marca es de ESOS
+   ajustes: al pasar de Suave a Duro cambia con qué te estás comparando. */
+function aptPintaMarca(){const ex=S.apt.last||"calc",E=APTEX[ex],el=$("apMark");if(!el)return;
+  const mis=aptMismos(ex,aptFirma(ex));
+  let h='<div class="sect"><span class="label">Con estos ajustes</span></div>';
+  if(mis.length){const mejor=Math.max.apply(null,mis.map(x=>x.s));
+    h+='<div class="stats-grid">'+
+      '<div><span class="label">Mejor</span><b>'+mejor+'</b></div>'+
+      '<div><span class="label">Última</span><b>'+mis[mis.length-1].s+'</b></div>'+
+      '<div><span class="label">Tandas</span><b>'+mis.length+'</b></div>'+
+      '<div><span class="label">Se mide en</span><b class="sm">'+E.unit+'</b></div></div>'+
+      (mis.length>1?'<div class="ap-sparkbox">'+aptSpark(mis)+'<span>tus últimas con estos ajustes</span></div>':'')}
+  else h+='<p class="ap-note" style="text-align:left">Ninguna tanda todavía con esta combinación. Las marcas se guardan por ajustes: poner un <em>Duro</em> de cinco minutos al lado de un <em>Suave</em> de noventa segundos no dice nada de si has mejorado.</p>';
+  const av=ex==="nav"?navAviso():"";
+  if(av)h+='<p class="ap-note ap-warn">'+av+'</p>';
+  const fl=aptFamList(ex);
+  if(fl.length)h+='<div class="sect"><span class="label">Tu reparto</span></div>'+aptFamBloque(ex,fl)+
+    '<p class="ap-note ap-grp" style="margin-top:10px">De peor a mejor, con tus últimas respuestas'+
+    (E.focoDe?'. Toca una y se abre con ese enfoque puesto.':'.')+'</p>';
+  else if(S.apt.fam[ex]&&Object.keys(S.apt.fam[ex]).length)
+    h+='<p class="ap-note" style="text-align:left">Todavía no hay base para repartir por familias: hacen falta '+MINFAM+' respuestas en cada una.</p>';
+  el.innerHTML=h}
 /* el pie del botón se deduce de los ajustes que tenga cada módulo, sin casos especiales */
 function aptSub(){const ex=S.apt.last||"calc",E=APTEX[ex],tiene=k=>E.cfg.some(c=>c[0]===k);
   $("aptSetSub").textContent=E.timed?aptMMSS(aptCfg(ex,"dur")):
@@ -1955,11 +2109,22 @@ duro:[
   function(){const gs=pickR([420,450,480,510]),t=pickR([7,9,11,13,17]);
     return{q:"A <em>"+gs+" kt</em>, ¿cuánto recorres en <em>"+t+" min</em>?",a:Math.round(gs*t/60),u:"NM",step:7}}
 ]};
+/* La familia de una pregunta de cálculo la da su unidad: no hace falta
+   etiquetar los veinte generadores a mano, y además agrupa por lo que
+   de verdad se parece en cabina (combustible con combustible). */
+const CALCFAM={"ft":"Altitudes y niveles","ft/min":"Régimen y tiempo","kg":"Combustible",
+  "lb":"Combustible","min":"Tiempos","NM":"Distancias","km":"Distancias",
+  "kt":"Velocidades","°C":"Temperatura","°F":"Temperatura"};
+const calcFam=it=>it.u?(CALCFAM[it.u]||"Otras unidades"):"Aritmética";
 function calcPool(){const l=aptCfg("calc","lvl");
   return l==="suave"?CALCG.suave:l==="normal"?CALCG.suave.concat(CALCG.normal):CALCG.normal.concat(CALCG.duro)}
-function calcBegin(){dr.pool=calcPool();$("aptCount").innerHTML="<b>00</b>";calcNext()}
+function calcBegin(){dr.pool=calcPool();dr.mazo=[];$("aptCount").innerHTML="<b>00</b>";calcNext()}
+/* el cálculo va a reloj, no a número de preguntas: el mazo se vuelve a
+   barajar cada vez que se acaba, así ningún tipo se repite de seguido
+   ni desaparece durante tres minutos */
+function calcSaca(){if(!dr.mazo.length)dr.mazo=shuf(dr.pool.slice());return dr.mazo.pop()}
 function calcNext(){if(!dr||dr.fin)return;
-  const it=pickR(dr.pool)();
+  const it=calcSaca()();
   it.o=aptNum(it.a,it.step,it.errs);
   dr.cur=it;dr.tq=Date.now();
   const fmt=v=>(it.num?nfm(v):nfm(v)+(it.u?" "+it.u:""));
@@ -1972,6 +2137,7 @@ function calcNext(){if(!dr||dr.fin)return;
 function calcAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
   const it=dr.cur,iOk=it.o.indexOf(it.a),ok=i===iOk;
   dr.n++;if(ok)dr.ok++;dr.rt.push(Date.now()-dr.tq);
+  aptMarca(calcFam(it),ok?1:0);
   aptFlash(ok);
   aptReveal(iOk,i,function(){dr.lock=false;calcNext()})}
 
@@ -2112,10 +2278,14 @@ function genVS(){let r=0;while(r===0)r=R(-20,20)*100;
     o:o.map(x=>(x>0?"+":"")+nfm(x)+" ft/min"),ok:o.indexOf(r)}}
 
 const INSTG=[genAlt,genAlt,genAI,genAI,genHDG,genHDG,genIAS,genVS];
-function instBegin(){dr.tot=aptCfg("inst","n");dr.lim=aptCfg("inst","lim");instNext()}
+function instBegin(){dr.tot=aptCfg("inst","n");dr.lim=aptCfg("inst","lim");
+  /* se reparte: con sorteo puro salían cinco altímetros y un anemómetro,
+     y entonces "tu reparto" mide la suerte, no tu lectura */
+  dr.baraja=[];while(dr.baraja.length<dr.tot)dr.baraja=dr.baraja.concat(shuf(INSTG.slice()));
+  instNext()}
 function instNext(){if(!dr||dr.fin)return;
   if(dr.n>=dr.tot)return aptEnd();
-  const it=pickR(INSTG)();dr.cur=it;dr.tq=Date.now();dr.lock=false;
+  const it=(dr.baraja[dr.n]||pickR(INSTG))();dr.cur=it;dr.tq=Date.now();dr.lock=false;
   aptItems(dr.n+1,dr.tot);
   $("aptStage").innerHTML=
     '<div>'+it.svg+'<div class="ap-instname">'+it.name+'</div></div>'+
@@ -2131,6 +2301,7 @@ function instNext(){if(!dr||dr.fin)return;
 function instAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
   const it=dr.cur,ok=i===it.ok;
   dr.n++;if(ok)dr.ok++;if(i>=0)dr.rt.push(Date.now()-dr.tq);
+  aptMarca(it.name,ok?1:0);        /* el instrumento ES la familia */
   aptFlash(ok);
   aptReveal(it.ok,i,function(){instNext()},ok?420:1050)}
 
@@ -2758,7 +2929,7 @@ function navP1(){
   else{const to=Math.random()<.5,k=R(-8,8);
     obs=nrm((to?rad+180:rad)+k);ind=vorInd(rad,obs);
     svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind)}
-  return{fam:"Dónde estoy",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
+  return{fam:"Situación con VOR",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
     lect:(obs!=null?'<span class="crs">'+(ins==="cdi"?"OBS":"CRS")+' <b>'+hdg(obs)+'</b></span>':'')+
       '<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>'+(conDME?'<span>DME <b>'+dist.toFixed(1)+'</b></span>':''),
     q:"Colócate. ¿Dónde estás respecto a la estación?",
@@ -2785,7 +2956,7 @@ function navP3(){
   else{const to=Math.random()<.5;obs=nrm(to?rad+180:rad);ind=vorInd(rad,obs);
     svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind)}
   const sol=alejar?rad:nrm(rad+180);
-  return{fam:"Acercarse o alejarse",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
+  return{fam:"Rumbo por un radial",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
     lect:(obs!=null?'<span class="crs">'+(ins==="cdi"?"OBS":"CRS")+' <b>'+hdg(obs)+'</b></span>':'')+
       '<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>',
     q:"Lee en qué radial estás. ¿Qué rumbo pones para <em>"+
@@ -2874,7 +3045,7 @@ function planILS(curso,escMax){const cx=120,cy=150;let t="";
 function navN1(){
   const rumbo=R(0,359),qdr=R(0,359),dist=R(8,34),conDME=Math.random()<.5;
   const qdm=nrm(qdr+180),rb=adfRB(qdm,rumbo);
-  return{fam:"NDB",ins:"adf",svg:navADF(rb),radial:qdr,rumbo:rumbo,obs:null,
+  return{fam:"Situación con NDB",ins:"adf",svg:navADF(rb),radial:qdr,rumbo:rumbo,obs:null,
     lect:'<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span><span>RB <b>'+hdg(rb)+
       '</b></span>'+(conDME?'<span>DME <b>'+dist.toFixed(1)+'</b></span>':''),
     q:"Carta fija: la aguja marca relativos. Colócate respecto al NDB.",
@@ -2894,7 +3065,7 @@ function navN1(){
 function navN2(){
   const r1=R(0,359),rb1=R(10,350),r2=nrm(r1+pickR([40,60,80,100,130,160])*pickR([1,-1]));
   const qdm=adfQDM(rb1,r1),rb2=adfRB(qdm,r2);
-  return{fam:"NDB",ins:"adf",svg:navADF(rb1),radial:nrm(qdm+180),rumbo:r1,obs:null,
+  return{fam:"Marcación tras virar",ins:"adf",svg:navADF(rb1),radial:nrm(qdm+180),rumbo:r1,obs:null,
     lect:'<span class="hdg">HDG <b>'+hdg(r1)+'</b></span><span>RB <b>'+hdg(rb1)+'</b></span>',
     q:"Viras a rumbo <em>"+hdg(r2)+"</em> manteniendo la posición. Lleva la aguja a donde quedará.",
     modo:"aguja",valIni:rb1,
@@ -2910,7 +3081,7 @@ function navN2(){
 function navN3(){
   const rumbo=R(0,359),rb=R(0,359),qdm=adfQDM(rb,rumbo),pideQDR=Math.random()<.5;
   const sol=pideQDR?nrm(qdm+180):qdm;
-  return{fam:"NDB",ins:"adf",svg:navADF(rb),radial:nrm(qdm+180),rumbo:rumbo,obs:null,
+  return{fam:"QDM y QDR",ins:"adf",svg:navADF(rb),radial:nrm(qdm+180),rumbo:rumbo,obs:null,
     lect:'<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>',
     q:"¿Cuál es el <em>"+(pideQDR?"QDR":"QDM")+"</em>?",
     modo:"teclado",
@@ -2960,7 +3131,7 @@ function perfilILS(D,escMax){const x0=28,x1=232,y0=196;let t="";
 /* I1 · altura en senda a una distancia */
 function navI1(){
   const D=pickR([3,4,5,6,7,8,9,10]),alt=Math.round(ilsAlt(D)/50)*50;
-  return{fam:"ILS",ins:"perfil",svg:perfilILS(D,12),radial:0,rumbo:0,obs:null,
+  return{fam:"Senda de planeo",ins:"perfil",svg:perfilILS(D,12),radial:0,rumbo:0,obs:null,
     lect:'<span>DME <b>'+D+'</b></span><span class="crs">SENDA <b>3,0°</b></span>',
     q:"Estás a <em>"+D+" DME</em> del umbral, en senda de <em>3°</em>. ¿Qué altura sobre el umbral te corresponde?",
     modo:"teclado4",
@@ -2975,7 +3146,7 @@ function navI1(){
 function navI2(){
   const curso=R(0,359),D=R(4,11),ptos=pickR([1,2,3])*pickR([1,-1]);
   const devL=ptos*(ILSLOC/5),lat=-ilsLat(devL,D);   /* aguja a la derecha = tú a la izquierda */
-  return{fam:"ILS",ins:"ils",svg:navILS(curso,devL,0,true),curso:curso,D:D,lat:lat,
+  return{fam:"Eje del localizador",ins:"ils",svg:navILS(curso,devL,0,true),curso:curso,D:D,lat:lat,
     radial:0,rumbo:curso,obs:null,escMax:14,
     lect:'<span class="crs">LOC <b>'+hdg(curso)+'</b></span><span>DME <b>'+D+'</b></span>',
     q:"Colócate respecto al eje del localizador.",
@@ -3026,18 +3197,46 @@ function navPlanILSSol(it){
     navPlane(px,py,it.curso,"#f0d6a6",.6)+'</svg>'}
 
 /* ============ RECORRIDO DEL EJERCICIO ============ */
-function navPool(){const f=aptCfg("nav","foco");
-  return f==="situacion"?[navP1]:f==="rumbo"?[navP3]:f==="corte"?[navP4]:
-         f==="ndb"?[navN1,navN2,navN3]:f==="ils"?[navI1,navI2]:
-         [navP1,navP1,navP3,navP4,navP4,navN1,navN2,navN3,navI1,navI2]}
+/* Cada ejercicio clasificado por los dos ejes: qué te pregunta y con
+   qué ayuda se responde. El localizador es las dos cosas —dónde estás
+   y una aproximación—, y por eso lleva las dos etiquetas. */
+const NAVCAT=[
+  [navP1,["situacion"],"vor"],
+  [navN1,["situacion"],"ndb"],
+  [navI2,["situacion"],"ils"],
+  [navP3,["rumbos"],"vor"],
+  [navN3,["rumbos"],"ndb"],
+  [navN2,["rumbos"],"ndb"],
+  [navP4,["corte"],"vor"],
+  [navI1,["situacion"],"ils"]      /* la senda es dónde estás, pero en vertical */
+];
+const NAVFO={situacion:"saber dónde estás",rumbos:"rumbos y marcaciones",corte:"cortes de ruta"};
+const NAVAY={vor:"el VOR",ndb:"el NDB",ils:"el ILS"};
+function navHay(f,ay){return NAVCAT.some(e=>(f==="todo"||e[1].indexOf(f)>=0)&&(ay==="todas"||e[2]===ay))}
+/* si la combinación no existe (no hay cortes de ruta con NDB) se afloja
+   el segundo eje en vez de dejar la tanda vacía, y se dice por qué */
+function navAviso(){const f=aptCfg("nav","foco"),ay=aptCfg("nav","ayuda");
+  if(f==="todo"||ay==="todas"||navHay(f,ay))return "";
+  return "Esa combinación no existe: "+NAVAY[ay]+" no se usa para "+NAVFO[f]+
+    ". La tanda sale con las ayudas que sí lo hacen."}
+function navPool(){const f=aptCfg("nav","foco"),ay=aptCfg("nav","ayuda");
+  let p=NAVCAT.filter(e=>(f==="todo"||e[1].indexOf(f)>=0)&&(ay==="todas"||e[2]===ay));
+  if(!p.length)p=NAVCAT.filter(e=>f==="todo"||e[1].indexOf(f)>=0);
+  if(!p.length)p=NAVCAT.slice();
+  return p.map(e=>e[0])}
 const NAVNOM={hsi:"HSI",cdi:"VOR / CDI",rmi:"RMI",adf:"ADF de carta fija",ils:"ILS",perfil:"Perfil de la senda"};
 
 function navBegin(){dr.tot=aptCfg("nav","n");dr.lim=aptCfg("nav","lim");dr.fam={};
+  /* se reparte, no se sortea: con sorteo puro una familia entera podía
+     no salir en toda la tanda, que es justo lo que no quieres cuando
+     entrenas lo que peor llevas */
+  dr.baraja=[];const pool=navPool();
+  while(dr.baraja.length<dr.tot)dr.baraja=dr.baraja.concat(shuf(pool.slice()));
   $("app").classList.add("wide");navNext()}
 
 function navNext(){if(!dr||dr.fin)return;
   if(dr.n>=dr.tot)return aptEnd();
-  const it=pickR(navPool())();
+  const it=(dr.baraja[dr.n]||pickR(navPool()))();
   dr.cur=it;dr.tq=Date.now();dr.lock=false;dr.resp=null;dr.tecla="";
   dr.escMax=46;                                   /* la cenital abarca 46 NM de radio */
   if(it.modo==="bug")dr.val=it.valIni;
@@ -3070,7 +3269,7 @@ function navNext(){if(!dr||dr.fin)return;
 function navCheck(){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
   const it=dr.cur,j=it.juzga(dr.resp);
   dr.n++;dr.ok+=j.p;dr.rt.push(Date.now()-dr.tq);
-  const f=dr.fam[it.fam]||(dr.fam[it.fam]={n:0,ok:0});f.n++;f.ok+=j.p;
+  aptMarca(it.fam,j.p);
   aptFlash(j.p>=1);
   navExp(j)}
 
@@ -3916,7 +4115,7 @@ function razNext(){if(!dr||dr.fin)return;
 function razAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
   const it=dr.cur,ok=i===it.ok;
   dr.n++;if(ok)dr.ok++;if(i>=0)dr.rt.push(Date.now()-dr.tq);
-  const f=dr.fam[it.fam]||(dr.fam[it.fam]={n:0,ok:0});f.n++;if(ok)f.ok++;
+  aptMarca(it.fam,ok?1:0);
   aptFlash(ok);
   [].slice.call(document.querySelectorAll("#razOps .ap-op")).forEach(function(o,k){
     o.classList.add(k===it.ok?"ok":k===i?"ko":"dim")});
@@ -4035,25 +4234,33 @@ function aptEnd(){if(!dr)return;
       dr.cap>dr.tt*.5?"Tardaste más de medio ejercicio en capturar: el corte inicial se te quedó corto.":
       frac>.75?"Muy bien sujeta. Quita el mapa y repítelo en IMC.":""}
   if(ex==="razona"){score=acc;unit="%";
-    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]];
-    let peor=null;
-    for(const k in dr.fam){const v=dr.fam[k];if(v.n>=2&&(!peor||v.ok/v.n<peor.r))peor={k:k,r:v.ok/v.n}}
-    extra=peor&&peor.r<.7?"Lo que peor llevas: "+peor.k.toLowerCase()+" ("+Math.round(peor.r*100)+
-      " %). Sácalo suelto desde el enfoque.":""}
+    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]]}
   if(ex==="nav"){score=acc;unit="%";
-    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]];
-    let peor=null;
-    for(const k in dr.fam){const v=dr.fam[k];if(v.n>=2&&(!peor||v.ok/v.n<peor.r))peor={k:k,r:v.ok/v.n}}
-    extra=peor&&peor.r<.75?"Donde más se te escapa: "+peor.k.toLowerCase()+" ("+Math.round(peor.r*100)+
-      " %). Sácalo suelto desde el enfoque del ejercicio.":""}
-  const prev=(S.apt.runs||[]).filter(x=>x.e===ex).slice(-1)[0];
-  const best=S.apt.best[ex];
+    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]]}
+  /* Sólo se compara con tandas de los MISMOS ajustes: la firma entra
+     en el registro y el "+3" de debajo significa algo. */
+  const firma=aptFirma(ex),mis=aptMismos(ex,firma);
+  const prev=mis.slice(-1)[0];
+  const best=mis.length?Math.max.apply(null,mis.map(x=>x.s)):undefined;
   const rec=best===undefined||score>best;
+  /* el reparto de esta tanda, antes de que aptStop borre el estado */
+  const ronda=[],famT=dr.fam||{},nT=dr.n,okT=dr.ok;
+  for(const k in famT)if(famT[k].n)ronda.push({k:k,n:famT[k].n,ok:famT[k].ok,a:famT[k].ok/famT[k].n});
+  ronda.sort((a,b)=>a.a-b.a);
   aptStop();
-  S.apt.runs=(S.apt.runs||[]).concat([{d:dayN(),e:ex,s:score,ms:ms}]).slice(-120);
-  if(rec)S.apt.best[ex]=score;
+  aptFamGuarda(ex,famT);
+  S.apt.runs=(S.apt.runs||[]).concat([{d:dayN(),e:ex,s:score,ms:ms,n:nT,
+    ok:Math.round(okT*10)/10,c:firma}]).slice(-120);
+  if(S.apt.best[ex]===undefined||score>S.apt.best[ex])S.apt.best[ex]=score;
   save();
-  drRes={ex:ex,score:score,unit:unit,rows:rows,extra:extra,prev:prev?prev.s:null,best:rec?score:best,rec:rec};
+  /* el consejo sale de lo ACUMULADO: con dos preguntas de una familia
+     el porcentaje de la tanda no significa nada */
+  const flojas=aptFamList(ex);
+  if(!extra&&flojas.length&&flojas[0].a<.75)
+    extra="Donde más se te escapa, contando tus últimas tandas: <b>"+flojas[0].k.toLowerCase()+
+      "</b>, "+Math.round(flojas[0].a*100)+" %. Lo tienes a un toque en «Tu reparto».";
+  drRes={ex:ex,score:score,unit:unit,rows:rows,extra:extra,prev:prev?prev.s:null,
+    best:rec?score:best,rec:rec,ronda:ronda,acum:flojas,nMis:mis.length};
   if(rec&&prev)confetti(60);
   go("drillres")}
 function renderAptRes(){if(!drRes)return go("psico");
@@ -4067,10 +4274,16 @@ function renderAptRes(){if(!drRes)return go("psico");
     '<div class="big">'+r.score+(r.unit?'<small>'+r.unit+'</small>':'')+'</div>'+
     '<div class="msg">'+msg+'</div>'+
     '<div class="delta">'+(d===null?'Medido en '+E.unit:
-      (d>0?'<b>+'+d+'</b>':d<0?'<b>'+d+'</b>':'<b>=</b>')+' respecto al anterior · mejor <b>'+r.best+'</b>')+'</div>'+
+      (d>0?'<b>+'+d+'</b>':d<0?'<b>'+d+'</b>':'<b>=</b>')+' con estos ajustes · mejor <b>'+r.best+'</b>')+'</div>'+
     '<div class="stats-grid">'+r.rows.map(x=>
       '<div><span class="label">'+x[0]+'</span><b'+(String(x[1]).length>6?' class="sm"':'')+'>'+x[1]+'</b></div>').join("")+'</div>'+
-    (r.extra?'<p class="ap-note" style="text-align:left;margin-top:20px">'+r.extra+'</p>':'')}
+    (r.ronda&&r.ronda.length>1?'<div class="sect"><span class="label">En esta tanda</span></div>'+
+      '<div class="ap-fam">'+r.ronda.map(function(f){
+        const ac=(r.acum||[]).filter(x=>x.k===f.k)[0];
+        return aptFamFila(f.k,ac?"acumulado "+Math.round(ac.a*100)+" %":"aún sin base acumulada",
+          (Math.round(f.ok*10)/10)+" / "+f.n,f.a,null)}).join("")+'</div>':'')+
+    (r.extra?'<p class="ap-note" style="text-align:left;margin-top:20px">'+r.extra+'</p>':'')+
+    (r.nMis>1?'':'<p class="ap-note ap-grp" style="margin-top:14px">Primera tanda con estos ajustes. A partir de ahora el «+» y el «−» se comparan sólo contra tandas iguales a esta.</p>')}
 /* teclado: 1-4 para responder mientras se entrena */
 document.addEventListener("keydown",function(e){
   if(!dr||dr.fin||!$("drill").classList.contains("active"))return;

@@ -176,7 +176,7 @@ function renderUso() {
         ${kp("Tiempo total", fmtT(ms))}${kp("Hoy", fmtT(td.ms))}${kp("Últimos 7 días", fmtT(w.ms))}${kp("Sesiones", ses)}
         ${kp("Respondidas", ok + ko)}${kp("Acertadas", c(ok, "sage"))}${kp("Falladas", c(ko, "terra"))}${kp("Acierto", pctS(ok, ko))}
         ${kp("Tarjetas hoy", (td.n || 0) + `<small>/ ${main.objetivo || 30} tarjetas</small>`)}${kp("Tarjetas 7 días", w.n)}${kp("Racha", (main.racha || 0) + "<small>días</small>")}${kp("Mejor combo", "×" + (main.combo || 0))}
-        ${kp("Vistas", (main.vistas || 0) + `<small>/ ${main.total || 0}</small>`)}${kp("Dominadas", c(main.dominadas || 0, "sage"))}${kp("Aprendiendo", c(main.aprendiendo || 0, "gold"))}${kp("Por repasar", c(main.falladas || 0, "terra"))}
+        ${kp("Vistas", (main.vistas || 0) + `<small>/ ${main.total || 0}</small>`)}${kp("Consolidadas", c(main.dominadas || 0, "sage"))}${kp("Aprendiendo", c(main.aprendiendo || 0, "gold"))}${kp("Por repasar", c(main.falladas || 0, "terra"))}
       </div>
       <div style="margin-top:16px" class="row"><span class="lbl grow">Rumbo a Air Europa · progreso</span><span class="code" style="font-size:15px">${String(main.progreso || 0).replace(".", ",")}%</span></div>
       <div class="prog"><i style="width:${main.progreso || 0}%"></i></div>

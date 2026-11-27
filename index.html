@@ -290,6 +290,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .front .flag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-bottom:16px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
   padding:6px 11px;border-radius:20px;border:1px solid rgba(222,143,123,.4);color:var(--terra)}
 .front .flag.again{border-color:rgba(217,183,126,.45);color:var(--gold2)}
+.front .flag.leech{border-color:rgba(222,143,123,.6);color:var(--terra);background:rgba(222,143,123,.08)}
 .front .foot{padding:0 26px 24px;display:flex;align-items:center;justify-content:space-between}
 .front .tap{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mute);white-space:nowrap}
 .front .barcode{max-width:110px;overflow:hidden}
@@ -360,6 +361,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .back .kicker{font-size:15px;margin-bottom:12px}
 .back .kicker b{font-style:normal;font-weight:600}
 .back .kicker .ok{color:#3f7a4b}.back .kicker .ko{color:#b6604b}
+.back .kicker .slow{display:block;margin-top:4px;font-size:13px;color:#8a7350}
+.back .kicker .rec{display:block;margin-top:6px;font-size:13px;color:#b6604b}
+.back .guess{display:inline-block;margin-top:8px;font:500 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;font-style:normal;color:#8a7350;
+  padding:6px 11px;border-radius:20px;border:1px solid rgba(138,115,80,.35);background:none;cursor:pointer}
+.back .guess:active{background:rgba(138,115,80,.12)}
 .back .kicker s{color:#8a8f9c;text-decoration-color:rgba(182,96,75,.6)}
 .back .a{display:flex;gap:14px;align-items:flex-start;font-size:22px}
 .back .a .lt{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;margin-top:1px;
@@ -536,13 +542,23 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     <div class="stats-grid">
       <div><span class="label">Racha</span><b id="kStreak">0<sup>días</sup></b></div>
       <div><span class="label">Acierto</span><b id="kAcc">—</b></div>
-      <div><span class="label">Memorizadas</span><b id="kMast">0</b></div>
+      <div><span class="label">Consolidadas</span><b id="kMast">0</b></div>
       <div><span class="label">A reforzar</span><b class="sm" id="kWeak">—</b></div>
     </div>
     <div class="sect"><span class="label">Accesos rápidos</span></div>
+    <button class="link-row" onclick="planDay()">
+      <span class="ic"><svg><use href="#plane"/></svg></span>
+      <span><b>Plan del día</b><span id="planSub">Repasos que tocan hoy y nuevas</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
     <button class="link-row" onclick="quickFails()">
       <span class="ic"><svg><use href="#target"/></svg></span>
       <span><b>Repasar mis fallos</b><span id="failCount">Tarjetas que aún no dominas</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
+    <button class="link-row" onclick="quickLeech()">
+      <span class="ic"><svg><use href="#close"/></svg></span>
+      <span><b>Puntos negros</b><span id="leechSub">Las que más se te resisten</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <button class="link-row" onclick="quickAll()">
@@ -570,6 +586,8 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
 
     <div class="sect"><span class="label">Modo</span></div>
     <div class="seg" id="segMode"><span class="pill"></span><button data-v="smart">Inteligente</button><button data-v="random">Aleatorio</button><button data-v="fails">Solo fallos</button></div>
+    <div class="sect"><span class="label">Nuevas al día · plan del día</span></div>
+    <div class="seg" id="segNew"><span class="pill"></span><button data-v="10">10</button><button data-v="20">20</button><button data-v="40">40</button><button data-v="0">∞</button></div>
     <div class="sect"><span class="label">Tarjetas por sesión</span></div>
     <div class="seg" id="segLen"><span class="pill"></span><button data-v="10">10</button><button data-v="20">20</button><button data-v="50">50</button><button data-v="0">∞</button></div>
 
@@ -617,7 +635,7 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
       <div><span class="label">Acertadas</span><b id="sumOk" style="color:var(--sage)">0</b></div>
       <div><span class="label">Falladas</span><b id="sumKo" style="color:var(--terra)">0</b></div>
       <div><span class="label">Mejor racha</span><b id="sumCombo">0</b></div>
-      <div><span class="label">Nuevas memorizadas</span><b id="sumNew">0</b></div>
+      <div><span class="label">Nuevas vistas</span><b id="sumNew">0</b></div>
     </div>
   </div>
   <div class="footer" style="display:grid;gap:12px">
@@ -657,7 +675,7 @@ const qHTML=s=>{const L=String(s).split(String.fromCharCode(10)),out=[],items=[]
 
 /* ============ ESTADO ============ */
 const KEY="atplflash.v1";
-const DEF={cards:{},days:{},bestCombo:0,goal:30,settings:{deck:"atpl",topics:{},variant:"all",mode:"smart",len:20,timer:false,time:15,sound:true,haptic:true,theme:"auto"}};
+const DEF={cards:{},days:{},bestCombo:0,goal:30,settings:{deck:"atpl",topics:{},variant:"all",mode:"smart",len:20,newDay:20,timer:false,time:15,sound:true,haptic:true,theme:"auto"}};
 let S;try{S=Object.assign(structuredClone(DEF),JSON.parse(localStorage.getItem(KEY)||"{}"));S.settings=Object.assign({},DEF.settings,S.settings)}catch(e){S=structuredClone(DEF)}
 /* migración: la versión de demo guardaba los temas como lista */
 if(Array.isArray(S.settings.topics)||typeof S.settings.topics!=="object")S.settings.topics={};
@@ -669,6 +687,35 @@ const dkey=d=>{const z=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+z
 const today=()=>dkey(new Date());
 const C=id=>S.cards[id]||(S.cards[id]={box:0,seen:0,ok:0,ko:0,last:0});
 const MASTER=3;
+/* ============ REPASO ESPACIADO ============
+   Cada tarjeta tiene un intervalo (iv, días) y un día de próximo repaso (dd).
+   Acierto: 1 → 3 → 7 → 16 → 37… días. Acierto lento: crece poco. Fallo o "lo adiviné": vuelve a 0 (hoy).
+   Solo el primer repaso de cada día hace avanzar el intervalo (repetir en la misma sesión no consolida).
+   Consolidada = ha superado un intervalo de 21 días o más. */
+const CONS=21;
+const dayN=(t=Date.now())=>Math.floor((t-new Date(t).getTimezoneOffset()*6e4)/864e5);
+const seenC=c=>!!c&&c.seen>0;
+const isCons=c=>seenC(c)&&c.box>0&&(c.iv||0)>=CONS;
+const isDue=c=>seenC(c)&&(c.box===0||(c.dd??0)<=dayN());
+const isLeech=c=>seenC(c)&&c.ko>=3&&!isCons(c);
+const cState=c=>!seenC(c)?"new":isDue(c)?"due":isCons(c)?"cons":"learn";
+const strength=c=>!seenC(c)||c.box===0?0:Math.min(1,Math.log1p(c.iv||0)/Math.log1p(CONS));
+function schedule(c,res){const t=dayN(),first=c.rd!==t;c.rd=t;
+  if(res==="ko"){c.iv=0;c.dd=t;return}
+  if(!first){if(!c.iv)c.dd=t+1;return}
+  const iv=c.iv||0;
+  c.iv=res==="slow"?Math.max(1,Math.round(iv*1.3)):iv<1?1:iv<3?3:Math.min(180,Math.round(iv*2.3));
+  c.dd=t+c.iv}
+/* migración desde el sistema anterior (cajas): nada se pierde, pero lo "dominado" se vuelve a comprobar
+   en pocos días, ya con las respuestas barajadas */
+if(S.srs!==1){const t=dayN();let h=0;
+  for(const id in S.cards){const c=S.cards[id];if(!c.seen)continue;h=(h*31+id.charCodeAt(0)+id.charCodeAt(id.length-1))%997;
+    if(c.box===0){c.iv=0;c.dd=t}else if(c.box>=MASTER){c.iv=3;c.dd=t+1+h%4}else{c.iv=1;c.dd=t+h%2}}
+  S.srs=1;save()}
+/* tiempo de respuesta relativo a la longitud: detecta aciertos con duda */
+function isSlow(q,rt){if(!rt||rt>120000)return false;const k=rt/(q.q.length+q.o.join("").length+120);
+  const slow=(S.rtn||0)>=8&&rt>12000&&k>2.2*S.rtk;
+  if(!slow){S.rtk=S.rtn?S.rtk*.9+k*.1:k;S.rtn=(S.rtn||0)+1}return slow}
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 
@@ -681,7 +728,7 @@ setInterval(()=>{const n=Date.now(),dt=Math.min(n-lastTick,20000);lastTick=n;if(
   S.uso.ms+=dt;S.uso.at=n;const d=D();d.ms=(d.ms||0)+dt;save()},15000);
 document.addEventListener("visibilitychange",()=>{lastTick=Date.now();if(!document.hidden)lastIn=Date.now();else save()});
 window.RUMBO_USO=()=>{let ok=0,ko=0,vistas=0,dom=0,apr=0,fal=0,last=S.uso.at||0;
-  Q.forEach(q=>{const c=S.cards[q.id];if(!c)return;vistas++;ok+=c.ok;ko+=c.ko;last=Math.max(last,c.last||0);if(c.box>=MASTER)dom++;else if(c.box>0)apr++;else fal++});
+  Q.forEach(q=>{const c=S.cards[q.id];if(!seenC(c))return;vistas++;ok+=c.ok;ko+=c.ko;last=Math.max(last,c.last||0);const st=cState(c);if(st==='cons')dom++;else if(st==='learn')apr++;else fal++});
   const ts=topicStats(),dias={};
   for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d),v=S.days[k];if(v&&(v.seen||v.ms))dias[k]={n:v.seen||0,ok:v.ok||0,ko:v.ko||0,ms:v.ms||0,ses:v.ses||0}}
   return{v:1,ms:S.uso.ms,ses:S.uso.ses,tr:S.uso.tr,desde:S.uso.desde,ultimo:last,total:Q.length,vistas,ok,ko,dominadas:dom,aprendiendo:apr,falladas:fal,
@@ -700,8 +747,8 @@ function go(id){stopTimer();document.querySelectorAll(".screen").forEach(s=>s.cl
 /* ============ HOME ============ */
 function streak(){let n=0;const d=new Date();if(!S.days[today()]?.seen)d.setDate(d.getDate()-1);while(S.days[dkey(d)]?.seen){n++;d.setDate(d.getDate()-1)}return n}
 function topicStats(){const r={};for(const t in TDECK)r[t]={ok:0,ko:0,total:0,mast:0};
-  Q.forEach(q=>{const c=S.cards[q.id];r[q.t].total++;if(c){r[q.t].ok+=c.ok;r[q.t].ko+=c.ko;if(c.box>=MASTER)r[q.t].mast++}});return r}
-const isFail=id=>{const c=S.cards[id];return c&&c.ko>0&&c.box<MASTER};
+  Q.forEach(q=>{const c=S.cards[q.id];r[q.t].total++;if(c){r[q.t].ok+=c.ok;r[q.t].ko+=c.ko;if(isCons(c))r[q.t].mast++}});return r}
+const isFail=id=>{const c=S.cards[id];return seenC(c)&&c.box===0};
 function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]}
 function arcPath(cx,cy,r,a0,a1){const[x0,y0]=polar(cx,cy,r,a0),[x1,y1]=polar(cx,cy,r,a1);return`M${x0} ${y0} A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1} ${y1}`}
 function drawGauge(frac){
@@ -743,7 +790,7 @@ function placeLogos(){logosReady.then(()=>{[["logoFrom","binter"],["logoTo","ae"
 /* retratos */
 $("hero").style.backgroundImage=`url(${IMG.cabina})`;$("sumHero").style.backgroundImage=`url(${IMG.borja})`;
 document.querySelector("#home .scroll").addEventListener("scroll",e=>{const t=e.target.scrollTop;$("hero").style.opacity=Math.max(0,1-t/260);$("hero").style.transform=`translateY(${-t*.35}px)`},{passive:true});
-function progress(){let s=0;Q.forEach(q=>{const c=S.cards[q.id];if(c)s+=Math.min(c.box,MASTER)/MASTER});return s/Q.length}
+function progress(){let s=0;Q.forEach(q=>{s+=strength(S.cards[q.id])});return s/Q.length}
 const stageIdx=f=>{let i=0;STAGES.forEach((s,k)=>{if(f>=s.p)i=k});return i};
 function drawRoute(f){
   const svg=$("routeSvg"),P="M10 74 Q165 -6 320 74";
@@ -761,7 +808,7 @@ function drawRoute(f){
   requestAnimationFrame(()=>requestAnimationFrame(()=>path.style.strokeDasharray=`${f*100} 100`));
   const i=stageIdx(f),nx=STAGES[i+1];
   $("routePct").textContent=Math.round(f*100)+"%";
-  $("routeNext").innerHTML=nx?`Próxima escala: <b>${nx.n}</b> · faltan unas ${Math.max(1,Math.ceil((nx.p-f)*Q.length))} tarjetas por dominar.`:`Destino alcanzado. <b>Air Europa te espera, ${PILOT}.</b>`;
+  $("routeNext").innerHTML=nx?`Próxima escala: <b>${nx.n}</b> · faltan unas ${Math.max(1,Math.ceil((nx.p-f)*Q.length))} tarjetas por consolidar.`:`Destino alcanzado. <b>Air Europa te espera, ${PILOT}.</b>`;
 }
 function countUp(el,to,suffix=""){const t0=performance.now(),d=900;const f=()=>{const p=Math.min(1,(performance.now()-t0)/d),e=1-Math.pow(1-p,3);el.innerHTML=Math.round(to*e)+suffix;if(p<1)requestAnimationFrame(f)};f()}
 function renderHome(){
@@ -772,14 +819,25 @@ function renderHome(){
   const d=S.days[today()]?.seen||0;countUp($("goalNum"),d);$("goalOf").textContent=d>=S.goal?"objetivo cumplido":`de ${S.goal} · hoy`;
   drawGauge(Math.min(1,d/S.goal));
   $("kStreak").innerHTML=streak()+(streak()===1?"<sup>día</sup>":"<sup>días</sup>");
-  let ok=0,ko=0,m=0;Object.values(S.cards).forEach(c=>{ok+=c.ok;ko+=c.ko;if(c.box>=MASTER)m++});
+  let ok=0,ko=0,m=0;Object.values(S.cards).forEach(c=>{ok+=c.ok;ko+=c.ko;if(isCons(c))m++});
   $("kAcc").innerHTML=ok+ko?Math.round(ok/(ok+ko)*100)+"<sup>%</sup>":"—";
   $("kMast").innerHTML=m+`<sup>/${Q.length}</sup>`;
   const ts=topicStats();let w=null,wv=2;for(const t in ts){const s=ts[t];if(s.ok+s.ko>=3){const v=s.ok/(s.ok+s.ko);if(v<wv){wv=v;w=t}}}
   $("kWeak").textContent=w?tName(w):"—";
   const f=Q.filter(q=>isFail(q.id)).length;
-  $("failCount").textContent=f?`${f} tarjeta${f>1?"s":""} pendiente${f>1?"s":""} de dominar`:"Nada pendiente, impecable";
+  $("failCount").textContent=f?`${f} tarjeta${f>1?"s":""} fallada${f>1?"s":""} la última vez`:"Nada fallado pendiente, impecable";
+  const pl=planCount(),pd=$("planSub");
+  pd.textContent=pl.due+pl.nw?`${pl.due} repaso${pl.due===1?"":"s"} · ${pl.nw} nueva${pl.nw===1?"":"s"} · ${DECKS[S.settings.deck].name}`:"Al día: nada pendiente hoy";
+  const lc=Q.filter(q=>isLeech(S.cards[q.id])).length;
+  $("leechSub").textContent=lc?`${lc} tarjeta${lc>1?"s":""} que se te resiste${lc>1?"n":""} (falladas 3 veces o más)`:"Ninguna se te resiste. Bien.";
 }
+/* plan del día: lo que toca repasar hoy + las nuevas del día, del cuaderno actual */
+function planCount(){const d=S.settings.deck,t=dayN();let due=0,fresh=0;
+  for(const q of Q){if(q.d!==d||!varOk(q))continue;const c=S.cards[q.id];if(!seenC(c))fresh++;else if(isDue(c))due++}
+  const nd=S.settings.newDay||0,left=nd?Math.max(0,nd-(S.days[today()]?.nw||0)):fresh;return{due,nw:Math.min(fresh,left)}}
+function planDay(){const pl=planCount();if(!pl.due&&!pl.nw){floatTxt("Plan del día completado");return}
+  startSession(Q.filter(q=>q.d===S.settings.deck&&varOk(q)),Math.min(120,pl.due+pl.nw),{plan:true,newLeft:pl.nw})}
+function quickLeech(){const p=Q.filter(q=>isLeech(S.cards[q.id]));if(!p.length){floatTxt("Ningún punto negro");return}startSession(p)}
 function quickFails(){const p=Q.filter(q=>isFail(q.id));if(!p.length){floatTxt("Sin fallos pendientes");return}startSession(p)}
 function quickAll(){const d=S.settings.deck;startSession(Q.filter(q=>q.d===d),10)}
 
@@ -803,7 +861,7 @@ function renderSetup(){
     if(n)b.onclick=()=>{const i=sel.indexOf(t);i>=0?sel.splice(i,1):sel.push(t);b.classList.toggle("on");tick(1100,.03);updStart();save()};L.appendChild(b)}
   seg("segDeck","deck",String,()=>renderSetup());
   $("varSub").classList.toggle("open",d==="b737");if(d==="b737")setTimeout(()=>seg("segVar","variant",String,()=>renderSetup()),30);
-  seg("segMode","mode");seg("segLen","len",Number);seg("segTime","time",Number);
+  seg("segMode","mode");seg("segNew","newDay",Number);seg("segLen","len",Number);seg("segTime","time",Number);
   sw("swTimer","timer",v=>{$("timerSub").classList.toggle("open",v);if(v)setTimeout(()=>seg("segTime","time",Number),30)});sw("swSound","sound");sw("swHaptic","haptic");seg("segTheme","theme",String,()=>applyTheme(true));themeNote();updStart();
 }
 const varOk=q=>S.settings.deck!=="b737"||S.settings.variant==="all"||!q.v||q.v===S.settings.variant;
@@ -836,23 +894,34 @@ const buzz=p=>{try{if(S.settings.haptic&&navigator.vibrate)navigator.vibrate(p)}
 /* ============ SESIÓN ============ */
 let ses=null;
 function pool(){const st=S.settings,d=st.deck,sel=st.topics[d]||[];let p=Q.filter(q=>q.d===d&&sel.includes(q.t)&&varOk(q));
-  if(st.mode==="fails"){const f=p.filter(q=>isFail(q.id));p=f.length?f:p}return p}
-function startSession(custom,len){
+  if(st.mode==="fails"){const f=p.filter(q=>isFail(q.id)||isLeech(S.cards[q.id]));p=f.length?f:p}return p}
+function startSession(custom,len,opt={}){
   const p=Array.isArray(custom)?custom:pool();if(!p.length)return;
-  ses={f0:progress(),pool:p,n:0,ok:0,ko:0,combo:0,best:0,relearn:[],recent:[],mastered:0,len:len??S.settings.len,cur:null,flipped:false,locked:false};
+  ses={f0:progress(),pool:p,n:0,ok:0,ko:0,combo:0,best:0,relearn:[],recent:[],mastered:0,len:len??S.settings.len,cur:null,flipped:false,locked:false,plan:!!opt.plan,newLeft:opt.newLeft??1e9,nw:0};
   S.uso.ses++;const dd=D();dd.ses=(dd.ses||0)+1;save();
   go("study");$("combo").className="combo";$("prog").style.width="0";$("clock").classList.toggle("off",!S.settings.timer);
   ac();setTimeout(nextCard,180);
 }
+/* elige la siguiente tarjeta:
+   1) las falladas de esta sesión vuelven a las 3 tarjetas (y otra vez a las 8 hasta acertarlas dos veces)
+   2) modo inteligente / plan del día: primero lo que toca repasar (lo fallado y lo más vencido antes),
+      intercalando una nueva cada 4; si no hay repasos, nuevas; y si tampoco, lo que vence antes */
 function pickCard(){
-  const due=ses.relearn.findIndex(r=>r.at<=ses.n);
-  if(due>=0)return{q:ses.relearn.splice(due,1)[0].q,relearn:true};
-  const avoid=new Set(ses.recent.slice(-Math.min(8,ses.pool.length-1)));
-  let cand=ses.pool.filter(q=>!avoid.has(q.id));if(!cand.length)cand=ses.pool;
-  if(S.settings.mode==="random")return{q:cand[Math.random()*cand.length|0]};
-  const now=Date.now();
-  const w=cand.map(q=>{const c=S.cards[q.id];if(!c)return 4;let x=[10,6,3,1.2,.6,.3][Math.min(c.box,5)];return x*(1+Math.min((now-c.last)/864e5,3))});
-  let r=Math.random()*w.reduce((a,b)=>a+b,0);for(let i=0;i<cand.length;i++){r-=w[i];if(r<=0)return{q:cand[i]}}return{q:cand[0]};
+  const rl=ses.relearn.findIndex(r=>r.at<=ses.n);
+  if(rl>=0){const it=ses.relearn.splice(rl,1)[0];return{q:it.q,relearn:it}}
+  const hold=new Set(ses.relearn.map(r=>r.q.id)),avoid=new Set(ses.recent.slice(-Math.min(8,ses.pool.length-1)));
+  let cand=ses.pool.filter(q=>!avoid.has(q.id)&&!hold.has(q.id));if(!cand.length)cand=ses.pool.filter(q=>!hold.has(q.id));if(!cand.length)cand=ses.pool;
+  const any=a=>a[Math.random()*a.length|0];
+  if(S.settings.mode==="random"&&!ses.plan)return{q:any(cand)};
+  const t=dayN(),due=[],fresh=[],rest=[];
+  for(const q of cand){const c=S.cards[q.id];(!seenC(c)?fresh:isDue(c)?due:rest).push(q)}
+  const newOk=fresh.length&&ses.nw<ses.newLeft;
+  if(due.length&&!(newOk&&ses.n%4===3)){
+    const pr=q=>{const c=S.cards[q.id];return(c.box===0?1e3:0)+(isLeech(c)?50:0)+(t-(c.dd??t))/((c.iv||0)+1)};
+    due.sort((a,b)=>pr(b)-pr(a));return{q:any(due.slice(0,3))}}
+  if(newOk||fresh.length&&!ses.plan)return{q:any(fresh)};
+  if(due.length)return{q:any(due)};
+  rest.sort((a,b)=>(S.cards[a.id].dd??0)-(S.cards[b.id].dd??0));return{q:any(rest.slice(0,5))};
 }
 const L4="ABCDEF";
 /* barajar opciones: cada vez que sale una tarjeta cambia el orden (nunca igual que la vez anterior).
@@ -886,10 +955,10 @@ const flightNo=q=>"UX "+String(q.n).padStart(4,"0");
 const varLabel=q=>q.v?`<span class="vtag">${q.v==="MAX"?"737 MAX":"737-"+q.v}</span>`:"";
 function nextCard(){
   if(ses.len&&ses.n>=ses.len&&!ses.relearn.length)return finish();
-  const{q,relearn}=pickCard();Object.assign(ses,{cur:q,flipped:false,locked:false,timedOut:false,choice:null,leaving:false});ses.recent.push(q.id);
+  const{q,relearn}=pickCard();Object.assign(ses,{cur:q,flipped:false,locked:false,timedOut:false,choice:null,leaving:false,curRel:relearn||null,slow:false,trMs:0,guessed:false,snap:null});ses.recent.push(q.id);
   ses.perm=shuffleFor(q);const P=ses.perm;
   const c=S.cards[q.id];
-  const flag=relearn?'<span class="flag again">↻ De nuevo</span>':(c&&c.ko>0&&c.box<MASTER?'<span class="flag">● Fallada antes</span>':"");
+  const flag=relearn?'<span class="flag again">↻ De nuevo</span>':isLeech(c)?`<span class="flag leech">● Punto negro · ${c.ko} fallos</span>`:(isFail(q.id)?'<span class="flag">● Fallada la última vez</span>':"");
   $("count").innerHTML=`<b>${pad(ses.n+1)}</b> / ${ses.len?pad(ses.len):"∞"}`;
   const len=q.q.length+q.o.join("").length+(q.img?260:0),dens=len>560?"xdense":len>300?"dense":"";
   const el=document.createElement("div");el.className="card enter";
@@ -926,7 +995,7 @@ function nextCard(){
   el.querySelector(".front").appendChild(more);
   fitCard(el);requestAnimationFrame(()=>fitCard(el));setTimeout(()=>fitCard(el),120);document.fonts&&document.fonts.ready.then(()=>fitCard(el));
   body.addEventListener("scroll",()=>moreState(el),{passive:true});
-  bindCard(el);startTimer();trReset();
+  bindCard(el);startTimer();trReset();ses.t0=Date.now();
 }
 /* reduce el texto hasta que quepan pregunta + opciones; si aun así no cabe, avisa */
 function fitCard(el){const f=el.querySelector(".front"),b=f.querySelector(".body"),lv=["","dense","xdense","xxdense"];
@@ -940,14 +1009,18 @@ function setHint(t){const h=$("hint");h.textContent=t;h.style.opacity=t?1:0}
 function choose(i){if(!ses||ses.flipped||ses.locked)return;ses.choice=i;
   const q=ses.cur,ok=ses.perm[i]===q.a,card=$("stage").firstChild;
   card.querySelectorAll(".op").forEach(b=>b.classList.toggle("picked",+b.dataset.i===i));
-  tick(1300,.04);grade(ok);setTimeout(flip,280)}
-function flip(){if(ses.flipped)return;ses.flipped=true;stopTimer();sFlip();buzz(8);
-  const q=ses.cur,card=$("stage").firstChild,ok=!ses.timedOut&&ses.choice!=null&&ses.perm[ses.choice]===q.a;
+  tick(1300,.04);grade(ok,Date.now()-ses.t0-(ses.trMs||0)-(ses.trAt?Date.now()-ses.trAt:0));setTimeout(flip,280)}
+function flip(){if(ses.flipped)return;ses.flipped=true;stopTimer();sFlip();buzz(8);paintBack()}
+function paintBack(){
+  const q=ses.cur,card=$("stage").firstChild,ok=ses.lastOk,c=S.cards[q.id];
   const k=card.querySelector(".bkKick"),lab=card.querySelector(".bkLabel");
   if(ses.timedOut){k.innerHTML='<b class="ko">Se acabó el tiempo.</b> La correcta era:';lab.textContent="Tiempo agotado"}
-  else if(ok){k.innerHTML='<b class="ok">Correcto.</b> Bien visto.'}
-  else{k.innerHTML=`<b class="ko">Marcaste ${L4[ses.choice]}:</b> <s>${esc(optTxt(q,ses.perm[ses.choice]))}</s><br>La correcta es:`}
-  card.classList.add("flipped",ok?"is-ok":"is-ko");
+  else if(ses.guessed){k.innerHTML='<b class="ko">Adivinada.</b> Cuenta como fallo: volverá en unas tarjetas y mañana.'}
+  else if(ok){k.innerHTML='<b class="ok">Correcto.</b> '+(ses.slow?'<span class="slow">Te costó: la repasaremos antes de lo normal.</span>':'Bien visto.')+'<br><button class="guess">Lo adiviné</button>';
+    const g=k.querySelector(".guess");["pointerdown","pointerup","click"].forEach(ev=>g.addEventListener(ev,e=>{e.stopPropagation();if(ev==="click")guessed()}))}
+  else{const j=ses.perm[ses.choice],n=c&&c.wr&&c.wr[j]||0;
+    k.innerHTML=`<b class="ko">Marcaste ${L4[ses.choice]}:</b> <s>${esc(optTxt(q,j))}</s>${n>=2?`<span class="rec">Ya van ${n} veces que eliges esta opción. Fíjate bien en por qué no es.</span>`:""}<br>La correcta es:`}
+  card.classList.remove("is-ok","is-ko");card.classList.add("flipped",ok?"is-ok":"is-ko");
   const bar=$("ansBtns");
   const hasTr=!!TRAD[q.id];bar.classList.toggle("has-tr",hasTr);$("trBtn").classList.add("off");
   bar.innerHTML=(hasTr?`<button class="ab tr" aria-label="Mantén pulsado para ver en castellano"><span class="lg">ES</span></button><span class="sep"></span>`:"")+`<span class="res ${ok?"ok":"ko"}">${ok?'<svg><use href="#tick"/></svg>Acertada':'<svg><use href="#close"/></svg>Fallada'}</span><span class="sep"></span><button class="ab nx" onclick="advance()">Siguiente<svg><use href="#arrow"/></svg></button>`;
@@ -965,22 +1038,35 @@ function bindCard(el){
   el.addEventListener("pointercancel",()=>{x0=null;el.style.transform=""});
 }
 /* registra el resultado (estadísticas, sonido, rachas) */
-function grade(ok){
+function grade(ok,rt,quiet){
   if(!ses||ses.locked)return;ses.locked=true;stopTimer();
-  const q=ses.cur,c=C(q.id),wasMast=c.box>=MASTER,stBefore=stageIdx(progress());
-  c.seen++;c.last=Date.now();const d=D();d.seen++;ses.n++;
+  const q=ses.cur,c=C(q.id),d=D(),wasNew=!seenC(c),wasCons=isCons(c),stBefore=stageIdx(progress());
+  ses.snap={c:JSON.stringify(c),d:JSON.stringify(d),k:[ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw,ses.relearn.length,S.bestCombo,S.rtk,S.rtn]};
+  ses.slow=ok&&!ses.timedOut&&isSlow(q,rt);
+  c.seen++;c.last=Date.now();d.seen++;ses.n++;if(wasNew){ses.nw++;d.nw=(d.nw||0)+1}
   const cm=$("combo");ses.lastOk=ok;
+  schedule(c,ok?(ses.slow?"slow":"ok"):"ko");
   if(ok){c.ok++;d.ok++;c.box=Math.min(c.box+1,5);ses.ok++;ses.combo++;ses.best=Math.max(ses.best,ses.combo);
-    if(!wasMast&&c.box>=MASTER)ses.mastered++;sOk();buzz(12);
-    if(ses.combo>=2){cm.textContent=`racha ×${ses.combo}`;cm.className="combo show";void cm.offsetWidth;cm.classList.add("pop")}
-    if(ses.combo%5===0){setTimeout(()=>sCombo(ses.combo),150);floatTxt(`×${ses.combo} seguidas`);confetti(22)}
-  }else{c.ko++;d.ko=(d.ko||0)+1;c.box=0;ses.ko++;ses.combo=0;sKo();buzz([25,40,25]);cm.className="combo";
-    ses.relearn.push({q,at:ses.n+3});}
+    if(!wasCons&&isCons(c))ses.mastered++;
+    if(ses.curRel&&ses.curRel.need>1)ses.relearn.push({q,at:ses.n+8,need:ses.curRel.need-1});
+    if(!quiet){sOk();buzz(12);
+      if(ses.combo>=2){cm.textContent=`racha ×${ses.combo}`;cm.className="combo show";void cm.offsetWidth;cm.classList.add("pop")}
+      if(ses.combo%5===0){setTimeout(()=>sCombo(ses.combo),150);floatTxt(`×${ses.combo} seguidas`);confetti(22)}}
+  }else{c.ko++;d.ko=(d.ko||0)+1;c.box=0;ses.ko++;ses.combo=0;cm.className="combo";
+    if(ses.choice!=null&&!ses.timedOut&&ses.perm){const j=ses.perm[ses.choice];(c.wr||(c.wr={}))[j]=(c.wr[j]||0)+1}
+    if(!quiet){sKo();buzz([25,40,25])}
+    ses.relearn.push({q,at:ses.n+3,need:2});}
   if(ses.best>S.bestCombo)S.bestCombo=ses.best;save();updTopicBar();
   $("prog").style.width=(ses.len?Math.min(100,ses.n/ses.len*100):(ses.n%10)*10)+"%";
+  if(quiet)return;
   if(d.seen===S.goal){setTimeout(()=>{floatTxt("Objetivo diario");confetti(50)},700)}
   const stAfter=stageIdx(progress());if(stAfter>stBefore){setTimeout(()=>{floatTxt("Escala: "+STAGES[stAfter].n);confetti(60);sCombo(20)},900)}
 }
+/* "Lo adiviné": deshace el acierto y lo registra como fallo (sin sonidos ni confeti) */
+function guessed(){if(!ses||!ses.snap||!ses.lastOk||ses.guessed)return;
+  const q=ses.cur,sn=ses.snap;S.cards[q.id]=JSON.parse(sn.c);S.days[today()]=JSON.parse(sn.d);
+  [ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw]=sn.k;ses.relearn.length=sn.k[6];S.bestCombo=sn.k[7];S.rtk=sn.k[8];S.rtn=sn.k[9];ses.n--;
+  ses.locked=false;ses.guessed=true;ses.choice=null;grade(false,0,true);buzz(10);paintBack()}
 /* pasa a la siguiente tarjeta */
 function advance(dir){if(!ses||!ses.flipped||ses.leaving)return;ses.leaving=true;
   const card=$("stage").firstChild;card.classList.add((dir||(ses.lastOk?"r":"l"))==="r"?"out-r":"out-l");
@@ -988,7 +1074,7 @@ function advance(dir){if(!ses||!ses.flipped||ses.leaving)return;ses.leaving=true
 /* traducción al castellano mientras se mantiene pulsado (solo tarjetas traducidas) */
 const TRAD=window.TRAD||{};let trOn=false;
 function trReset(){trOn=false;$("trBtn").classList.remove("on");$("trBtn").classList.toggle("off",!TRAD[ses.cur.id])}
-function trSet(on){if(!ses||!ses.cur||on===trOn)return;const t=TRAD[ses.cur.id];if(!t)return;trOn=on;if(on)S.uso.tr++;
+function trSet(on){if(!ses||!ses.cur||on===trOn)return;const t=TRAD[ses.cur.id];if(!t)return;trOn=on;if(on){S.uso.tr++;ses.trAt=Date.now()}else if(ses.trAt){ses.trMs=(ses.trMs||0)+Date.now()-ses.trAt;ses.trAt=0}
   const q=ses.cur,c=$("stage").firstChild,src=on?t:q,put=(sel,txt,f=esc)=>{const n=c&&c.querySelector(sel);if(n&&txt!=null){n.innerHTML=f(txt);n.animate&&n.animate([{opacity:.2},{opacity:1}],{duration:200,easing:"ease-out"})}};
   put(".front .q",src.q,qHTML);c.querySelectorAll(".op .tx").forEach((n,i)=>put(`.op[data-i="${i}"] .tx`,optTxt(src,ses.perm[i])));
   put(".back .qmini",src.q);put(".back .a span:last-child",optTxt(src,q.a));if(ses.choice!=null)put(".bkKick s",optTxt(src,ses.perm[ses.choice]));
@@ -1008,7 +1094,7 @@ function endSession(){if(ses&&ses.n>0)finish();else go("home")}
 function finish(){stopTimer();const t=ses.ok+ses.ko,p=t?Math.round(ses.ok/t*100):0;
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="summary"));
   countUp($("sumPct"),p,"<small>%</small>");
-  $("sumOk").textContent=ses.ok;$("sumKo").textContent=ses.ko;$("sumCombo").textContent="×"+ses.best;$("sumNew").textContent=ses.mastered;
+  $("sumOk").textContent=ses.ok;$("sumKo").textContent=ses.ko;$("sumCombo").textContent="×"+ses.best;$("sumNew").textContent=ses.nw;
   $("sumMsg").textContent=p>=90?`Así se entra en Air Europa, ${PILOT}.`:p>=75?`Un vuelo muy limpio, ${PILOT}.`:p>=50?"Buen rumbo. Sigue sumando millas.":"Hoy se aprende; mañana se aprueba.";
   const f1=progress(),dl=Math.round((f1-ses.f0)*1000)/10;
   $("sumDelta").innerHTML=`Rumbo a Air Europa · <b>${Math.round(f1*100)}%</b>${dl>0?` · <b>+${String(dl).replace(".",",")}%</b> hoy`:""}`;
@@ -1030,8 +1116,9 @@ function stopTimer(){if(!tState)return;cancelAnimationFrame(tState.raf);clearTim
 /* ============ ESTADÍSTICAS ============ */
 function renderStats(){
   const ts=topicStats();let ok=0,ko=0;const boxes=[0,0,0,0,0,0];
-  Q.forEach(q=>{const c=S.cards[q.id];if(c){ok+=c.ok;ko+=c.ko;boxes[c.box]++}});
-  const unseen=Q.filter(q=>!S.cards[q.id]).length,learning=boxes[1]+boxes[2],mast=boxes[3]+boxes[4]+boxes[5];
+  const cnt={new:0,due:0,learn:0,cons:0};
+  Q.forEach(q=>{const c=S.cards[q.id];if(c){ok+=c.ok;ko+=c.ko}cnt[cState(c)]++});
+  const unseen=cnt.new,learning=cnt.learn,mast=cnt.cons;boxes[0]=cnt.due;
   const rowsOf=d=>deckTopics(d).filter(t=>ts[t].total).map(t=>({t,...ts[t],acc:ts[t].ok+ts[t].ko?ts[t].ok/(ts[t].ok+ts[t].ko):null})).sort((a,b)=>(a.acc??2)-(b.acc??2));
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({l:"LMXJVSD"[(d.getDay()+6)%7],v:S.days[dkey(d)]?.seen||0,today:i===0})}
   const mx=Math.max(1,...days.map(d=>d.v));
@@ -1059,8 +1146,8 @@ function renderStats(){
    <div class="sect"><span class="label">Últimos 7 días</span></div>
    <div class="bars">${days.map(d=>`<div class="${d.today?"today":""}"><small>${d.v||""}</small><i class="${d.v?"":"zero"}" style="height:0" data-h="${d.v/mx*85}"></i><span>${d.l}</span></div>`).join("")}</div>
    <div class="sect"><span class="label">Memorización</span></div>
-   <div class="levels"><div><b>${unseen}</b><span class="label">Nuevas</span></div><div><b style="color:var(--terra)">${boxes[0]}</b><span class="label">Falladas</span></div>
-     <div><b style="color:var(--gold)">${learning}</b><span class="label">Aprendiendo</span></div><div><b style="color:var(--sage)">${mast}</b><span class="label">Dominadas</span></div></div>
+   <div class="levels"><div><b>${unseen}</b><span class="label">Nuevas</span></div><div><b style="color:var(--terra)">${boxes[0]}</b><span class="label">Por repasar</span></div>
+     <div><b style="color:var(--gold)">${learning}</b><span class="label">Aprendiendo</span></div><div><b style="color:var(--sage)">${mast}</b><span class="label">Consolidadas</span></div></div>
    <div class="stack"><i style="width:${pct(mast)}%;background:var(--sage)"></i><i style="width:${pct(learning)}%;background:var(--gold)"></i><i style="width:${pct(boxes[0])}%;background:var(--terra)"></i><i style="flex:1;background:var(--hair2)"></i></div>
    ${Object.keys(DECKS).map(d=>`<div class="sect"><span class="label">${DECKS[d].name} · de peor a mejor</span></div>
    ${rowsOf(d).map(r=>`<div class="trow"><div class="row"><span class="code">${tCode(r.t)}</span><span>${tName(r.t)}</span><span class="pct" style="color:${col(r.acc)}">${r.acc==null?"—":Math.round(r.acc*100)+"%"}</span></div>

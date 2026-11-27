@@ -652,6 +652,20 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .nav-txt{font-size:13.5px;line-height:1.52;color:rgba(244,239,230,.84);margin-top:3px}
 .nav-txt b{color:var(--gold2);font-weight:600}
 
+/* --- cabina viva --- */
+.vl-top{flex:none}
+.vl-top .ap-inst{width:min(100%,238px)}
+.vl-read{display:flex;justify-content:space-between;gap:6px;margin-top:11px;padding:0 2px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute2)}
+.vl-read b{color:var(--gold);font-weight:500;font-size:11.5px;letter-spacing:0}
+.vl-map{flex:none;width:min(100%,150px);margin:0 auto}
+.vl-map svg{display:block;width:100%;aspect-ratio:1}
+.vl-imc{flex:none;text-align:center;font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--mute);padding:6px 20px}
+.vl-bank{flex:none;position:relative;height:4px;width:112px;margin:0 auto;border-radius:2px;background:var(--track)}
+.vl-bank i{position:absolute;left:50%;top:-4px;width:12px;height:12px;margin-left:-6px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 10px var(--gold);transition:none}
+.vl-bank span{position:absolute;left:50%;top:-7px;width:1px;height:18px;margin-left:-.5px;background:var(--dash)}
+
 </style>
 </head>
 <body>
@@ -675,7 +689,7 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
     <symbol id="calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 7h7M8.5 12h2M13.5 12h2M8.5 16.5h2M13.5 16.5h2"/></symbol>
     <symbol id="dial" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4.5-3.5"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></symbol>
     <symbol id="stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><path d="M14.5 17h5M17 14.5v5"/></symbol>
-    <symbol id="vor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M12 3.2 L19 7.1 v7.8 L12 20.8 L5 16.9 V9.1 Z"/><circle cx="12" cy="12" r="3.2"/><path d="M12 1.6v2M12 20.4v2M3.2 6.8l1.7 1M19.1 16.2l1.7 1M3.2 17.2l1.7-1M19.1 7.8l1.7-1" stroke-linecap="round"/></symbol>\n    <symbol id="cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></symbol>
+    <symbol id="wing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5 C8 11 16 11 21 13.5"/><path d="M12 11.6V19"/><path d="M8.5 19h7"/><circle cx="12" cy="7.4" r="2"/></symbol>\n    <symbol id="vor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M12 3.2 L19 7.1 v7.8 L12 20.8 L5 16.9 V9.1 Z"/><circle cx="12" cy="12" r="3.2"/><path d="M12 1.6v2M12 20.4v2M3.2 6.8l1.7 1M19.1 16.2l1.7 1M3.2 17.2l1.7-1M19.1 7.8l1.7-1" stroke-linecap="round"/></symbol>\n    <symbol id="cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></symbol>
     <symbol id="split" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h5l3 5 3-5h5M3 17h5l3-5"/><circle cx="19" cy="7" r="2"/><circle cx="19" cy="17" r="2"/></symbol>
     <symbol id="seal" viewBox="0 0 120 120" fill="none" stroke="currentColor">
       <circle cx="60" cy="60" r="56" stroke-width="1.6"/><circle cx="60" cy="60" r="44" stroke-width=".8" stroke-dasharray="2 3"/>
@@ -751,6 +765,11 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
     <button class="link-row" onclick="aptOpen('nav')">
       <span class="ic"><svg><use href="#vor"/></svg></span>
       <span><b>Radionavegación</b><span>VOR, HSI y RMI · cortes y entradas en espera</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
+    <button class="link-row" onclick="aptOpen('vuelo')">
+      <span class="ic"><svg><use href="#wing"/></svg></span>
+      <span><b>Vuelo por radial</b><span>Intercepta y mantén, con mapa o a ciegas</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <button class="link-row" onclick="go('psico')">
@@ -1617,6 +1636,15 @@ const APTEX={
     tips:["Agrupa de dos en dos y dales sonido: K7 · M4 se retiene mejor cantado que leído.",
           "No memorices el orden si no te lo piden: memoriza la pareja.",
           "Si fallas, no persigas la ronda anterior; el nivel baja solo y vuelve a subir."]},
+  vuelo:{n:"Vuelo por radial",s:"Intercepta un radial y mantenlo, con mapa o a ciegas",ic:"wing",
+    unit:"% en ruta",timed:true,
+    cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
+         ["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"]],"hsi"],
+         ["mapa","Mapa",[["si","Con mapa"],["no","Modo IMC"]],"si"]],
+    tips:["El pulgar manda alabeo, y del alabeo sale el viraje: 25° a 180 kt son 3°/s, un viraje normalizado.",
+          "Se intercepta anticipando: empieza a nivelar cuando quedan unos pocos grados, no cuando la barra ya está centrada.",
+          "La puntuación es el porcentaje del tiempo TOTAL en ruta, así que capturar tarde también cuesta. No vale clavarla al final.",
+          "Cuando te salga con mapa, quítalo. El modo IMC es el ejercicio de verdad: es lo que tendrás en el simulador."]},
   nav:{n:"Radionavegación",s:"VOR, HSI y RMI: dónde estás, cortes y esperas",ic:"vor",
     unit:"% de acierto",
     cfg:[["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"],["rmi","RMI"],["mix","Mezcla"]],"hsi"],
@@ -1728,7 +1756,7 @@ function aptStart(){const ex=S.apt.last||"calc";
   $("aptStage").className="ap-stage"+(ex==="nav"?" scroll-y":"");
   dr={ex:ex,t0:Date.now(),n:0,ok:0,rt:[],fin:false,raf:0,raf2:0,to:0,iv:0};
   if(APTEX[ex].timed)dr.dur=aptCfg(ex,"dur")*1000;
-  ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin,trk:trkBegin,nav:navBegin})[ex]();
+  ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin,trk:trkBegin,nav:navBegin,vuelo:vueloBegin})[ex]();
   if(APTEX[ex].timed)aptTick()}
 function aptStop(){if(!dr)return;removeEventListener("resize",trkSize);
   cancelAnimationFrame(dr.raf);cancelAnimationFrame(dr.raf2);
@@ -2283,7 +2311,8 @@ function vorInd(radial,obs){
   const amb=Math.abs(Math.abs(d)-90)<2.5;        /* zona de ambigüedad: bandera OFF */
   const dev=to?nrm180(d-180):-d;
   return{to:to,from:!to,off:amb,dev:Math.max(-VORFS,Math.min(VORFS,dev)),
-    full:Math.abs(dev)>=VORFS,exacto:dev,puntos:Math.round(dev/VORDOT)}}
+    full:Math.abs(dev)>=VORFS,exacto:dev,
+    puntos:Math.round(Math.max(-VORFS,Math.min(VORFS,dev))/VORDOT)}}
 
 /* ¿hacia qué lado corrige el piloto? En el HSI siempre el lado de la aguja;
    en el CDI convencional se invierte si vuelas a más de 90° del OBS. */
@@ -2695,6 +2724,163 @@ function navTest(){const f=[];
 window.NAV_TEST=navTest;
 
 /* ============================================================
+   7 · VUELO POR RADIAL · la cabina viva
+   El mismo motor geométrico, pero con el tiempo encima. El pulgar manda
+   ALABEO, y del alabeo sale el régimen de viraje como en el avión:
+       grados/s = 1091 · tan(alabeo) / velocidad
+   Así 30° de alabeo a 240 kt dan 2,6°/s. Se intercepta anticipando y
+   saliendo del viraje antes de llegar; quien persigue la aguja entra en
+   péndulo igual que en el avión.
+
+   El paso de simulación (vueloPaso) está separado del pintado a propósito:
+   así se puede volar el ejercicio entero sin navegador y comprobar que es
+   realmente interceptable. VUELO_TEST() en la consola lo hace.
+   ============================================================ */
+const VLBANK=30;           /* alabeo máximo con el mando al tope */
+const VLNIVELA=14;         /* grados por segundo a los que nivela al soltar */
+const VLTOL=2.5;           /* en ruta = desvío por debajo de esto */
+const VLGS=240;            /* velocidad respecto al suelo, kt */
+
+/* Escenario. La velocidad angular del radial es V/D: a 180 kt y 12 NM son
+   0,24°/s, y cerrar 30° pasaba de dos minutos volando perpendicular, así que
+   el ejercicio era materialmente imposible. De 6 a 11 NM, 240 kt y un desvío
+   inicial de 10 a 20°, con el corte ya establecido, cierra en menos de un
+   minuto y deja tiempo de sobra para sujetarlo. */
+function vueloEscenario(){
+  const T=R(1,36)*10,hacia=Math.random()<.5,obs=hacia?nrm(T+180):T;
+  const sgn=pickR([1,-1]),off=R(10,20)*sgn,rad0=nrm(T+off),d0=R(6,11),corte=R(30,50);
+  return{T:T,hacia:hacia,obs:obs,gs:VLGS,
+    px:d0*Math.sin(rad0*Math.PI/180),py:d0*Math.cos(rad0*Math.PI/180),esc:72/d0,
+    hd:nrm(hacia?obs+corte*sgn:obs-corte*sgn),
+    bank:0,sx:0,sy:0,sid:null,dos:false,lt:0,last:0,
+    on:0,tt:0,sd:0,sn:0,cap:null,inside:null}}
+
+/* un paso de simulación: toca solo el estado, nada del DOM */
+function vueloPaso(dt){
+  const pide=dr.sid!=null?dr.sx*VLBANK:0;
+  const paso=(dr.sid!=null?60:VLNIVELA)*dt;
+  dr.bank+=Math.max(-paso,Math.min(paso,pide-dr.bank));
+  dr.hd=nrm(dr.hd+1091*Math.tan(dr.bank*Math.PI/180)/dr.gs*dt);
+  const v=dr.gs/3600*dt;
+  dr.px+=v*Math.sin(dr.hd*Math.PI/180);dr.py+=v*Math.cos(dr.hd*Math.PI/180);
+  const radial=nrm(Math.atan2(dr.px,dr.py)*180/Math.PI),dist=Math.hypot(dr.px,dr.py);
+  const ind=vorInd(radial,dr.obs);
+  dr.tt+=dt;
+  const enRuta=Math.abs(ind.exacto)<=VLTOL&&!ind.off;
+  if(enRuta){dr.on+=dt;if(dr.cap===null)dr.cap=dr.tt}
+  if(dr.cap!==null){dr.sd+=Math.abs(ind.exacto)*dt;dr.sn+=dt}
+  return{radial:radial,dist:dist,ind:ind,enRuta:enRuta}}
+
+function vueloBegin(){
+  Object.assign(dr,vueloEscenario());
+  dr.mapa=aptCfg("vuelo","mapa")==="si";
+  const ins=aptCfg("vuelo","ins");dr.ins=ins;
+  $("aptStage").className="ap-stage";
+  $("aptStage").innerHTML=
+    '<div class="vl-top">'+(ins==="cdi"?navCDILive():navHSILive())+
+      '<div class="vl-read" id="vlRead"></div></div>'+
+    (dr.mapa?'<div class="vl-map" id="vlMap">'+vueloMapa(dr.T)+'</div>':
+      '<div class="vl-imc">Modo IMC · sin mapa. Solo el instrumento.</div>')+
+    '<div class="ap-stick" id="apStick"><span class="lb">Apoya el pulgar · izquierda y derecha = alabeo</span>'+
+      '<i class="base" id="apBase"></i><i class="knob" id="apKnob"></i></div>'+
+    '<div class="vl-bank"><i id="vlBank"></i><span></span></div>';
+  trkBind();
+  dr.raf2=requestAnimationFrame(vueloLoop)}
+
+/* --- instrumentos en vivo: se construyen UNA vez y luego solo se mueven los
+       grupos con setAttribute; rehacer el SVG entero cada fotograma tiraría la
+       fluidez en el móvil --- */
+function navRosa(){let t="";
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
+    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
+    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
+      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
+  return t}
+function navHSILive(){let t='<g id="lvCard">'+navRosa()+
+  '<g id="lvCourse"><path d="M120 38 l7 12 h-14 z" fill="#d9b77e"/>'+
+  '<line x1="120" y1="50" x2="120" y2="74" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>'+
+  '<line x1="120" y1="166" x2="120" y2="196" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>';
+  for(let k=-2;k<=2;k++)if(k)t+='<circle cx="'+(120+k*17)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.55)"/>';
+  t+='<line id="lvBar" x1="120" y1="78" x2="120" y2="162" stroke="#d9b77e" stroke-width="4" stroke-linecap="round"/>'+
+     '<path id="lvTo" d="M120 96 l6 10 h-12 z" fill="#f4efe6"/>'+
+     '<path id="lvFrom" d="M120 144 l6 -10 h-12 z" fill="#f4efe6"/></g></g>'+
+     '<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>'+
+     '<path d="M104 120 h32 M120 108 v30" stroke="#f0d6a6" stroke-width="2.6" stroke-linecap="round"/>'+
+     '<circle cx="120" cy="120" r="3" fill="#f0d6a6"/>';
+  return instSVG(t)}
+function navCDILive(){let t='<g id="lvCard">'+navRosa()+'</g><path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
+  for(let k=-5;k<=5;k++)if(k)t+='<circle cx="'+(120+k*12)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.5)"/>';
+  t+='<line id="lvBar" x1="120" y1="58" x2="120" y2="182" stroke="#f4efe6" stroke-width="3.6" stroke-linecap="round"/>'+
+     '<path id="lvTo" d="M120 80 l7 12 h-14 z" fill="#9cc5a1"/>'+
+     '<path id="lvFrom" d="M120 160 l7 -12 h-14 z" fill="#d9b77e"/>';
+  return instSVG(t)}
+/* mapa norte arriba, como una carta: lo único que se mueve es el avión */
+function vueloMapa(T){let t="";
+  for(let i=0;i<12;i++)t+=instTK(i*30,106,100,1,"rgba(232,226,214,.25)");
+  t+='<text x="120" y="14" font-size="9" text-anchor="middle" fill="rgba(232,226,214,.45)">N</text>';
+  t+=navLine(120,120,T,10,96,"#d9b77e",false,"R-"+hdg(T));
+  t+=navLine(120,120,nrm(T+180),10,96,"rgba(217,183,126,.35)",true,null);
+  t+=navVOR(120,120);
+  return '<svg viewBox="0 0 240 240">'+t+'<g id="vmPlane">'+navPlane(120,120,0,"#f0d6a6",.52)+'</g></svg>'}
+
+function vueloPinta(e,now){
+  const card=$("lvCard"),cur=$("lvCourse"),bar=$("lvBar"),to=$("lvTo"),fr=$("lvFrom"),ind=e.ind;
+  if(dr.ins==="cdi"){if(card)card.setAttribute("transform","rotate("+(-dr.obs)+" 120 120)");
+    if(bar){bar.setAttribute("transform","translate("+(ind.dev/VORFS*60).toFixed(1)+" 0)");
+      bar.setAttribute("stroke",ind.off?"#8a93a6":"#f4efe6")}}
+  else{if(card)card.setAttribute("transform","rotate("+(-dr.hd)+" 120 120)");
+    if(cur)cur.setAttribute("transform","rotate("+dr.obs+" 120 120)");
+    if(bar){bar.setAttribute("transform","translate("+(ind.dev/VORFS*34).toFixed(1)+" 0)");
+      bar.setAttribute("stroke",ind.off?"#8a93a6":e.enRuta?"#9cc5a1":"#d9b77e")}}
+  if(to)to.style.opacity=ind.off||!ind.to?0:1;
+  if(fr)fr.style.opacity=ind.off||ind.to?0:1;
+  if(now-dr.last>120){dr.last=now;
+    const r=$("vlRead");
+    if(r)r.innerHTML='<span>DME <b>'+e.dist.toFixed(1)+'</b></span><span>R <b>'+hdg(e.radial)+
+      '</b></span><span>RBO <b>'+hdg(dr.hd)+'</b></span><span>EN RUTA <b>'+
+      (dr.tt?Math.round(dr.on/dr.tt*100):0)+'</b>%</span>';
+    const b=$("vlBank");if(b)b.style.transform="translateX("+(dr.bank/VLBANK*46).toFixed(1)+"px)";
+    $("aptCount").innerHTML="<b>"+(dr.tt?Math.round(dr.on/dr.tt*100):0)+"</b> %"}
+  /* mapa: escala fija desde el arranque para que no dé saltos; si el avión se
+     va fuera del círculo se pega al borde en vez de desaparecer */
+  if(dr.mapa){const p=$("vmPlane");
+    if(p){let ex=dr.px*dr.esc,ey=-dr.py*dr.esc;const m=Math.hypot(ex,ey);
+      if(m>102){ex*=102/m;ey*=102/m}
+      p.setAttribute("transform","translate("+ex.toFixed(1)+" "+ey.toFixed(1)+
+        ") rotate("+Math.round(dr.hd)+" 120 120)")}}}
+
+function vueloLoop(){if(!dr||dr.fin)return;
+  const now=Date.now(),dt=Math.min(.06,(now-(dr.lt||now))/1000);dr.lt=now;
+  vueloPinta(vueloPaso(dt),now);
+  dr.raf2=requestAnimationFrame(vueloLoop)}
+
+/* ============ PRUEBA DE VUELO SIN NAVEGADOR ============
+   Vuela el ejercicio completo con un piloto proporcional. Si un automático
+   sencillo no captura, el escenario no es interceptable y no vale de nada.
+   window.VUELO_TEST() devuelve el resumen. */
+function vueloTest(n,dur){const guarda=dr,res=[];
+  for(let s=0;s<(n||30);s++){
+    dr=Object.assign({fin:false},vueloEscenario());
+    dr.sid=1;
+    const dt=1/30,pasos=(dur||180)/dt;
+    for(let i=0;i<pasos;i++){
+      const radial=nrm(Math.atan2(dr.px,dr.py)*180/Math.PI),ind=vorInd(radial,dr.obs);
+      const corte=Math.max(-45,Math.min(45,ind.exacto*4));
+      dr.sx=Math.max(-1,Math.min(1,nrm180(nrm(dr.obs+corte)-dr.hd)/20));
+      vueloPaso(dt)}
+    res.push({enRuta:Math.round(dr.on/dr.tt*100),captura:dr.cap==null?null:Math.round(dr.cap),
+      desvio:dr.sn?+(dr.sd/dr.sn).toFixed(2):null})}
+  dr=guarda;
+  const cap=res.filter(x=>x.captura!=null);
+  return{casos:res.length,sin_captura:res.length-cap.length,
+    captura_media_s:cap.length?Math.round(cap.reduce((a,b)=>a+b.captura,0)/cap.length):null,
+    en_ruta_medio:Math.round(res.reduce((a,b)=>a+b.enRuta,0)/res.length),
+    peor_en_ruta:Math.min.apply(null,res.map(x=>x.enRuta))}}
+window.VUELO_TEST=vueloTest;
+
+/* ============================================================
    MARCADOR
    ============================================================ */
 let drRes=null;
@@ -2729,6 +2915,17 @@ function aptEnd(){if(!dr)return;
       rms>.3?"Mucho péndulo: corriges de más y vuelves a salir por el otro lado":
       cAcc!==null&&cAcc<.6?"Pilotas bien pero el cálculo se cae; ese reparto es justo lo que miden":
       onp>.8?"Muy centrado. Sube la dificultad o mete el cálculo":""}
+  if(ex==="vuelo"){const frac=dr.tt?dr.on/dr.tt:0;
+    score=Math.round(frac*100);unit="%";
+    const med=dr.sn?dr.sd/dr.sn:null;
+    rows=[["En ruta",Math.round(frac*100)+" %"],
+          ["Capturas en",dr.cap==null?"—":aptMMSS(Math.round(dr.cap))],
+          ["Desvío medio",med==null?"—":med.toFixed(1)+"°"],
+          ["Curso",hdg(dr.obs)]];
+    extra=dr.cap==null?"No llegaste a centrar la barra. Mete corte: con 30° o 45° se cierra mucho más rápido que persiguiéndola de lado.":
+      med!=null&&med>4?"Capturas pero no la sujetas: estás corrigiendo de más. Alabeos pequeños, de 5° a 10°, una vez en ruta.":
+      dr.cap>dr.tt*.5?"Tardaste más de medio ejercicio en capturar: el corte inicial se te quedó corto.":
+      frac>.75?"Muy bien sujeta. Quita el mapa y repítelo en IMC.":""}
   if(ex==="nav"){score=acc;unit="%";
     rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]];
     let peor=null;

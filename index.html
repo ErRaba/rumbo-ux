@@ -262,6 +262,14 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .front .rose{position:absolute;right:-70px;bottom:-60px;width:300px;height:300px;opacity:.07;color:var(--gold);pointer-events:none}
 .front .head{padding:26px 26px 18px;display:flex;justify-content:space-between;align-items:flex-start}
 .front .code{font-family:var(--mono);font-size:44px;font-weight:400;color:var(--gold);letter-spacing:-.02em;line-height:1}
+.front .tbar{padding:0 26px 16px;margin-top:-6px}
+.front .tbar .trk{display:flex;gap:2px;height:5px;border-radius:5px;overflow:hidden;background:rgba(237,231,220,.08)}
+.front .tbar .trk i{display:block;height:100%;border-radius:5px;transition:width .6s cubic-bezier(.3,1,.4,1)}
+.front .tbar .trk i.n{flex:1;background:rgba(237,231,220,.14)}
+.front .tbar .nums{display:flex;gap:10px;margin-top:7px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;color:var(--ivory);opacity:.75}
+.front .tbar .nums b{font-weight:500}.front .tbar .nums .tot{margin-left:auto;opacity:.8}
+.front.xdense .tbar,.front.xxdense .tbar{padding-bottom:10px}
+.cta.dis{opacity:.35;pointer-events:none}
 .front .subject{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ivory);opacity:.75;margin-top:10px}
 .front .meta{text-align:right;flex:none;white-space:nowrap;padding-left:12px}
 .front .meta .label{display:block}
@@ -803,7 +811,7 @@ const availTopics=d=>deckTopics(d).filter(t=>Q.some(q=>q.t===t&&varOk(q)));
 function updStart(){const d=S.settings.deck,av=availTopics(d),sel=S.settings.topics[d].filter(t=>av.includes(t)),n=sel.length,all=n===av.length;
   const nq=pool().length;
   $("allBtn").textContent=all?"Ninguna":"Todas";
-  $("startBtn").style.opacity=nq?1:.35;$("startBtn").style.pointerEvents=nq?"auto":"none";
+  $("startBtn").classList.toggle("dis",!nq);
   $("startSub").textContent=nq?`· ${nq} tarjetas`:"· elige tema"}
 function toggleAll(){const d=S.settings.deck,av=availTopics(d);S.settings.topics[d]=S.settings.topics[d].filter(t=>av.includes(t)).length===av.length?[]:av.slice();save();renderSetup()}
 function seg(id,key,cast=String,after){const el=$(id),pill=el.querySelector(".pill");
@@ -847,12 +855,39 @@ function pickCard(){
   let r=Math.random()*w.reduce((a,b)=>a+b,0);for(let i=0;i<cand.length;i++){r-=w[i];if(r<=0)return{q:cand[i]}}return{q:cand[0]};
 }
 const L4="ABCDEF";
+/* barajar opciones: cada vez que sale una tarjeta cambia el orden (nunca igual que la vez anterior).
+   "All of the above"/"None of these" y "Both A and B are correct" se quedan en su sitio;
+   en estas últimas se reescriben las letras para que apunten a las opciones en el nuevo orden. */
+const PIN_RE=/\b(all|none|both|any|neither) of (the )?(above|these|them|those)\b|\ball the above\b|\b(todas|ninguna) (de )?las anteriores\b/i;
+const REF_RE=/^(Both |Las respuestas )([A-F])( and | y )([A-F])( are correct| son correctas)(\.?)$/;
+function shuffleFor(q){const n=q.o.length,fixed=q.o.map(o=>PIN_RE.test(o)||REF_RE.test(o)),free=[];
+  q.o.forEach((o,i)=>{if(!fixed[i])free.push(i)});
+  const prev=(S.pm&&S.pm[q.id])||"0123456789".slice(0,n),pa=prev.indexOf(String(q.a));let perm;
+  for(let t=0;t<40;t++){const f=free.slice();for(let i=f.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[f[i],f[j]]=[f[j],f[i]]}
+    let k=0;perm=q.o.map((o,i)=>fixed[i]?i:f[k++]);
+    if(free.length<2||(perm.join("")!==prev&&(fixed[q.a]||perm.indexOf(q.a)!==pa)))break}   // la correcta cambia de letra
+  (S.pm||(S.pm={}))[q.id]=perm.join("");return perm}
+/* texto de la opción original j, con las letras de "Both A and B" ya traducidas al orden mostrado */
+function optTxt(src,j){const t=src.o[j],m=String(t).match(REF_RE);if(!m||!ses.perm)return t;
+  const d=[m[2],m[4]].map(L=>L4[ses.perm.indexOf(L4.indexOf(L))]).sort();return m[1]+d[0]+m[3]+d[1]+m[5]+m[6]}
+const shown=j=>ses.perm.indexOf(j);           // posición mostrada de la opción original j
+/* barra de la asignatura: bien (última respuesta acertada), mal (última fallada) y sin contestar */
+function topicBar(t){let tot=0,ok=0,ko=0;
+  for(const q of Q){if(q.t!==t||!varOk(q))continue;tot++;const c=S.cards[q.id];if(c&&c.seen){c.box>0?ok++:ko++}}
+  const w=v=>tot?v/tot*100:0;
+  return`<div class="trk"><i style="width:${w(ok)}%;background:var(--sage)"></i><i style="width:${w(ko)}%;background:var(--terra)"></i><i class="n"></i></div>
+   <div class="nums"><span style="color:var(--sage)"><b>${ok}</b> bien</span><span style="color:var(--terra)"><b>${ko}</b> mal</span><span><b>${tot-ok-ko}</b> sin contestar</span><span class="tot">${tot}</span></div>`}
+function updTopicBar(){const b=$("stage").firstChild&&$("stage").firstChild.querySelector(".tbar");if(!b||!ses.cur)return;
+  const n=document.createElement("div");n.innerHTML=topicBar(ses.cur.t);
+  const old=b.querySelectorAll(".trk i"),nw=n.querySelectorAll(".trk i");old.forEach((e,i)=>e.style.width=nw[i].style.width);
+  b.querySelector(".nums").replaceWith(n.querySelector(".nums"))}
 function barcode(seed){let s="",x=seed*9301+49297;for(let i=0;i<34;i++){x=(x*9301+49297)%233280;s+=`<i style="width:${1+(x%3)}px;opacity:${.4+(x%5)/8}"></i>`}return s}
 const flightNo=q=>"UX "+String(q.n).padStart(4,"0");
 const varLabel=q=>q.v?`<span class="vtag">${q.v==="MAX"?"737 MAX":"737-"+q.v}</span>`:"";
 function nextCard(){
   if(ses.len&&ses.n>=ses.len&&!ses.relearn.length)return finish();
   const{q,relearn}=pickCard();Object.assign(ses,{cur:q,flipped:false,locked:false,timedOut:false,choice:null,leaving:false});ses.recent.push(q.id);
+  ses.perm=shuffleFor(q);const P=ses.perm;
   const c=S.cards[q.id];
   const flag=relearn?'<span class="flag again">↻ De nuevo</span>':(c&&c.ko>0&&c.box<MASTER?'<span class="flag">● Fallada antes</span>':"");
   $("count").innerHTML=`<b>${pad(ses.n+1)}</b> / ${ses.len?pad(ses.len):"∞"}`;
@@ -865,17 +900,18 @@ function nextCard(){
       <svg class="rose"><use href="#rose"/></svg>
       <div class="head"><div><div class="code">${tCode(q.t)}</div><div class="subject">${tName(q.t)}${varLabel(q)}</div></div>
         <div class="meta"><span class="label">Vuelo</span><b>${flightNo(q)}</b></div></div>
+      <div class="tbar">${topicBar(q.t)}</div>
       <div class="perf"></div>
       <div class="body">${flag}<div class="q">${qHTML(q.q)}</div>
         ${q.img&&FIG[q.img]?`<button class="fig" data-fig="${q.img}"><img src="${FIG[q.img]}" alt="Figura"><span>Ampliar figura</span></button>`:""}
-        <div class="opts">${q.o.map((o,i)=>`<button class="op" data-i="${i}"><span class="lt">${L4[i]}</span><span class="tx">${esc(o)}</span></button>`).join("")}</div>
+        <div class="opts">${P.map((j,i)=>`<button class="op" data-i="${i}"><span class="lt">${L4[i]}</span><span class="tx">${esc(optTxt(q,j))}</span></button>`).join("")}</div>
       </div>
       <div class="foot"><span class="tap"><i></i>ELIGE UNA RESPUESTA</span><span class="barcode">${barcode(q.n)}</span></div>
     </div>
     <div class="face back">
       <div class="head"><span class="label bkLabel">Respuesta</span><span class="tag">${flightNo(q)} · ${tCode(q.t)}</span></div>
       <div class="body"><div class="qmini">${esc(q.q)}</div><div class="kicker bkKick"></div>
-        <div class="a"><span class="lt">${L4[q.a]}</span><span>${esc(q.o[q.a])}</span></div>
+        <div class="a"><span class="lt">${L4[shown(q.a)]}</span><span>${esc(optTxt(q,q.a))}</span></div>
         ${q.why?`<div class="why">${esc(q.why)}</div>`:""}${q.chk?`<div class="chk">Respuesta por verificar</div>`:""}</div>
       <svg class="seal"><use href="#seal"/></svg>
       <div class="foot"><span class="src">${esc(q.src||"")}</span><span>TOCA PARA SEGUIR →</span></div>
@@ -902,15 +938,15 @@ function moreState(el){const b=el.querySelector(".front .body"),m=el.querySelect
 function setHint(t){const h=$("hint");h.textContent=t;h.style.opacity=t?1:0}
 /* elegir opción: corrige al instante y gira la tarjeta */
 function choose(i){if(!ses||ses.flipped||ses.locked)return;ses.choice=i;
-  const q=ses.cur,ok=i===q.a,card=$("stage").firstChild;
+  const q=ses.cur,ok=ses.perm[i]===q.a,card=$("stage").firstChild;
   card.querySelectorAll(".op").forEach(b=>b.classList.toggle("picked",+b.dataset.i===i));
   tick(1300,.04);grade(ok);setTimeout(flip,280)}
 function flip(){if(ses.flipped)return;ses.flipped=true;stopTimer();sFlip();buzz(8);
-  const q=ses.cur,card=$("stage").firstChild,ok=!ses.timedOut&&ses.choice===q.a;
+  const q=ses.cur,card=$("stage").firstChild,ok=!ses.timedOut&&ses.choice!=null&&ses.perm[ses.choice]===q.a;
   const k=card.querySelector(".bkKick"),lab=card.querySelector(".bkLabel");
   if(ses.timedOut){k.innerHTML='<b class="ko">Se acabó el tiempo.</b> La correcta era:';lab.textContent="Tiempo agotado"}
   else if(ok){k.innerHTML='<b class="ok">Correcto.</b> Bien visto.'}
-  else{k.innerHTML=`<b class="ko">Marcaste ${L4[ses.choice]}:</b> <s>${esc(q.o[ses.choice])}</s><br>La correcta es:`}
+  else{k.innerHTML=`<b class="ko">Marcaste ${L4[ses.choice]}:</b> <s>${esc(optTxt(q,ses.perm[ses.choice]))}</s><br>La correcta es:`}
   card.classList.add("flipped",ok?"is-ok":"is-ko");
   const bar=$("ansBtns");
   const hasTr=!!TRAD[q.id];bar.classList.toggle("has-tr",hasTr);$("trBtn").classList.add("off");
@@ -940,7 +976,7 @@ function grade(ok){
     if(ses.combo%5===0){setTimeout(()=>sCombo(ses.combo),150);floatTxt(`×${ses.combo} seguidas`);confetti(22)}
   }else{c.ko++;d.ko=(d.ko||0)+1;c.box=0;ses.ko++;ses.combo=0;sKo();buzz([25,40,25]);cm.className="combo";
     ses.relearn.push({q,at:ses.n+3});}
-  if(ses.best>S.bestCombo)S.bestCombo=ses.best;save();
+  if(ses.best>S.bestCombo)S.bestCombo=ses.best;save();updTopicBar();
   $("prog").style.width=(ses.len?Math.min(100,ses.n/ses.len*100):(ses.n%10)*10)+"%";
   if(d.seen===S.goal){setTimeout(()=>{floatTxt("Objetivo diario");confetti(50)},700)}
   const stAfter=stageIdx(progress());if(stAfter>stBefore){setTimeout(()=>{floatTxt("Escala: "+STAGES[stAfter].n);confetti(60);sCombo(20)},900)}
@@ -954,8 +990,8 @@ const TRAD=window.TRAD||{};let trOn=false;
 function trReset(){trOn=false;$("trBtn").classList.remove("on");$("trBtn").classList.toggle("off",!TRAD[ses.cur.id])}
 function trSet(on){if(!ses||!ses.cur||on===trOn)return;const t=TRAD[ses.cur.id];if(!t)return;trOn=on;if(on)S.uso.tr++;
   const q=ses.cur,c=$("stage").firstChild,src=on?t:q,put=(sel,txt,f=esc)=>{const n=c&&c.querySelector(sel);if(n&&txt!=null){n.innerHTML=f(txt);n.animate&&n.animate([{opacity:.2},{opacity:1}],{duration:200,easing:"ease-out"})}};
-  put(".front .q",src.q,qHTML);c.querySelectorAll(".op .tx").forEach((n,i)=>put(`.op[data-i="${i}"] .tx`,src.o[i]));
-  put(".back .qmini",src.q);put(".back .a span:last-child",src.o[q.a]);if(ses.choice!=null)put(".bkKick s",src.o[ses.choice]);
+  put(".front .q",src.q,qHTML);c.querySelectorAll(".op .tx").forEach((n,i)=>put(`.op[data-i="${i}"] .tx`,optTxt(src,ses.perm[i])));
+  put(".back .qmini",src.q);put(".back .a span:last-child",optTxt(src,q.a));if(ses.choice!=null)put(".bkKick s",optTxt(src,ses.perm[ses.choice]));
   if(q.why)put(".back .why",on&&t.why?t.why:q.why);
   document.querySelectorAll(".trbtn,.ab.tr").forEach(b=>b.classList.toggle("on",on));$("trBtn").querySelector(".lb").textContent=on?"En castellano":"Mantén para traducir";if(on)buzz(6);
   if(on&&!ses.flipped)fitCard(c)}

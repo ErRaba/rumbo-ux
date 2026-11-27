@@ -506,7 +506,7 @@ html[data-theme=day]{
   --cardsh:0 34px 60px -28px rgba(20,33,61,.5),0 2px 6px rgba(20,33,61,.08);
   --figdim:none}
 /* islas que conservan la laca nocturna también de día */
-html[data-theme=day] :is(.front,.answer-btns,.trbtn,.cta,.morph,.figview,.deck){
+html[data-theme=day] :is(.front,.answer-btns,.trbtn,.cta,.morph,.figview,.deck,.ap-panel,.ap-inst){
   --ink:#070b14;--ivory:#f4efe6;--hair:rgba(217,183,126,.16);--hair2:rgba(244,239,230,.08);--mute:#8a93a6;--mute2:#5d6679;
   --gold:#d9b77e;--gold2:#f0d6a6;--gold3:#a8854f;--sage:#9cc5a1;--terra:#de8f7b}
 html[data-theme=day] .perf::before,html[data-theme=day] .perf::after{background:#efe8dc}
@@ -522,6 +522,84 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
 
 .confetti{position:fixed;top:-12px;width:6px;height:12px;z-index:50;pointer-events:none;border-radius:1px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(800deg)}}
+/* ===== PSICOTÉCNICO · APTITUDES ===== */
+.ap-head{margin-bottom:4px}
+.ap-mini{display:flex;gap:16px;align-items:baseline;margin-top:7px}
+.ap-mini span{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute2)}
+.ap-mini b{font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:500;letter-spacing:.04em}
+.ap-spark{display:flex;align-items:flex-end;gap:2px;height:16px;margin-left:auto}
+.ap-spark i{width:3px;border-radius:1px;background:var(--gold3);opacity:.55}
+.ap-spark i:last-child{background:var(--gold);opacity:1}
+.ap-note{font-family:var(--serif);font-style:italic;font-size:13.5px;line-height:1.45;color:var(--mute);margin-top:12px}
+.ap-tips{margin-top:10px;border-top:1px solid var(--hair2)}
+.ap-tips div{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--hair2);font-size:13px;line-height:1.4;color:rgba(244,239,230,.74)}
+html[data-theme=day] .ap-tips div{color:rgba(20,33,61,.72)}
+.ap-tips div::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--gold);margin-top:6px}
+
+/* --- cabina del ejercicio --- */
+.ap-stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;min-height:0;padding:8px 0}
+.ap-panel{position:relative;border-radius:20px;padding:22px 20px;color:var(--ivory);background:linear-gradient(170deg,var(--lacquer),var(--lacquer2));
+  box-shadow:0 0 0 1px rgba(217,183,126,.16) inset,var(--cardsh)}
+.ap-panel .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:12px}
+.ap-q{font-family:var(--serif);font-weight:350;font-size:25px;line-height:1.24;letter-spacing:-.01em;text-wrap:pretty}
+.ap-q em{font-style:italic;color:var(--gold2)}
+.ap-q.num{font-family:var(--mono);font-size:34px;letter-spacing:.02em;font-weight:300}
+.ap-sub{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute2);margin-top:10px}
+
+.ap-ops{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ap-ops.one{grid-template-columns:1fr}
+.ap-op{height:62px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:9px;
+  font-family:var(--mono);font-size:17px;letter-spacing:.02em;color:var(--ivory);
+  background:rgba(255,255,255,.015);box-shadow:0 0 0 1px var(--hair) inset;transition:transform .12s,background .2s,box-shadow .2s,color .2s}
+.ap-op.txt{height:auto;min-height:58px;padding:12px 14px;font-family:var(--sans);font-size:13.5px;line-height:1.32;text-align:center}
+.ap-op .k{font-family:var(--mono);font-size:10px;color:var(--gold3);letter-spacing:.1em}
+.ap-op:active{transform:scale(.97);background:rgba(217,183,126,.08)}
+.ap-op.ok{background:rgba(156,197,161,.16);box-shadow:0 0 0 1px var(--sage) inset;color:var(--sage)}
+.ap-op.ko{background:rgba(222,143,123,.14);box-shadow:0 0 0 1px var(--terra) inset;color:var(--terra)}
+.ap-op.dim{opacity:.35}
+
+/* --- instrumentos --- */
+.ap-inst{display:block;width:min(100%,286px);margin:0 auto;aspect-ratio:1;filter:drop-shadow(0 26px 40px rgba(0,0,0,.6))}
+.ap-inst text{font-family:var(--mono);fill:#e8e2d6}
+.ap-instname{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute2);margin-top:14px}
+
+/* --- memoria --- */
+.ap-pairs{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:10px}
+.ap-pair{height:76px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:rgba(255,255,255,.02);box-shadow:0 0 0 1px var(--hair) inset;animation:apIn .4s backwards}
+.ap-pair b{font-family:var(--mono);font-size:25px;color:var(--gold2);font-weight:400;line-height:1}
+.ap-pair span{font-family:var(--mono);font-size:19px;color:var(--ivory);line-height:1}
+@keyframes apIn{from{opacity:0;transform:translateY(8px) scale(.96)}}
+.ap-hold{display:grid;place-items:center;height:160px}
+.ap-hold b{font-family:var(--serif);font-size:72px;font-weight:250;color:var(--gold2);line-height:1}
+.ap-lvl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute2);text-align:center;margin-top:14px}
+
+/* --- doble tarea --- */
+.ap-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.ap-g{position:relative;height:124px;border-radius:13px;overflow:hidden;background:rgba(255,255,255,.015);
+  box-shadow:0 0 0 1px var(--hair) inset;transition:box-shadow .15s,background .15s}
+.ap-g .band{position:absolute;left:0;right:0;top:38%;height:24%;background:rgba(156,197,161,.13);border-top:1px solid rgba(156,197,161,.3);border-bottom:1px solid rgba(156,197,161,.3)}
+.ap-g .nd{position:absolute;left:5px;right:5px;height:2px;border-radius:2px;background:var(--gold);box-shadow:0 0 10px var(--gold);top:50%;transform:translateY(-50%)}
+.ap-g .lb{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--mute2)}
+.ap-g.warn{background:rgba(222,143,123,.14);box-shadow:0 0 0 1.5px var(--terra) inset;animation:apPulse .7s infinite}
+.ap-g.warn .nd{background:var(--terra);box-shadow:0 0 12px var(--terra)}
+.ap-g.hit{box-shadow:0 0 0 1.5px var(--sage) inset;background:rgba(156,197,161,.14)}
+@keyframes apPulse{50%{background:rgba(222,143,123,.26)}}
+.ap-dualq{margin-top:4px}
+html[data-theme=day] .ap-g .band{background:rgba(63,122,75,.15);border-color:rgba(63,122,75,.42)}
+html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
+
+/* --- marcador --- */
+.ap-res{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.ap-res .big{font-family:var(--serif);font-weight:250;font-size:104px;line-height:.92;letter-spacing:-.05em;color:var(--gold2);font-variation-settings:"opsz" 144}
+.ap-res .big small{font-size:34px;letter-spacing:0;color:var(--mute)}
+.ap-res .msg{font-family:var(--serif);font-style:italic;font-size:21px;margin-top:8px}
+.ap-res .delta{margin-top:18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.ap-res .delta b{color:var(--gold2);font-weight:500}
+.ap-res .stats-grid{text-align:left;margin-top:26px}
+.ap-clock{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--gold);min-width:52px;text-align:right}
+.ap-clock.low{color:var(--terra);animation:apPulse .9s infinite}
+
 </style>
 </head>
 <body>
@@ -542,6 +620,10 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     <symbol id="bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></symbol>
     <symbol id="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
     <symbol id="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 7h7M8.5 12h2M13.5 12h2M8.5 16.5h2M13.5 16.5h2"/></symbol>
+    <symbol id="dial" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4.5-3.5"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><path d="M14.5 17h5M17 14.5v5"/></symbol>
+    <symbol id="split" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h5l3 5 3-5h5M3 17h5l3-5"/><circle cx="19" cy="7" r="2"/><circle cx="19" cy="17" r="2"/></symbol>
     <symbol id="seal" viewBox="0 0 120 120" fill="none" stroke="currentColor">
       <circle cx="60" cy="60" r="56" stroke-width="1.6"/><circle cx="60" cy="60" r="44" stroke-width=".8" stroke-dasharray="2 3"/>
       <path id="sealArc" d="M60 60 m-49 0 a49 49 0 1 1 98 0 a49 49 0 1 1 -98 0" stroke="none"/>
@@ -610,6 +692,12 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     <button class="link-row" onclick="quickAll()">
       <span class="ic"><svg><use href="#bolt"/></svg></span>
       <span><b>Ráfaga de 10</b><span id="burstSub">Cuaderno actual, modo inteligente</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
+    <div class="sect"><span class="label">Selección</span></div>
+    <button class="link-row" onclick="go('psico')">
+      <span class="ic"><svg><use href="#dial"/></svg></span>
+      <span><b>Psicotécnico</b><span id="aptSub">Cálculo, instrumentos, memoria y doble tarea</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
   </div>
@@ -715,6 +803,49 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
   </div>
   <div class="scroll" id="statsBody"></div>
 </section>
+
+<!-- ================= PSICOTÉCNICO ================= -->
+<section class="screen" id="psico">
+  <div class="nav">
+    <button class="circle-btn" onclick="go('home')" aria-label="Volver"><svg><use href="#back"/></svg></button>
+    <span class="label">Aptitudes</span><span style="width:42px"></span>
+  </div>
+  <div class="scroll" id="psicoBody"></div>
+</section>
+
+<!-- ================= AJUSTES DEL EJERCICIO ================= -->
+<section class="screen" id="aptset">
+  <div class="nav">
+    <button class="circle-btn" onclick="go('psico')" aria-label="Volver"><svg><use href="#back"/></svg></button>
+    <span class="label" id="aptSetLbl">Ejercicio</span><span style="width:42px"></span>
+  </div>
+  <div class="scroll" id="aptSetBody"></div>
+  <div class="footer"><button class="cta" onclick="aptStart()"><span>Empezar<small id="aptSetSub"></small></span><span class="arrow"><svg><use href="#arrow"/></svg></span></button></div>
+</section>
+
+<!-- ================= EJERCICIO EN MARCHA ================= -->
+<section class="screen" id="drill">
+  <div class="hud">
+    <button class="circle-btn" onclick="aptQuit()" aria-label="Terminar"><svg><use href="#close"/></svg></button>
+    <div class="count" id="aptCount"><b>01</b></div>
+    <div class="ap-clock" id="aptClock">—</div>
+  </div>
+  <div class="track"><i id="aptProg"></i></div>
+  <div class="ap-stage" id="aptStage"></div>
+</section>
+
+<!-- ================= RESULTADO ================= -->
+<section class="screen" id="drillres">
+  <div class="nav">
+    <button class="circle-btn" onclick="go('psico')" aria-label="Volver"><svg><use href="#back"/></svg></button>
+    <span class="label" id="aptResLbl">Resultado</span><span style="width:42px"></span>
+  </div>
+  <div class="ap-res" id="aptResBody"></div>
+  <div class="footer" style="display:grid;gap:12px">
+    <button class="cta" onclick="aptStart()">Otra ronda<span class="arrow"><svg><use href="#arrow"/></svg></span></button>
+    <button class="ghost-btn" onclick="go('psico')">Volver a aptitudes</button>
+  </div>
+</section>
 </div>
 
 <script type="text/x-app" id="appjs">
@@ -807,8 +938,10 @@ window.RUMBO_USO=()=>{let ok=0,ko=0,vistas=0,dom=0,apr=0,fal=0,last=S.uso.at||0;
 (()=>{let s="";for(let i=0;i<72;i++){const a=i*5*Math.PI/180,r1=i%2?92:88;s+=`<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+96*Math.sin(a)}" y2="${100-96*Math.cos(a)}"/>`}$("ticks").innerHTML=s})();
 
 /* ============ NAVEGACIÓN ============ */
-function go(id){stopTimer();document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
-  if(id==="home")renderHome();if(id==="setup")renderSetup();if(id==="stats")renderStats();if(id==="examset")renderExamSet()}
+function go(id){stopTimer();if(id!=="drill")aptStop();
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
+  if(id==="home")renderHome();if(id==="setup")renderSetup();if(id==="stats")renderStats();if(id==="examset")renderExamSet();
+  if(id==="psico")renderPsico();if(id==="aptset")renderAptSet();if(id==="drillres")renderAptRes()}
 
 /* ============ HOME ============ */
 function streak(){let n=0;const d=new Date();if(!S.days[today()]?.seen)d.setDate(d.getDate()-1);while(S.days[dkey(d)]?.seen){n++;d.setDate(d.getDate()-1)}return n}
@@ -1393,6 +1526,581 @@ document.addEventListener("keydown",e=>{if(!ses||!$("study").classList.contains(
   const k=e.key.toUpperCase(),i="ABCDEF".indexOf(k);if(!ses.flipped&&e.key.length===1&&i>=0&&i<ses.cur.o.length)return choose(i);
   if(!ses.flipped&&/^[1-6]$/.test(e.key)&&+e.key<=ses.cur.o.length)return choose(+e.key-1);
   if(ses.flipped&&(e.key===" "||e.key==="Enter"||e.key==="ArrowRight"))advance()});
+/* ============================================================
+   PSICOTÉCNICO · ENTRENAMIENTO DE APTITUDES
+   Cuatro módulos calcados de las baterías reales de selección:
+     calc  → "Mathematics" (COMPASS) · aritmética de cabina contrarreloj
+     inst  → "Instrument comprehension" · altímetro de tres agujas, horizonte, rumbo
+     mem   → "Memory" (COMPASS) · pares letra-número con dificultad adaptativa
+     dual  → "Multi-tasking" (ADAPT / AON mt) · cálculo + vigilancia de indicadores
+   Lo que puntúa en selección es rendir con interferencia, no acertar aislado.
+   ============================================================ */
+S.apt=Object.assign({cfg:{},best:{},runs:[]},S.apt);
+
+const APTEX={
+  calc:{n:"Cálculo mental",s:"Aritmética y reglas de cabina contrarreloj",ic:"calc",
+    unit:"aciertos",timed:true,
+    cfg:[["dur","Duración",[[90,"90 s"],[180,"3 min"],[300,"5 min"]],180],
+         ["lvl","Repertorio",[["suave","Suave"],["normal","Normal"],["duro","Duro"]],"normal"]],
+    tips:["Responde por tanteo antes de calcular: descarta las opciones imposibles por magnitud.",
+          "Interioriza las reglas de pulgar (3:1, GS×5, ISA) hasta que no las pienses.",
+          "Vale más mantener el ritmo que acertar la difícil: cada segundo parado son dos preguntas perdidas."]},
+  inst:{n:"Lectura de instrumentos",s:"Altímetro de tres agujas, horizonte, rumbo, IAS y V/S",ic:"dial",
+    unit:"% de acierto",
+    cfg:[["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
+         ["lim","Límite por pregunta",[[0,"Sin límite"],[20,"20 s"],[12,"12 s"]],20]],
+    tips:["En el altímetro lee primero la aguja corta (millares) y luego la larga: el error clásico es invertirlas.",
+          "El horizonte se lee al revés de lo que parece: el avión está fijo, lo que se mueve es el cielo.",
+          "Con el rumbo, canta el recíproco mentalmente; lo piden casi siempre."]},
+  mem:{n:"Memoria de secuencias",s:"Pares letra-número · el nivel sube si aciertas todo",ic:"stack",
+    unit:"pares retenidos",
+    cfg:[["rounds","Rondas",[[6,"6"],[10,"10"],[14,"14"]],10],
+         ["ritmo","Ritmo",[["tranquilo","Tranquilo"],["normal","Normal"],["exigente","Exigente"]],"normal"]],
+    tips:["Agrupa de dos en dos y dales sonido: K7 · M4 se retiene mejor cantado que leído.",
+          "No memorices el orden si no te lo piden: memoriza la pareja.",
+          "Si fallas, no persigas la ronda anterior; el nivel baja solo y vuelve a subir."]},
+  dual:{n:"Doble tarea",s:"Calcular mientras vigilas cuatro indicadores",ic:"split",
+    unit:"índice",timed:true,
+    cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
+         ["ritmo","Avisos",[["tranquilo","Espaciados"],["normal","Normales"],["exigente","Seguidos"]],"normal"]],
+    tips:["Este es el módulo que suspende a la gente: la mayoría se cae al meter el segundo canal.",
+          "Barre los indicadores cada pocos segundos por costumbre, no cuando te acuerdes.",
+          "Si un aviso te pilla a medio cálculo, atiende el aviso: pesa más que una pregunta."]}
+};
+const aptCfg=(ex,k)=>{const d=APTEX[ex].cfg.find(c=>c[0]===k);const st=S.apt.cfg[ex]||{};return st[k]!==undefined?st[k]:d[3]};
+const aptSetCfg=(ex,k,v)=>{(S.apt.cfg[ex]=S.apt.cfg[ex]||{})[k]=v;save()};
+
+/* ============ utilidades ============ */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pickR=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=R(0,i);const t=a[i];a[i]=a[j];a[j]=t}return a};
+const nfm=n=>Math.round(n).toLocaleString("es-ES");
+const pad3=n=>String(n).padStart(3,"0");
+const aptMMSS=s=>Math.floor(s/60)+":"+pad(Math.round(s%60));
+function aptStep(a){const m=Math.abs(a);
+  if(m<12)return 1;if(m<40)return pickR([2,3,5]);if(m<120)return pickR([5,10]);
+  if(m<600)return pickR([10,20,50]);if(m<2500)return pickR([50,100,200]);return pickR([100,200,500])}
+/* opciones numéricas: la correcta más distractores plausibles (los errores típicos primero) */
+function aptNum(a,step,errs){const out=[a];
+  for(const e of (errs||[]))if(out.length<4&&isFinite(e)&&e!==a&&out.indexOf(e)<0&&(a<0||e>0))out.push(e);
+  step=step||aptStep(a);
+  for(const k of [1,-1,2,-2,3,-3,4,-4,5,-5]){if(out.length>=4)break;
+    const v=a+k*step;if(out.indexOf(v)<0&&(a<=0||v>0))out.push(v)}
+  return out.sort((x,y)=>x-y)}
+
+/* ============ pantalla de aptitudes ============ */
+function aptSpark(ex){const r=(S.apt.runs||[]).filter(x=>x.e===ex).slice(-10);
+  if(r.length<2)return "";const mx=Math.max.apply(null,r.map(x=>x.s))||1;
+  return '<span class="ap-spark">'+r.map(x=>'<i style="height:'+Math.max(3,Math.round(x.s/mx*16))+'px"></i>').join("")+'</span>'}
+function renderPsico(){
+  const runs=S.apt.runs||[];
+  let h='<h1 class="display title-xl ap-head">Chequeo de<br><em>aptitudes</em></h1>'+
+    '<p class="ap-note">Los psicotécnicos de selección no miden lo que sabes: miden cómo rindes con prisa y con ruido. Eso se entrena.</p>'+
+    '<div class="sect"><span class="label">Módulos</span></div>';
+  for(const ex in APTEX){const E=APTEX[ex],rs=runs.filter(x=>x.e===ex),last=rs[rs.length-1],best=S.apt.best[ex];
+    h+='<button class="link-row" onclick="aptOpen(\''+ex+'\')">'+
+      '<span class="ic"><svg><use href="#'+E.ic+'"/></svg></span>'+
+      '<span style="flex:1"><b>'+E.n+'</b><span>'+E.s+'</span>'+
+      (last?'<span class="ap-mini"><span>Último <b>'+last.s+'</b></span><span>Mejor <b>'+best+'</b></span>'+aptSpark(ex)+'</span>':"")+
+      '</span><svg class="chev" width="16" height="16"><use href="#arrow"/></svg></button>'}
+  if(runs.length){const n=runs.length,mins=Math.round(runs.reduce((s,x)=>s+(x.ms||0),0)/60000);
+    h+='<div class="sect"><span class="label">Tu entrenamiento</span></div><div class="stats-grid">'+
+      '<div><span class="label">Sesiones</span><b>'+n+'</b></div>'+
+      '<div><span class="label">Tiempo</span><b>'+mins+'<sup>min</sup></b></div>'+
+      '<div><span class="label">Esta semana</span><b>'+runs.filter(x=>dayN()-x.d<7).length+'</b></div>'+
+      '<div><span class="label">Último módulo</span><b class="sm">'+APTEX[runs[n-1].e].n+'</b></div></div>'}
+  h+='<p class="ap-note" style="margin-top:22px">Diez minutos al día durante tres semanas rinden más que una tarde entera: lo que mejora es el automatismo, y el automatismo necesita repetición corta y frecuente.</p>';
+  $("psicoBody").innerHTML=h}
+
+function aptOpen(ex){S.apt.last=ex;save();go("aptset")}
+function renderAptSet(){const ex=S.apt.last||"calc",E=APTEX[ex];
+  $("aptSetLbl").textContent=E.n;
+  let h='<h1 class="display title-xl">'+E.n+'</h1><p class="ap-note">'+E.s+'.</p>';
+  E.cfg.forEach(function(c){const k=c[0],lb=c[1],opts=c[2];
+    h+='<div class="sect"><span class="label">'+lb+'</span></div><div class="seg" id="apSeg_'+k+'"><span class="pill"></span>';
+    opts.forEach(function(o){h+='<button data-v="'+o[0]+'">'+o[1]+'</button>'});h+='</div>'});
+  const best=S.apt.best[ex],rs=(S.apt.runs||[]).filter(x=>x.e===ex);
+  if(best!==undefined)h+='<div class="sect"><span class="label">Tu marca</span></div><div class="stats-grid">'+
+    '<div><span class="label">Mejor</span><b>'+best+'</b></div>'+
+    '<div><span class="label">Último</span><b>'+(rs.length?rs[rs.length-1].s:"—")+'</b></div></div>'+
+    '<p class="ap-note">Medido en '+E.unit+'.</p>';
+  h+='<div class="sect"><span class="label">Cómo se aprueba</span></div><div class="ap-tips">'+E.tips.map(t=>'<div>'+t+'</div>').join("")+'</div>';
+  $("aptSetBody").innerHTML=h;
+  E.cfg.forEach(function(c){const k=c[0];
+    const el=$("apSeg_"+k),pill=el.querySelector(".pill");
+    const paint=function(){const bs=[].slice.call(el.querySelectorAll("button"));
+      bs.forEach(b=>b.classList.toggle("on",b.dataset.v===String(aptCfg(ex,k))));
+      let i=bs.findIndex(b=>b.dataset.v===String(aptCfg(ex,k)));if(i<0)i=0;
+      pill.style.left="calc(4px + "+i+"*(100% - 8px)/"+bs.length+")";
+      pill.style.width="calc((100% - 8px)/"+bs.length+")"};
+    el.querySelectorAll("button").forEach(function(b){b.onclick=function(){
+      const raw=b.dataset.v;aptSetCfg(ex,k,/^-?\d+$/.test(raw)?+raw:raw);paint();aptSub()}});
+    paint()});
+  aptSub()}
+function aptSub(){const ex=S.apt.last||"calc",E=APTEX[ex];
+  $("aptSetSub").textContent=E.timed?aptMMSS(aptCfg(ex,"dur")):ex==="inst"?aptCfg(ex,"n")+" preguntas":aptCfg(ex,"rounds")+" rondas"}
+
+/* ============ ciclo de vida del ejercicio ============ */
+let dr=null;
+function aptStart(){const ex=S.apt.last||"calc";
+  aptStop();go("drill");
+  dr={ex:ex,t0:Date.now(),n:0,ok:0,rt:[],fin:false,raf:0,raf2:0,to:0,iv:0};
+  if(APTEX[ex].timed)dr.dur=aptCfg(ex,"dur")*1000;
+  ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin})[ex]();
+  if(APTEX[ex].timed)aptTick()}
+function aptStop(){if(!dr)return;
+  cancelAnimationFrame(dr.raf);cancelAnimationFrame(dr.raf2);
+  clearTimeout(dr.to);clearInterval(dr.iv);dr.fin=true;dr=null}
+/* salir a medias: si ya hay recorrido se puntúa, si no se descarta */
+function aptQuit(){if(dr&&dr.n>2)return aptEnd();aptStop();go("psico")}
+function aptTick(){if(!dr||dr.fin)return;
+  const left=dr.dur-(Date.now()-dr.t0);
+  if(left<=0)return aptEnd();
+  $("aptClock").textContent=aptMMSS(Math.ceil(left/1000));
+  $("aptClock").classList.toggle("low",left<=15000);
+  $("aptProg").style.width=(100-left/dr.dur*100)+"%";
+  dr.raf=requestAnimationFrame(aptTick)}
+function aptItems(i,tot){$("aptCount").innerHTML="<b>"+pad(i)+"</b> / "+tot;
+  $("aptProg").style.width=(i-1)/tot*100+"%"}
+function aptFlash(ok){buzz(ok?8:[14,40,14]);if(ok)sOk();else sKo()}
+/* pinta la respuesta elegida y sigue */
+function aptReveal(iOk,iSel,next,wait){
+  const ops=[].slice.call(document.querySelectorAll("#aptStage .ap-op"));
+  ops.forEach((o,k)=>{if(k===iOk)o.classList.add("ok");else if(k===iSel)o.classList.add("ko");else o.classList.add("dim")});
+  dr.to=setTimeout(function(){if(dr&&!dr.fin)next()},wait||(iOk===iSel?160:620))}
+
+/* ============================================================
+   1 · CÁLCULO MENTAL  ("Mathematics", COMPASS)
+   Tantas como puedas en el tiempo dado. Cada generador devuelve
+   {q, a, u, num?, step?, errs?, hint?}: el enunciado, la respuesta,
+   la unidad y, cuando aplica, el error típico como distractor.
+   ============================================================ */
+const CALCG={
+suave:[
+  function(){const a=R(3,19),b=R(3,9),c=R(2,80),op=pickR(["+","−"]);
+    return{q:a+" × "+b+" "+op+" "+c,num:true,a:op==="+"?a*b+c:a*b-c,step:R(2,9)}},
+  function(){const b=R(3,9),q=R(12,48);return{q:(b*q)+" ÷ "+b,num:true,a:q,step:R(2,7)}},
+  function(){const p=pickR([5,10,15,20,25,30,40,60,75]),n=pickR([120,240,360,480,620,840,960,1200,1800,2400]);
+    return{q:"El "+p+" % de "+nfm(n),num:true,a:Math.round(n*p/100)}},
+  function(){const gs=pickR([180,210,240,300,330,360,420,450,480,540]),t=pickR([5,6,8,10,12,15,20,30]);
+    return{q:"A <em>"+gs+" kt</em> sobre el suelo, ¿cuánto recorres en <em>"+t+" min</em>?",
+      a:Math.round(gs*t/60),u:"NM",hint:"NM = GS × min / 60"}},
+  function(){const f=pickR([1200,1500,1800,2100,2400,2700,3000,3600]),t=pickR([10,15,20,30,40,45]);
+    return{q:"Consumo <em>"+nfm(f)+" kg/h</em>. ¿Cuánto quemas en <em>"+t+" min</em>?",
+      a:Math.round(f*t/60),u:"kg",hint:"kg = kg/h × min / 60"}},
+  function(){const a=R(4,9),b=R(4,9),c=R(2,9);return{q:a+" × "+b+" × "+c,num:true,a:a*b*c}}
+],
+normal:[
+  function(){const gs=pickR([180,240,300,360,420,480]),d=pickR([30,45,60,75,90,120,150]);
+    return{q:"Te quedan <em>"+d+" NM</em> y vuelas a <em>"+gs+" kt</em>. ¿Cuántos minutos?",
+      a:Math.round(d/gs*60),u:"min",hint:"min = NM × 60 / GS"}},
+  function(){const f=pickR([1800,2000,2400,2500,3000]),k=pickR([900,1200,1500,2000,2500,3000,4000]);
+    return{q:"Quedan <em>"+nfm(k)+" kg</em> y consumes <em>"+nfm(f)+" kg/h</em>. ¿Autonomía?",
+      a:Math.round(k/f*60),u:"min"}},
+  function(){const fl=pickR([200,240,280,310,330,350,370,390]),alt=pickR([0,1500,3000,4000,5000,6000]);
+    const a=Math.round((fl*100-alt)/1000*3);
+    return{q:"Desde <em>FL"+fl+"</em> hasta <em>"+(alt?nfm(alt)+" ft":"el nivel del mar")+"</em> con la regla 3:1, ¿cuántas millas necesitas?",
+      a:a,u:"NM",step:5,errs:[Math.round(fl*100/1000*3)],hint:"NM = (ft a perder / 1000) × 3"}},
+  function(){const gs=pickR([180,210,240,280,300,320,360,400,420]);
+    return{q:"Senda de <em>3°</em> con GS <em>"+gs+" kt</em>. ¿Qué régimen de descenso?",
+      a:Math.round(gs*5/10)*10,u:"ft/min",step:100,hint:"ft/min ≈ GS × 5"}},
+  function(){const fl=pickR([50,80,100,120,150,180,200,240,280,300,340,360]);const a=15-2*(fl/10);
+    return{q:"¿Temperatura ISA a <em>FL"+fl+"</em>?",a:a,u:"°C",step:3,errs:[-a,15-fl/10],
+      hint:"ISA = 15 − 2 × (FL/10)"}},
+  function(){const n=pickR([20,40,60,80,100,150,200,300]);
+    return{q:"<em>"+n+" NM</em> en kilómetros",a:Math.round(n*1.85),u:"km",errs:[n*2,Math.round(n*1.6)],hint:"1 NM = 1,85 km"}},
+  function(){const c=pickR([-40,-30,-20,-10,0,10,15,20,25,30,35]);
+    return{q:"<em>"+c+" °C</em> en grados Fahrenheit",a:Math.round(c*9/5+32),u:"°F",step:6,
+      errs:[Math.round(c*1.8),2*c+30],hint:"°F = °C × 1,8 + 32"}},
+  function(){const r=pickR(["x2","x3","d","x2m1","fib"]);const n0=R(2,9);let s=[],v=n0,d=R(3,11);
+    for(let i=0;i<5;i++){s.push(v);
+      v=r==="x2"?v*2:r==="x3"?v*3:r==="d"?v+d:r==="x2m1"?v*2+1:(i?s[i]+s[i-1]:v+1)}
+    if(r==="fib"){s=[1,2,3,5,8,13];v=21}
+    return{q:s.join(" · ")+" · ?",num:true,a:v,step:Math.max(2,Math.round(v*.12))}},
+  function(){const kg=pickR([200,500,800,1000,1500,2000,3000]);
+    return{q:"<em>"+nfm(kg)+" kg</em> en libras",a:Math.round(kg*2.2),u:"lb",errs:[kg*2,Math.round(kg*2.5)],hint:"1 kg = 2,2 lb"}}
+],
+duro:[
+  function(){const rwy=pickR([4,9,13,18,22,27,31,36]),ang=pickR([30,45,60,90]),v=pickR([10,20,30]);
+    const side=pickR([-1,1]),f={30:.5,45:.7,60:.9,90:1}[ang],a=Math.round(v*f);
+    let dir=(rwy*10+side*ang+360)%360;if(dir===0)dir=360;
+    return{q:"Pista <em>"+pad(rwy)+"</em>, viento <em>"+pad3(dir)+"/"+v+"</em>. ¿Componente cruzada?",
+      a:a,u:"kt",step:Math.max(2,Math.round(a*.3)),errs:[v,Math.round(v*(1-f))],
+      hint:"Regla del reloj · 30°→½ · 45°→⅔ · 60°→casi todo"}},
+  function(){const q=pickR([983,993,1003,1023,1033]),alt=pickR([2000,3000,4000,5000,6000]);
+    const a=alt+(1013-q)*30;
+    return{q:"Altitud indicada <em>"+nfm(alt)+" ft</em> con <em>QNH "+q+"</em>. ¿Altitud de presión?",
+      a:a,u:"ft",step:150,errs:[alt-(1013-q)*30],hint:"30 ft por hPa · por debajo de 1013, suma"}},
+  function(){const t=pickR([4,5,6]),f=pickR([2400,2700,3000,3600]),n=pickR([2,3]);
+    return{q:"<em>"+n+" vueltas</em> de espera de <em>"+t+" min</em> a <em>"+nfm(f)+" kg/h</em>. ¿Combustible?",
+      a:Math.round(n*t*f/60),u:"kg",step:50}},
+  function(){const d=pickR([120,150,180,210,240]),gs=pickR([300,360,420,480]),f=pickR([2400,3000,3600]);
+    const min=d/gs*60;return{q:"<em>"+d+" NM</em> a <em>"+gs+" kt</em> consumiendo <em>"+nfm(f)+" kg/h</em>. ¿Cuánto combustible?",
+      a:Math.round(min*f/60),u:"kg",step:100,hint:"Primero el tiempo, luego el consumo"}},
+  function(){const fl=pickR([310,330,350,370,390]),oat=pickR([-40,-45,-50,-55,-60]);
+    const isa=15-2*(fl/10),a=oat-isa;
+    return{q:"<em>FL"+fl+"</em> con <em>OAT "+oat+" °C</em>. ¿Desviación respecto a ISA?",
+      a:a,u:"°C",step:3,errs:[-a,isa-oat],hint:"ISA = 15 − 2 × (FL/10)"}},
+  function(){const vs=pickR([1500,1800,2000,2400,3000]),ft=pickR([6000,9000,12000,15000,18000]);
+    return{q:"Perder <em>"+nfm(ft)+" ft</em> a <em>"+nfm(vs)+" ft/min</em>. ¿Cuántos minutos?",
+      a:Math.round(ft/vs),u:"min",step:2}},
+  function(){const gs=pickR([420,450,480,510]),t=pickR([7,9,11,13,17]);
+    return{q:"A <em>"+gs+" kt</em>, ¿cuánto recorres en <em>"+t+" min</em>?",a:Math.round(gs*t/60),u:"NM",step:7}}
+]};
+function calcPool(){const l=aptCfg("calc","lvl");
+  return l==="suave"?CALCG.suave:l==="normal"?CALCG.suave.concat(CALCG.normal):CALCG.normal.concat(CALCG.duro)}
+function calcBegin(){dr.pool=calcPool();$("aptCount").innerHTML="<b>00</b>";calcNext()}
+function calcNext(){if(!dr||dr.fin)return;
+  const it=pickR(dr.pool)();
+  it.o=aptNum(it.a,it.step,it.errs);
+  dr.cur=it;dr.tq=Date.now();
+  const fmt=v=>(it.num?nfm(v):nfm(v)+(it.u?" "+it.u:""));
+  $("aptCount").innerHTML="<b>"+pad(dr.ok)+"</b> / "+pad(dr.n);
+  $("aptStage").innerHTML=
+    '<div class="ap-panel"><span class="tag">'+(it.u?"Cálculo de cabina":"Aritmética")+'</span>'+
+      '<div class="ap-q'+(it.num?" num":"")+'">'+it.q+'</div>'+
+      (it.hint?'<div class="ap-sub">'+it.hint+'</div>':'')+'</div>'+
+    '<div class="ap-ops">'+it.o.map((v,i)=>'<button class="ap-op" onclick="calcAns('+i+')">'+fmt(v)+'</button>').join("")+'</div>'}
+function calcAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
+  const it=dr.cur,iOk=it.o.indexOf(it.a),ok=i===iOk;
+  dr.n++;if(ok)dr.ok++;dr.rt.push(Date.now()-dr.tq);
+  aptFlash(ok);
+  aptReveal(iOk,i,function(){dr.lock=false;calcNext()})}
+
+/* ============================================================
+   2 · LECTURA DE INSTRUMENTOS  ("Instrument comprehension")
+   Instrumentos dibujados en SVG, no imágenes: cada pregunta genera
+   una lectura nueva. Los distractores son los errores de lectura
+   reales (invertir agujas en el altímetro, el recíproco en el rumbo,
+   el signo en el variómetro).
+   ============================================================ */
+function instSVG(inner){return '<svg class="ap-inst" viewBox="0 0 240 240">'+
+  '<defs><radialGradient id="apFace" cx="34%" cy="24%" r="88%">'+
+  '<stop offset="0" stop-color="#1d2a44"/><stop offset="1" stop-color="#070b14"/></radialGradient>'+
+  '<clipPath id="apClip"><circle cx="120" cy="120" r="104"/></clipPath></defs>'+
+  '<circle cx="120" cy="120" r="118" fill="#0a0f1a"/>'+
+  '<circle cx="120" cy="120" r="118" fill="none" stroke="rgba(217,183,126,.3)" stroke-width="1.5"/>'+
+  '<circle cx="120" cy="120" r="105" fill="url(#apFace)" stroke="rgba(217,183,126,.14)"/>'+
+  inner+
+  '<circle cx="120" cy="120" r="6" fill="#0c1322" stroke="rgba(217,183,126,.5)"/></svg>'}
+const instND=(deg,r,w,col,tail)=>'<g transform="rotate('+deg+' 120 120)">'+
+  '<path d="M'+(120-w)+' 120 L120 '+(120-r)+' L'+(120+w)+' 120 L120 '+(120+(tail||9))+' Z" fill="'+col+'"/></g>';
+const instTK=(deg,r1,r2,w,col)=>'<g transform="rotate('+deg+' 120 120)"><line x1="120" y1="'+(120-r1)+'" x2="120" y2="'+(120-r2)+
+  '" stroke="'+(col||"#e8e2d6")+'" stroke-width="'+w+'" stroke-linecap="round"/></g>';
+const instLBL=(deg,r,txt,size)=>{const p=polar(120,120,r,deg);
+  return '<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+size*.35).toFixed(1)+'" font-size="'+size+'" text-anchor="middle">'+txt+'</text>'};
+
+/* --- altímetro de tres agujas --- */
+function instAlt(v){let t="";
+  for(let i=0;i<50;i++){const maj=i%5===0;
+    t+=instTK(i*7.2,98,maj?86:92,maj?2.4:1,maj?"#e8e2d6":"rgba(232,226,214,.4)")}
+  for(let i=0;i<10;i++)t+=instLBL(i*36,70,i,20);
+  t+='<text x="120" y="156" font-size="8.5" text-anchor="middle" letter-spacing="2.4" fill="rgba(232,226,214,.5)">ALT ft</text>';
+  t+='<rect x="142" y="111" width="42" height="18" rx="3" fill="#05080f" stroke="rgba(217,183,126,.35)"/>'+
+     '<text x="163" y="124.5" font-size="11" text-anchor="middle">1013</text>';
+  t+=instND((v/10000%10)*36,44,5.5,"#d9b77e",7);
+  t+=instND((v/1000%10)*36,67,6.5,"#f4efe6",11);
+  t+=instND((v%1000)/1000*360,97,3.2,"#f4efe6",13);
+  return instSVG(t)}
+function genAlt(){const v=R(2,178)*100;
+  const sw=(Math.floor(v/1000)%10)*100+Math.floor(v%1000/100)*1000+Math.floor(v/10000)*10000;
+  const o=[v];[v+1000,v-1000,sw,v+10000,v-10000,v+100,v-100].forEach(function(e){
+    if(o.length<4&&e>0&&e<100000&&o.indexOf(e)<0)o.push(e)});
+  o.sort((a,b)=>a-b);
+  return{svg:instAlt(v),name:"Altímetro de tres agujas",q:"¿Qué altitud indica?",
+    o:o.map(x=>nfm(x)+" ft"),ok:o.indexOf(v)}}
+
+/* --- horizonte artificial --- */
+function instAI(p,b){const sc=2.7;let lad="";
+  [5,10,15,20].forEach(function(d){[-1,1].forEach(function(s){
+    const y=120-s*d*sc,w=d%10===0?27:14;
+    lad+='<line x1="'+(120-w)+'" y1="'+y+'" x2="'+(120+w)+'" y2="'+y+'" stroke="rgba(244,239,230,.8)" stroke-width="1.4"/>';
+    if(d%10===0)lad+='<text x="'+(120-w-9)+'" y="'+(y+4)+'" font-size="9" text-anchor="middle" fill="rgba(244,239,230,.8)">'+d+'</text>'+
+      '<text x="'+(120+w+9)+'" y="'+(y+4)+'" font-size="9" text-anchor="middle" fill="rgba(244,239,230,.8)">'+d+'</text>'})});
+  let t='<g clip-path="url(#apClip)"><g transform="rotate('+(-b)+' 120 120)"><g transform="translate(0 '+(p*sc).toFixed(1)+')">'+
+    '<rect x="-220" y="-420" width="680" height="540" fill="#20406d"/>'+
+    '<rect x="-220" y="120" width="680" height="540" fill="#4e3b21"/>'+
+    '<line x1="-220" y1="120" x2="460" y2="120" stroke="#f4efe6" stroke-width="2"/>'+lad+
+    '</g></g></g>';
+  /* escala de alabeo en el bisel (fija) */
+  [0,10,20,30,45,60].forEach(function(d){[-1,1].forEach(function(s){
+    if(d===0&&s<0)return;t+=instTK(s*d,104,d%30===0||d===45?94:99,d===0?2.4:1.6,"rgba(244,239,230,.7)")})});
+  t+='<g transform="rotate('+(-b)+' 120 120)"><path d="M120 22 l6 10 h-12 z" fill="#d9b77e"/></g>';
+  /* simbolo de avion fijo */
+  t+='<path d="M58 120 h36 M146 120 h36" stroke="#f0d6a6" stroke-width="3" stroke-linecap="round"/>'+
+     '<path d="M120 114 v12" stroke="#f0d6a6" stroke-width="3" stroke-linecap="round"/>'+
+     '<circle cx="120" cy="120" r="3" fill="#f0d6a6"/>';
+  return instSVG(t)}
+const aiTxt=(p,b)=>(p===0?"Morro nivelado":(p>0?"Morro arriba ":"Morro abajo ")+Math.abs(p)+"°")+" · "+
+  (b===0?"alas niveladas":Math.abs(b)+"° "+(b>0?"a la derecha":"a la izquierda"));
+function genAI(){const p=pickR([-15,-10,-10,-5,0,5,10,10,15,20]),b=pickR([-45,-30,-30,-20,-10,0,10,20,30,30,45]);
+  /* distractores = los errores de lectura reales: alabeo al revés, morro al revés */
+  const cand=[[p,b],[-p,b],[p,-b],[-p,-b],[p,b>=0?b-10:b+10],[p>=0?p+5:p-5,b],[p,b>=0?b+10:b-10],[p-5,-b]];
+  const o=[],seen={};
+  cand.forEach(function(c){const k=c[0]+"/"+c[1];if(o.length<4&&!seen[k]){seen[k]=1;o.push(c)}});
+  let gu=0;while(o.length<4&&gu++<60){const c=[pickR([-10,-5,0,5,10,15]),pickR([-30,-20,-10,0,10,20,30])],k=c[0]+"/"+c[1];
+    if(!seen[k]){seen[k]=1;o.push(c)}}
+  shuf(o);
+  return{svg:instAI(p,b),name:"Horizonte artificial",q:"¿Qué actitud indica?",txt:true,
+    o:o.map(c=>aiTxt(c[0],c[1])),ok:o.findIndex(c=>c[0]===p&&c[1]===b)}}
+
+/* --- indicador de rumbo --- */
+function instHDG(h){let t='<g transform="rotate('+(-h)+' 120 120)">';
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
+    t+=instTK(d,101,maj?88:95,maj?2.4:1.2,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
+    const d=i*30,p=polar(120,120,73,d),big=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
+      '" y="'+(p[1]+(big?7.5:6)).toFixed(1)+'" font-size="'+(big?21:16)+'" text-anchor="middle">'+lb+'</text></g>'});
+  t+='</g>';
+  t+='<path d="M120 10 l8 14 h-16 z" fill="#d9b77e"/>';
+  t+='<path d="M120 94 L123 108 L146 118 L146 124 L123 118 L123 136 L131 142 L131 146 L120 143'+
+     ' L109 146 L109 142 L117 136 L117 118 L94 124 L94 118 L117 108 Z" fill="#f0d6a6" opacity=".92"/>';
+  return instSVG(t)}
+function genHDG(){const h=R(1,71)*5,rec=(h+180)%360;
+  const asRec=Math.random()<.4,nz=x=>x===0?360:x;
+  const a=nz(asRec?rec:h),o=[a];
+  [nz(asRec?h:rec),nz((a+30)%360),nz((a+330)%360),nz((a+10)%360),nz((a+350)%360),nz((a+90)%360)].forEach(function(e){
+    if(o.length<4&&o.indexOf(e)<0)o.push(e)});
+  o.sort((x,y)=>x-y);
+  return{svg:instHDG(h),name:"Indicador de rumbo",
+    q:asRec?"¿Cuál es el rumbo <em>recíproco</em>?":"¿Qué rumbo indica?",
+    o:o.map(x=>pad3(x)+"°"),ok:o.indexOf(a),
+    hint:asRec?"Recíproco = rumbo ± 180°":""}}
+
+/* --- anemómetro --- */
+/* 40 kt abajo a la izquierda, 200 arriba, 360 abajo a la derecha: hueco limpio al pie */
+function instIAS(v){const ang=x=>210+(x-40)/320*300;let t="";
+  for(let x=40;x<=360;x+=10){const maj=(x-40)%40===0;
+    t+=instTK(ang(x),99,maj?85:93,maj?2.3:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  for(let x=40;x<=360;x+=40)t+=instLBL(ang(x),69,x,16);
+  t+='<text x="120" y="152" font-size="8.5" text-anchor="middle" letter-spacing="2.4" fill="rgba(232,226,214,.5)">KNOTS</text>';
+  t+=instND(ang(v),95,4,"#f4efe6",12);
+  return instSVG(t)}
+function genIAS(){const v=R(6,34)*10,o=[v];
+  [v+20,v-20,v+40,v-40,v+10,v-10].forEach(function(e){if(o.length<4&&e>=40&&e<=360&&o.indexOf(e)<0)o.push(e)});
+  o.sort((a,b)=>a-b);
+  return{svg:instIAS(v),name:"Anemómetro",q:"¿Qué velocidad indicada marca?",
+    o:o.map(x=>x+" kt"),ok:o.indexOf(v)}}
+
+/* --- variómetro --- */
+/* cero a las nueve, ±2000 abriéndose 160° a cada lado como el instrumento real */
+function instVS(r){const ang=x=>270+x/2000*160;let t="";
+  for(let x=-2000;x<=2000;x+=100){const maj=x%500===0;
+    if(Math.abs(x)>1000&&!maj)continue;
+    t+=instTK(ang(x),99,maj?85:93,maj?2.3:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  [[0,"0"],[500,"5"],[1000,"10"],[1500,"15"],[2000,"20"],[-500,"5"],[-1000,"10"],[-1500,"15"],[-2000,"20"]].forEach(function(p){
+    t+=instLBL(ang(p[0]),70,p[1],Math.abs(p[0])%1000?13:17)});
+  t+='<text x="120" y="102" font-size="7.5" text-anchor="middle" letter-spacing="2.2" fill="rgba(232,226,214,.5)">FT/MIN</text>';
+  t+='<text x="120" y="147" font-size="7.5" text-anchor="middle" letter-spacing="2.2" fill="rgba(232,226,214,.5)">×100</text>';
+  t+=instND(ang(r),95,4,"#f4efe6",12);
+  return instSVG(t)}
+function genVS(){let r=0;while(r===0)r=R(-20,20)*100;
+  /* todos los distractores dentro de la escala: uno fuera de rango se descarta de un vistazo */
+  const o=[r];[-r,r+500,r-500,r+200,r-200,r+300,r-300].forEach(function(e){
+    if(o.length<4&&e!==0&&Math.abs(e)<=2000&&o.indexOf(e)<0)o.push(e)});
+  o.sort((a,b)=>a-b);
+  return{svg:instVS(r),name:"Variómetro",q:"¿Qué régimen vertical indica?",
+    o:o.map(x=>(x>0?"+":"")+nfm(x)+" ft/min"),ok:o.indexOf(r)}}
+
+const INSTG=[genAlt,genAlt,genAI,genAI,genHDG,genHDG,genIAS,genVS];
+function instBegin(){dr.tot=aptCfg("inst","n");dr.lim=aptCfg("inst","lim");instNext()}
+function instNext(){if(!dr||dr.fin)return;
+  if(dr.n>=dr.tot)return aptEnd();
+  const it=pickR(INSTG)();dr.cur=it;dr.tq=Date.now();dr.lock=false;
+  aptItems(dr.n+1,dr.tot);
+  $("aptStage").innerHTML=
+    '<div>'+it.svg+'<div class="ap-instname">'+it.name+'</div></div>'+
+    '<div class="ap-panel" style="padding:16px 18px"><div class="ap-q" style="font-size:19px">'+it.q+'</div>'+
+      (it.hint?'<div class="ap-sub">'+it.hint+'</div>':'')+'</div>'+
+    '<div class="ap-ops'+(it.txt?" one":"")+'">'+it.o.map((v,i)=>
+      '<button class="ap-op'+(it.txt?" txt":"")+'" onclick="instAns('+i+')">'+v+'</button>').join("")+'</div>';
+  if(dr.lim){dr.left=dr.lim;$("aptClock").textContent=dr.lim+" s";$("aptClock").classList.remove("low");
+    dr.iv=setInterval(function(){if(!dr||dr.fin)return;dr.left--;
+      $("aptClock").textContent=dr.left+" s";$("aptClock").classList.toggle("low",dr.left<=5);
+      if(dr.left<=0){clearInterval(dr.iv);instAns(-1)}},1000)}
+  else $("aptClock").textContent="—"}
+function instAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
+  const it=dr.cur,ok=i===it.ok;
+  dr.n++;if(ok)dr.ok++;if(i>=0)dr.rt.push(Date.now()-dr.tq);
+  aptFlash(ok);
+  aptReveal(it.ok,i,function(){instNext()},ok?420:1050)}
+
+/* ============================================================
+   3 · MEMORIA DE SECUENCIAS  ("Memory", COMPASS)
+   Pares letra-número en pantalla unos segundos y luego sondeos
+   sobre la pareja, no sobre el orden. El nivel sube cuando la ronda
+   sale entera y baja cuando se falla: cada uno acaba en su techo.
+   ============================================================ */
+const MEMLET="ABCDEFGHJKLMNPRSTVWXZ".split("");
+function memBegin(){dr.tot=aptCfg("mem","rounds");dr.lvl=4;dr.max=0;dr.pok=0;dr.pn=0;memRound()}
+function memRound(){if(!dr||dr.fin)return;
+  if(dr.n>=dr.tot)return aptEnd();
+  aptItems(dr.n+1,dr.tot);
+  const lvl=dr.lvl,lets=shuf(MEMLET.slice()).slice(0,lvl),digs=shuf([1,2,3,4,5,6,7,8,9]).slice(0,lvl);
+  dr.pairs=lets.map((l,i)=>[l,digs[i]]);
+  dr.roundOk=true;
+  const k={tranquilo:1.35,normal:1,exigente:.75}[aptCfg("mem","ritmo")];
+  dr.showMs=Math.round((1400+lvl*850)*k);
+  let c=3;
+  const paint=()=>{$("aptStage").innerHTML='<div class="ap-panel"><span class="tag">Prepárate</span>'+
+    '<div class="ap-hold"><b>'+c+'</b></div><div class="ap-lvl">'+lvl+' pares</div></div>'};
+  $("aptClock").textContent="";paint();
+  dr.iv=setInterval(function(){if(!dr||dr.fin)return;c--;
+    if(c>0){paint();tick(620,.04)}else{clearInterval(dr.iv);memShow()}},700)}
+function memShow(){
+  const cols=dr.pairs.length<=4?2:dr.pairs.length<=6?3:4;
+  $("aptStage").innerHTML='<div class="ap-panel"><span class="tag">Memoriza</span>'+
+    '<div class="ap-pairs" style="grid-template-columns:repeat('+cols+',1fr)">'+
+    dr.pairs.map((p,i)=>'<div class="ap-pair" style="animation-delay:'+(i*55)+'ms"><b>'+p[0]+'</b><span>'+p[1]+'</span></div>').join("")+
+    '</div><div class="ap-lvl">Memoriza la pareja, no el orden</div></div>';
+  let left=Math.ceil(dr.showMs/1000);$("aptClock").textContent=left+" s";
+  dr.iv=setInterval(function(){if(!dr||dr.fin)return;left--;$("aptClock").textContent=Math.max(0,left)+" s";
+    $("aptClock").classList.toggle("low",left<=2)},1000);
+  dr.to=setTimeout(function(){if(!dr||dr.fin)return;clearInterval(dr.iv);$("aptClock").classList.remove("low");memProbe()},dr.showMs)}
+function memProbe(){const n=dr.pairs.length>=5?3:2,idx=shuf(dr.pairs.map((p,i)=>i)).slice(0,n);
+  dr.probes=idx.map(function(i){const p=dr.pairs[i],t=R(0,2);
+    if(t===0){const o=shuf([p[1]].concat(shuf(dr.pairs.filter(x=>x[1]!==p[1]).map(x=>x[1])).slice(0,3)));
+      return{q:"¿Qué número acompañaba a la <em>"+p[0]+"</em>?",o:o.map(String),ok:o.indexOf(p[1])}}
+    if(t===1){const o=shuf([p[0]].concat(shuf(dr.pairs.filter(x=>x[0]!==p[0]).map(x=>x[0])).slice(0,3)));
+      return{q:"¿Qué letra iba con el <em>"+p[1]+"</em>?",o:o,ok:o.indexOf(p[0])}}
+    const fake=[],av=dr.pairs.filter(x=>x[0]!==p[0]);
+    shuf(av.slice()).slice(0,3).forEach(function(x){
+      const d=pickR(dr.pairs.filter(y=>y[1]!==x[1]).map(y=>y[1]).concat([R(1,9)]));
+      if(d!==x[1])fake.push(x[0]+" "+d)});
+    while(fake.length<3){const l=pickR(MEMLET),d=R(1,9),s=l+" "+d;
+      if(fake.indexOf(s)<0&&!dr.pairs.some(y=>y[0]===l))fake.push(s)}
+    const good=p[0]+" "+p[1],o=shuf([good].concat(fake));
+    return{q:"¿Cuál de estas parejas aparecía?",o:o,ok:o.indexOf(good)}});
+  dr.pi=0;memAsk()}
+function memAsk(){if(!dr||dr.fin)return;
+  if(dr.pi>=dr.probes.length){dr.n++;
+    if(dr.roundOk){dr.max=Math.max(dr.max,dr.pairs.length);dr.lvl=Math.min(8,dr.lvl+1);floatTxt("Nivel "+dr.lvl)}
+    else dr.lvl=Math.max(3,dr.lvl-1);
+    dr.to=setTimeout(memRound,520);return}
+  const pr=dr.probes[dr.pi];dr.tq=Date.now();dr.lock=false;
+  $("aptClock").textContent=(dr.pi+1)+"/"+dr.probes.length;
+  $("aptStage").innerHTML='<div class="ap-panel"><span class="tag">Sondeo</span><div class="ap-q">'+pr.q+'</div></div>'+
+    '<div class="ap-ops">'+pr.o.map((v,i)=>'<button class="ap-op" onclick="memAns('+i+')">'+v+'</button>').join("")+'</div>'}
+function memAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
+  const pr=dr.probes[dr.pi],ok=i===pr.ok;
+  dr.pn++;if(ok)dr.pok++;else dr.roundOk=false;
+  dr.rt.push(Date.now()-dr.tq);aptFlash(ok);
+  aptReveal(pr.ok,i,function(){dr.pi++;memAsk()},ok?300:800)}
+
+/* ============================================================
+   4 · DOBLE TAREA  ("Multi-tasking", ADAPT / AON mt)
+   Canal principal: cálculo. Canal secundario: cuatro indicadores
+   que se salen de banda y hay que atender antes de que venza la
+   ventana. Lo que se mide es el reparto, no cada canal por separado.
+   ============================================================ */
+const DUALN=["HYD","FUEL","OIL","ELEC"];
+function dualBegin(){
+  dr.g=[0,1,2,3].map(()=>({v:0,out:0,t0:0}));
+  dr.al=0;dr.hit=0;dr.fa=0;dr.art=[];dr.lt=0;
+  const rit=aptCfg("dual","ritmo");
+  dr.gap={tranquilo:[6,10],normal:[4,7],exigente:[2.5,4.5]}[rit];
+  dr.win={tranquilo:4000,normal:3200,exigente:2500}[rit];
+  $("aptStage").innerHTML='<div class="ap-gauges">'+dr.g.map((x,i)=>
+    '<div class="ap-g" id="apG'+i+'" onclick="dualTap('+i+')"><div class="band"></div>'+
+    '<div class="nd" id="apN'+i+'"></div><div class="lb">'+DUALN[i]+'</div></div>').join("")+'</div>'+
+    '<div class="ap-dualq" id="apDQ"></div>';
+  dualQ();
+  dr.next=Date.now()+2200;
+  dr.raf2=requestAnimationFrame(dualLoop)}
+function dualLoop(){if(!dr||dr.fin)return;
+  const now=Date.now(),dt=Math.min(.06,(now-(dr.lt||now))/1000);dr.lt=now;
+  for(let i=0;i<4;i++){const g=dr.g[i];
+    if(!g.out){g.v+=(Math.random()-.5)*1.7*dt;g.v=Math.max(-.5,Math.min(.5,g.v))}
+    const el=$("apN"+i);if(el)el.style.top=(50-g.v*41)+"%"}
+  if(now>=dr.next){const free=[0,1,2,3].filter(i=>!dr.g[i].out);
+    if(free.length){const i=pickR(free),g=dr.g[i];
+      g.out=1;g.t0=now;g.v=pickR([-1,1])*(.78+Math.random()*.18);
+      dr.al++;$("apG"+i).classList.add("warn");tick(920,.055)}
+    dr.next=now+(dr.gap[0]+Math.random()*(dr.gap[1]-dr.gap[0]))*1000}
+  for(let i=0;i<4;i++){const g=dr.g[i];
+    if(g.out&&now-g.t0>dr.win){g.out=0;g.v=0;$("apG"+i).classList.remove("warn");
+      buzz([10,30,10]);tick(240,.05)}}
+  dr.raf2=requestAnimationFrame(dualLoop)}
+function dualTap(i){if(!dr||dr.fin)return;const g=dr.g[i],el=$("apG"+i);
+  if(g.out){dr.hit++;dr.art.push(Date.now()-g.t0);g.out=0;g.v=0;
+    el.classList.remove("warn");el.classList.add("hit");buzz(8);tick(1320,.045);
+    setTimeout(()=>el&&el.classList.remove("hit"),280)}
+  else{dr.fa++;el.classList.add("warn");buzz([20]);tick(200,.05);
+    setTimeout(()=>el&&!g.out&&el.classList.remove("warn"),220)}}
+function dualQ(){if(!dr||dr.fin)return;
+  const k=R(1,4);let q,a;
+  if(k===1){const x=R(17,89),y=R(13,79);q=x+" + "+y;a=x+y}
+  else if(k===2){const x=R(45,99),y=R(11,39);q=x+" − "+y;a=x-y}
+  else if(k===3){const x=R(3,9),y=R(12,29);q=x+" × "+y;a=x*y}
+  else{const p=pickR([10,20,25,50]),n=pickR([80,120,160,240,360,480]);q="El "+p+" % de "+n;a=n*p/100}
+  const o=aptNum(a,Math.max(2,Math.round(a*.12)));dr.cur={a:a,o:o};dr.tq=Date.now();dr.lock=false;
+  $("apDQ").innerHTML='<div class="ap-panel" style="padding:15px 18px 17px"><span class="tag">Cálculo</span>'+
+    '<div class="ap-q num" style="font-size:28px">'+q+'</div></div>'+
+    '<div class="ap-ops" style="margin-top:10px">'+o.map((v,i)=>
+      '<button class="ap-op" onclick="dualAns('+i+')">'+nfm(v)+'</button>').join("")+'</div>'}
+function dualAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
+  const iOk=dr.cur.o.indexOf(dr.cur.a),ok=i===iOk;
+  dr.n++;if(ok)dr.ok++;dr.rt.push(Date.now()-dr.tq);
+  buzz(ok?6:[12,30]);if(ok)tone(784,.12,.04);else tone(300,.16,.04,"triangle");
+  aptReveal(iOk,i,function(){dualQ()},ok?140:520)}
+
+/* ============================================================
+   MARCADOR
+   ============================================================ */
+let drRes=null;
+function aptEnd(){if(!dr)return;
+  const ex=dr.ex,E=APTEX[ex],ms=Date.now()-dr.t0;
+  const acc=dr.n?Math.round(dr.ok/dr.n*100):0;
+  const art=dr.rt.length?Math.round(dr.rt.reduce((a,b)=>a+b,0)/dr.rt.length/100)/10:0;
+  let score=0,rows=[],unit="",extra="";
+  if(ex==="calc"){score=dr.ok;unit="";
+    rows=[["Aciertos",dr.ok],["Intentadas",dr.n],["Acierto",acc+" %"],["Por pregunta",art+" s"]];
+    extra=dr.n?"Ritmo de "+(Math.round(dr.n/(ms/60000)*10)/10)+" preguntas por minuto":""}
+  if(ex==="inst"){score=acc;unit="%";
+    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]]}
+  if(ex==="mem"){score=dr.max;unit="";
+    rows=[["Pares retenidos",dr.max],["Rondas",dr.n],["Sondeos",dr.pok+"/"+dr.pn],["Nivel al cerrar",dr.lvl]];
+    extra="Tu techo de hoy: "+(dr.max||"—")+" pares con sus números"}
+  if(ex==="dual"){const alAcc=dr.al?dr.hit/dr.al:1,cAcc=dr.n?dr.ok/dr.n:0;
+    score=Math.max(0,Math.min(100,Math.round(100*(.55*cAcc+.45*alAcc)-1.5*dr.fa)));unit="";
+    const rt=dr.art.length?Math.round(dr.art.reduce((a,b)=>a+b,0)/dr.art.length):0;
+    rows=[["Cálculo",Math.round(cAcc*100)+" %"],["Avisos",dr.hit+"/"+dr.al],
+          ["Reacción",(rt/1000).toFixed(1)+" s"],["Falsas alarmas",dr.fa]];
+    extra=dr.fa>3?"Demasiados toques en indicadores que estaban en banda":
+      alAcc<.7?"Se te escapan avisos: barre los indicadores por costumbre, no cuando te acuerdes":
+      cAcc<.6?"Vigilas bien pero el cálculo se cae: ahí está el reparto":""}
+  const prev=(S.apt.runs||[]).filter(x=>x.e===ex).slice(-1)[0];
+  const best=S.apt.best[ex];
+  const rec=best===undefined||score>best;
+  aptStop();
+  S.apt.runs=(S.apt.runs||[]).concat([{d:dayN(),e:ex,s:score,ms:ms}]).slice(-120);
+  if(rec)S.apt.best[ex]=score;
+  save();
+  drRes={ex:ex,score:score,unit:unit,rows:rows,extra:extra,prev:prev?prev.s:null,best:rec?score:best,rec:rec};
+  if(rec&&prev)confetti(60);
+  go("drillres")}
+function renderAptRes(){if(!drRes)return go("psico");
+  const r=drRes,E=APTEX[r.ex];
+  $("aptResLbl").textContent=E.n;
+  const d=r.prev==null?null:r.score-r.prev;
+  const msg=r.rec&&r.prev!=null?"Marca personal.":d===null?"Primera referencia: ya tienes con qué comparar.":
+    d>0?"Mejor que la vez anterior.":d===0?"Clavado en tu registro anterior.":"Por debajo de tu último intento.";
+  $("aptResBody").innerHTML=
+    '<div class="eyebrow" style="text-align:center">'+(r.rec?"Marca personal":"Ejercicio completado")+'</div>'+
+    '<div class="big">'+r.score+(r.unit?'<small>'+r.unit+'</small>':'')+'</div>'+
+    '<div class="msg">'+msg+'</div>'+
+    '<div class="delta">'+(d===null?'Medido en '+E.unit:
+      (d>0?'<b>+'+d+'</b>':d<0?'<b>'+d+'</b>':'<b>=</b>')+' respecto al anterior · mejor <b>'+r.best+'</b>')+'</div>'+
+    '<div class="stats-grid">'+r.rows.map(x=>
+      '<div><span class="label">'+x[0]+'</span><b'+(String(x[1]).length>6?' class="sm"':'')+'>'+x[1]+'</b></div>').join("")+'</div>'+
+    (r.extra?'<p class="ap-note" style="text-align:left;margin-top:20px">'+r.extra+'</p>':'')}
+/* teclado: 1-4 para responder mientras se entrena */
+document.addEventListener("keydown",function(e){
+  if(!dr||dr.fin||!$("drill").classList.contains("active"))return;
+  if(!/^[1-4]$/.test(e.key))return;
+  const b=document.querySelectorAll("#aptStage .ap-op")[+e.key-1];if(b)b.click()});
+
 applyTheme();renderHome();
 if("serviceWorker"in navigator&&location.protocol!=="file:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>

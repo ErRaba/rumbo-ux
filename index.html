@@ -600,6 +600,58 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .ap-clock{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--gold);min-width:52px;text-align:right}
 .ap-clock.low{color:var(--terra);animation:apPulse .9s infinite}
 
+/* --- tracking psicomotor --- */
+.ap-trk{flex:1;display:flex;flex-direction:column;gap:11px;width:100%;min-height:0}
+.ap-field{position:relative;flex:none;width:100%;aspect-ratio:1;max-height:44vh;border-radius:18px;overflow:hidden;
+  color:var(--ivory);background:linear-gradient(170deg,var(--lacquer),var(--lacquer2));
+  box-shadow:0 0 0 1px rgba(217,183,126,.18) inset,var(--cardsh)}
+.ap-fgrid{position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(rgba(244,239,230,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(244,239,230,.055) 1px,transparent 1px);
+  background-size:34px 34px;background-position:center}
+.ap-ret{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
+  border:1px dashed rgba(244,239,230,.28);transition:border-color .15s,box-shadow .15s}
+.ap-ret.in{border-color:var(--sage);border-style:solid;box-shadow:0 0 22px rgba(156,197,161,.3),0 0 0 1px rgba(156,197,161,.2) inset}
+.ap-cross{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);
+  background:linear-gradient(var(--dash),var(--dash)) center/1px 100% no-repeat,
+             linear-gradient(var(--dash),var(--dash)) center/100% 1px no-repeat}
+.ap-mark{position:absolute;left:50%;top:50%;width:26px;height:26px;color:var(--gold2);
+  filter:drop-shadow(0 0 10px rgba(217,183,126,.45));will-change:transform}
+.ap-mark.in{color:var(--sage);filter:drop-shadow(0 0 12px rgba(156,197,161,.5))}
+.ap-mark svg{display:block;width:26px;height:26px}
+
+.ap-stick{position:relative;flex:1;min-height:104px;border-radius:18px;touch-action:none;overflow:hidden;
+  box-shadow:0 0 0 1px var(--hair2) inset;display:grid;place-items:center;
+  background:radial-gradient(70% 70% at 50% 50%,rgba(217,183,126,.05),transparent 70%)}
+.ap-stick::before{content:"";position:absolute;left:50%;top:50%;width:128px;height:128px;margin:-64px 0 0 -64px;
+  border-radius:50%;border:1px dashed var(--hair2);transition:opacity .15s;pointer-events:none}
+.ap-stick.on::before{opacity:0}
+.ap-stick .lb{position:relative;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute2);
+  text-align:center;width:104px;line-height:1.7;transition:opacity .15s;pointer-events:none}
+.ap-stick.on .lb{opacity:0}
+.ap-stick .base,.ap-stick .knob{position:absolute;left:0;top:0;border-radius:50%;opacity:0;transition:opacity .15s;pointer-events:none}
+.ap-stick .base{width:112px;height:112px;border:1px solid var(--hair);background:rgba(217,183,126,.03)}
+.ap-stick .knob{width:46px;height:46px;background:linear-gradient(165deg,#1b2b49,#0e1729);
+  box-shadow:0 0 0 1px rgba(217,183,126,.5) inset,0 10px 20px -8px rgba(0,0,0,.9)}
+.ap-stick.on .base,.ap-stick.on .knob{opacity:1}
+
+.ap-trkline{display:flex;align-items:baseline;gap:12px;padding:0 2px}
+.ap-trkline .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.ap-trkline b{font-family:var(--mono);font-size:22px;font-weight:400;letter-spacing:.02em}
+.ap-ops.row4{grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.ap-ops.row4 .ap-op{height:50px;font-size:14px;border-radius:12px}
+
+/* --- radionavegación --- */
+.ap-stage.scroll-y{justify-content:flex-start;overflow-y:auto;gap:12px;scrollbar-width:none}
+.ap-stage.scroll-y::-webkit-scrollbar{display:none}
+.ap-stage.scroll-y .ap-inst{width:min(100%,246px)}
+.ap-stage.scroll-y>*{flex:none}
+.nav-plan{filter:drop-shadow(0 18px 32px rgba(0,0,0,.55))}
+.ap-ops.one .ap-op.txt{text-align:left;justify-content:flex-start;padding:13px 16px;line-height:1.35}
+.nav-exp .tag{color:var(--sage)}
+.nav-exp.ko .tag{color:var(--terra)}
+.nav-txt{font-size:13.5px;line-height:1.52;color:rgba(244,239,230,.84);margin-top:3px}
+.nav-txt b{color:var(--gold2);font-weight:600}
+
 </style>
 </head>
 <body>
@@ -623,6 +675,7 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
     <symbol id="calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 7h7M8.5 12h2M13.5 12h2M8.5 16.5h2M13.5 16.5h2"/></symbol>
     <symbol id="dial" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4.5-3.5"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></symbol>
     <symbol id="stack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><path d="M14.5 17h5M17 14.5v5"/></symbol>
+    <symbol id="vor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M12 3.2 L19 7.1 v7.8 L12 20.8 L5 16.9 V9.1 Z"/><circle cx="12" cy="12" r="3.2"/><path d="M12 1.6v2M12 20.4v2M3.2 6.8l1.7 1M19.1 16.2l1.7 1M3.2 17.2l1.7-1M19.1 7.8l1.7-1" stroke-linecap="round"/></symbol>\n    <symbol id="cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></symbol>
     <symbol id="split" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h5l3 5 3-5h5M3 17h5l3-5"/><circle cx="19" cy="7" r="2"/><circle cx="19" cy="17" r="2"/></symbol>
     <symbol id="seal" viewBox="0 0 120 120" fill="none" stroke="currentColor">
       <circle cx="60" cy="60" r="56" stroke-width="1.6"/><circle cx="60" cy="60" r="44" stroke-width=".8" stroke-dasharray="2 3"/>
@@ -695,6 +748,11 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <div class="sect"><span class="label">Selección</span></div>
+    <button class="link-row" onclick="aptOpen('nav')">
+      <span class="ic"><svg><use href="#vor"/></svg></span>
+      <span><b>Radionavegación</b><span>VOR, HSI y RMI · cortes y entradas en espera</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
     <button class="link-row" onclick="go('psico')">
       <span class="ic"><svg><use href="#dial"/></svg></span>
       <span><b>Psicotécnico</b><span id="aptSub">Cálculo, instrumentos, memoria y doble tarea</span></span>
@@ -1559,6 +1617,26 @@ const APTEX={
     tips:["Agrupa de dos en dos y dales sonido: K7 · M4 se retiene mejor cantado que leído.",
           "No memorices el orden si no te lo piden: memoriza la pareja.",
           "Si fallas, no persigas la ronda anterior; el nivel baja solo y vuelve a subir."]},
+  nav:{n:"Radionavegación",s:"VOR, HSI y RMI: dónde estás, cortes y esperas",ic:"vor",
+    unit:"% de acierto",
+    cfg:[["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"],["rmi","RMI"],["mix","Mezcla"]],"hsi"],
+         ["foco","Enfoque",[["todo","Todo"],["orient","Situación"],["cortes","Cortes"],["esperas","Esperas"]],"todo"],
+         ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
+         ["lim","Límite",[[0,"Sin límite"],[30,"30 s"],[20,"20 s"]],30]],
+    tips:["Lee siempre en este orden: bandera, luego OBS, luego desvío. Si empiezas por la aguja te pierdes.",
+          "El CDI convencional no sabe hacia dónde vuelas: por eso miente si vuelas a más de 90° del OBS. El HSI no, y por eso el 737 lleva HSI.",
+          "TO/FROM dice de qué lado del VOR estás respecto al curso, no si te acercas. Son dos preguntas distintas.",
+          "En las esperas, Δ es rumbo menos acercamiento, siempre en ese orden, y medido al revés si los virajes son a la izquierda."]},
+  trk:{n:"Tracking psicomotor",s:"Mantener el punto centrado con el pulgar",ic:"cross",
+    unit:"índice",timed:true,
+    cfg:[["dur","Duración",[[90,"90 s"],[150,"2:30"],[240,"4 min"]],150],
+         ["eje","Ejes",[["uno","Solo lateral"],["dos","Lateral y vertical"]],"dos"],
+         ["nivel","Dificultad",[["suave","Suave"],["normal","Normal"],["duro","Duro"]],"normal"],
+         ["calc","Interferencia",[["no","Solo pilotar"],["si","Con cálculo"]],"no"]],
+    tips:["Una pantalla no es una palanca: aquí entrenas la anticipación y el no sobrecorregir, no la muñeca. Lo psicomotor puro solo se mide con mando real.",
+          "El pulgar manda régimen, no posición: si esperas a que el punto llegue al centro para soltar, ya te has pasado.",
+          "Si entras en péndulo, suelta del todo un segundo y vuelve a entrar suave. Corregir a lo bruto es lo que puntúa mal.",
+          "En Duro el mando es un integrador puro, sin autocentrado: es el que más se parece al COMPASS."]},
   dual:{n:"Doble tarea",s:"Calcular mientras vigilas cuatro indicadores",ic:"split",
     unit:"índice",timed:true,
     cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
@@ -1567,7 +1645,8 @@ const APTEX={
           "Barre los indicadores cada pocos segundos por costumbre, no cuando te acuerdes.",
           "Si un aviso te pilla a medio cálculo, atiende el aviso: pesa más que una pregunta."]}
 };
-const aptCfg=(ex,k)=>{const d=APTEX[ex].cfg.find(c=>c[0]===k);const st=S.apt.cfg[ex]||{};return st[k]!==undefined?st[k]:d[3]};
+const aptCfg=(ex,k)=>{const d=APTEX[ex].cfg.find(c=>c[0]===k);if(!d)return undefined;
+  const st=S.apt.cfg[ex]||{};return st[k]!==undefined?st[k]:d[3]};
 const aptSetCfg=(ex,k,v)=>{(S.apt.cfg[ex]=S.apt.cfg[ex]||{})[k]=v;save()};
 
 /* ============ utilidades ============ */
@@ -1637,22 +1716,26 @@ function renderAptSet(){const ex=S.apt.last||"calc",E=APTEX[ex];
       const raw=b.dataset.v;aptSetCfg(ex,k,/^-?\d+$/.test(raw)?+raw:raw);paint();aptSub()}});
     paint()});
   aptSub()}
-function aptSub(){const ex=S.apt.last||"calc",E=APTEX[ex];
-  $("aptSetSub").textContent=E.timed?aptMMSS(aptCfg(ex,"dur")):ex==="inst"?aptCfg(ex,"n")+" preguntas":aptCfg(ex,"rounds")+" rondas"}
+/* el pie del botón se deduce de los ajustes que tenga cada módulo, sin casos especiales */
+function aptSub(){const ex=S.apt.last||"calc",E=APTEX[ex],tiene=k=>E.cfg.some(c=>c[0]===k);
+  $("aptSetSub").textContent=E.timed?aptMMSS(aptCfg(ex,"dur")):
+    tiene("n")?aptCfg(ex,"n")+" preguntas":tiene("rounds")?aptCfg(ex,"rounds")+" rondas":""}
 
 /* ============ ciclo de vida del ejercicio ============ */
 let dr=null;
 function aptStart(){const ex=S.apt.last||"calc";
   aptStop();go("drill");
+  $("aptStage").className="ap-stage"+(ex==="nav"?" scroll-y":"");
   dr={ex:ex,t0:Date.now(),n:0,ok:0,rt:[],fin:false,raf:0,raf2:0,to:0,iv:0};
   if(APTEX[ex].timed)dr.dur=aptCfg(ex,"dur")*1000;
-  ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin})[ex]();
+  ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin,trk:trkBegin,nav:navBegin})[ex]();
   if(APTEX[ex].timed)aptTick()}
-function aptStop(){if(!dr)return;
+function aptStop(){if(!dr)return;removeEventListener("resize",trkSize);
   cancelAnimationFrame(dr.raf);cancelAnimationFrame(dr.raf2);
   clearTimeout(dr.to);clearInterval(dr.iv);dr.fin=true;dr=null}
 /* salir a medias: si ya hay recorrido se puntúa, si no se descarta */
-function aptQuit(){if(dr&&dr.n>2)return aptEnd();aptStop();go("psico")}
+function aptQuit(){if(dr&&(dr.n>2||(dr.dur&&Date.now()-dr.t0>20000)))return aptEnd();
+  aptStop();go("psico")}
 function aptTick(){if(!dr||dr.fin)return;
   const left=dr.dur-(Date.now()-dr.t0);
   if(left<=0)return aptEnd();
@@ -2046,6 +2129,572 @@ function dualAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
   aptReveal(iOk,i,function(){dualQ()},ok?140:520)}
 
 /* ============================================================
+   5 · TRACKING PSICOMOTOR  ("Control" de COMPASS / ADAPT)
+   El punto se desvía solo con una perturbación suma de tres senos
+   (la forcing function de los test reales) y hay que mantenerlo en
+   el centro. El dedo NO arrastra el punto: la palanca manda régimen,
+   igual que un mando real, así que hay que anticipar la deriva y
+   soltar antes de llegar o se entra en péndulo.
+     c += (k·palanca − damp·c)·dt        e = perturbación + c
+   Con damp alto (suave) se parece a un mando de posición; con damp 0
+   (duro) es un integrador puro, que es lo que de verdad cuesta.
+   ============================================================ */
+/* Amplitudes calibradas para que NO hacer nada puntúe bajo (~20 % en suave, ~10 % en
+   duro): con la perturbación floja de antes el punto caía dentro de tolerancia la mitad
+   del tiempo solo y el ejercicio no medía nada. La dificultad la dan la tolerancia, la
+   frecuencia y el autocentrado, no una amplitud desbocada; en los tres niveles el mando
+   tiene régimen de sobra (k) para anular la deriva máxima. */
+const TRKP={suave :{a:.70,f:[.09,.15,.24],k:1.15,damp:.90,tol:.22},
+            normal:{a:.74,f:[.11,.19,.31],k:1.35,damp:.35,tol:.18},
+            duro  :{a:.78,f:[.14,.25,.41],k:1.60,damp:0,  tol:.15}};
+const TRKMAX=56;   /* recorrido útil de la palanca, en píxeles */
+const TRKM2=13;    /* medio símbolo móvil: lo centra sobre su posición */
+
+function trkBegin(){
+  const P=TRKP[aptCfg("trk","nivel")],dos=aptCfg("trk","eje")==="dos",con=aptCfg("trk","calc")==="si";
+  dr.P=P;dr.dos=dos;dr.con=con;
+  dr.cx=0;dr.cy=0;dr.sx=0;dr.sy=0;dr.sid=null;
+  dr.on=0;dr.tt=0;dr.se=0;dr.mx=0;dr.lt=Date.now();dr.last=Date.now();dr.inside=null;dr.st=0;
+  /* fases al azar: la perturbación nunca se repite igual */
+  dr.ph=[0,1,2,3,4,5].map(()=>Math.random()*Math.PI*2);
+  $("aptStage").className="ap-stage";
+  $("aptStage").innerHTML=
+    '<div class="ap-trk">'+
+      '<div class="ap-field" id="apFld">'+
+        '<div class="ap-fgrid"></div>'+
+        '<div class="ap-ret" id="apRet"></div>'+
+        '<div class="ap-cross"></div>'+
+        '<div class="ap-mark" id="apMark"><svg viewBox="0 0 40 40">'+
+          '<path d="M20 6 L22 17 L35 22 L35 25 L22 22 L22 31 L26 34 L26 36 L20 34 L14 36 L14 34 L18 31 L18 22 L5 25 L5 22 L18 17 Z" fill="currentColor"/>'+
+        '</svg></div>'+
+      '</div>'+
+      (con?'<div class="ap-trkq" id="apTQ"></div>':'')+
+      '<div class="ap-stick" id="apStick">'+
+        '<span class="lb">Apoya aquí el pulgar</span>'+
+        '<i class="base" id="apBase"></i><i class="knob" id="apKnob"></i>'+
+      '</div>'+
+    '</div>';
+  trkSize();
+  trkBind();
+  if(con)trkQ();
+  dr.raf2=requestAnimationFrame(trkLoop)}
+
+function trkSize(){const f=$("apFld");if(!f)return;
+  dr.fw=f.clientWidth;dr.fh=f.clientHeight;
+  dr.rad=Math.min(dr.fw,dr.fh)/2-20;
+  const r=$("apRet"),d=dr.P.tol*dr.rad*2;
+  r.style.width=d+"px";r.style.height=d+"px"}
+
+function trkBind(){const z=$("apStick"),b=$("apBase"),k=$("apKnob");
+  const place=(x,y,dx,dy)=>{b.style.transform="translate("+(x-56)+"px,"+(y-56)+"px)";
+    k.style.transform="translate("+(x+dx-23)+"px,"+(y+dy-23)+"px)"};
+  z.addEventListener("pointerdown",function(e){if(!dr||dr.fin)return;
+    e.preventDefault();dr.sid=e.pointerId;
+    const r=z.getBoundingClientRect();dr.ox=e.clientX-r.left;dr.oy=e.clientY-r.top;
+    dr.sx=0;dr.sy=0;z.classList.add("on");place(dr.ox,dr.oy,0,0);
+    /* la captura va al final y protegida: si falla, la palanca sigue viva */
+    try{z.setPointerCapture(e.pointerId)}catch(err){}});
+  z.addEventListener("pointermove",function(e){if(!dr||dr.fin||e.pointerId!==dr.sid)return;
+    const r=z.getBoundingClientRect();let dx=e.clientX-r.left-dr.ox,dy=e.clientY-r.top-dr.oy;
+    const m=Math.hypot(dx,dy);if(m>TRKMAX){dx*=TRKMAX/m;dy*=TRKMAX/m}
+    dr.sx=dx/TRKMAX;dr.sy=dr.dos?dy/TRKMAX:0;place(dr.ox,dr.oy,dx,dr.dos?dy:0)});
+  const up=function(e){if(!dr||e.pointerId!==dr.sid)return;
+    dr.sid=null;dr.sx=0;dr.sy=0;z.classList.remove("on")};
+  z.addEventListener("pointerup",up);z.addEventListener("pointercancel",up);
+  addEventListener("resize",trkSize)}
+
+function trkDist(t,ax){const P=dr.P,o=ax*3,p=dr.ph;
+  return P.a*(.5*Math.sin(2*Math.PI*P.f[0]*t+p[o])
+             +.3*Math.sin(2*Math.PI*P.f[1]*t+p[o+1])
+             +.2*Math.sin(2*Math.PI*P.f[2]*t+p[o+2]))}
+
+function trkLoop(){if(!dr||dr.fin)return;
+  const now=Date.now(),dt=Math.min(.05,(now-(dr.lt||now))/1000);dr.lt=now;
+  /* la perturbación avanza en el mismo tiempo que integra el mando: si cae la tasa de
+     refresco, o la app pasa a segundo plano, se frena todo a la vez y el ejercicio no
+     se vuelve injusto */
+  dr.st+=dt;const t=dr.st,P=dr.P;
+  /* integrador del mando */
+  dr.cx+=(P.k*dr.sx-P.damp*dr.cx)*dt;dr.cy+=(P.k*dr.sy-P.damp*dr.cy)*dt;
+  dr.cx=Math.max(-2,Math.min(2,dr.cx));dr.cy=Math.max(-2,Math.min(2,dr.cy));
+  let ex=trkDist(t,0)+dr.cx,ey=dr.dos?trkDist(t,1)+dr.cy:0;
+  ex=Math.max(-1,Math.min(1,ex));ey=Math.max(-1,Math.min(1,ey));
+  const e=Math.hypot(ex,ey);
+  const m=$("apMark");
+  if(m)m.style.transform="translate("+(ex*dr.rad-TRKM2)+"px,"+(ey*dr.rad-TRKM2)+"px)";
+  /* puntuación: tiempo en tolerancia, error cuadrático medio y peor desvío */
+  dr.tt+=dt;dr.se+=e*e*dt;if(e>dr.mx)dr.mx=e;
+  const ins=e<=P.tol;if(ins)dr.on+=dt;
+  if(ins!==dr.inside){dr.inside=ins;$("apRet").classList.toggle("in",ins);
+    if(m)m.classList.toggle("in",ins)}
+  if(now-dr.last>250){dr.last=now;
+    $("aptCount").innerHTML="<b>"+(dr.tt?Math.round(dr.on/dr.tt*100):0)+"</b> %"}
+  dr.raf2=requestAnimationFrame(trkLoop)}
+
+/* cálculo simultáneo: la fila de abajo se responde con el otro pulgar */
+function trkQ(){if(!dr||dr.fin||!dr.con)return;
+  const k=R(1,3);let q,a;
+  if(k===1){const x=R(14,69),y=R(12,59);q=x+" + "+y;a=x+y}
+  else if(k===2){const x=R(40,95),y=R(11,34);q=x+" − "+y;a=x-y}
+  else{const x=R(3,9),y=R(11,19);q=x+" × "+y;a=x*y}
+  const o=aptNum(a,Math.max(2,Math.round(a*.14)));dr.cur={a:a,o:o};dr.lock=false;
+  $("apTQ").innerHTML='<div class="ap-trkline"><span class="tag">Cálculo</span><b>'+q+'</b></div>'+
+    '<div class="ap-ops row4">'+o.map((v,i)=>
+      '<button class="ap-op" onclick="trkAns('+i+')">'+nfm(v)+'</button>').join("")+'</div>'}
+function trkAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;
+  const iOk=dr.cur.o.indexOf(dr.cur.a),ok=i===iOk;
+  dr.n++;if(ok)dr.ok++;
+  buzz(ok?6:[12,30]);if(ok)tone(784,.1,.035);else tone(300,.14,.035,"triangle");
+  const ops=[].slice.call(document.querySelectorAll("#apTQ .ap-op"));
+  ops.forEach((o,j)=>o.classList.add(j===iOk?"ok":j===i?"ko":"dim"));
+  dr.to=setTimeout(function(){if(dr&&!dr.fin)trkQ()},ok?130:460)}
+
+/* teclado, para probarlo con ratón: flechas = palanca */
+document.addEventListener("keydown",function(e){
+  if(!dr||dr.fin||dr.ex!=="trk"||!/^Arrow/.test(e.key))return;e.preventDefault();
+  if(e.key==="ArrowLeft")dr.sx=-1;if(e.key==="ArrowRight")dr.sx=1;
+  if(dr.dos){if(e.key==="ArrowUp")dr.sy=-1;if(e.key==="ArrowDown")dr.sy=1}});
+document.addEventListener("keyup",function(e){
+  if(!dr||dr.fin||dr.ex!=="trk"||!/^Arrow/.test(e.key))return;
+  if(/Left|Right/.test(e.key))dr.sx=0;if(/Up|Down/.test(e.key))dr.sy=0});
+
+/* ============================================================
+   6 · RADIONAVEGACIÓN · ORIENTACIÓN VOR
+   Un solo motor geométrico del que cuelgan TODOS los instrumentos,
+   así que una pregunta no puede contradecir a su propio dibujo.
+   Convenio: rumbos en grados magnéticos, 0 = norte, horario.
+     radial (QDR) = marcación DE la estación AL avión
+     QDM          = radial ± 180 = marcación a la estación
+   ============================================================ */
+const nrm=a=>((a%360)+360)%360;                 /* 0 … 359,99 */
+const nrm180=a=>{a=nrm(a);return a>180?a-360:a};/* −180 … +180 */
+const r360=a=>{a=Math.round(nrm(a));return a===0?360:a};
+const hdg=a=>pad3(Math.round(nrm(a))===0?360:Math.round(nrm(a)));
+
+/* --- la indicación del VOR, de una pieza ---
+   d = diferencia entre el radial en que estás y el curso seleccionado.
+   |d| < 90 → FROM (el curso te lleva alejándote)  ·  |d| > 90 → TO
+   desvío: dónde está la línea del curso respecto a ti, MIRANDO en la
+   dirección del OBS. Positivo = a tu derecha. Fondo de escala ±10°. */
+const VORFS=10;                 /* fondo de escala, grados */
+const VORDOT=2;                 /* grados por punto */
+function vorInd(radial,obs){
+  const d=nrm180(radial-obs),to=Math.abs(d)>90;
+  const amb=Math.abs(Math.abs(d)-90)<2.5;        /* zona de ambigüedad: bandera OFF */
+  const dev=to?nrm180(d-180):-d;
+  return{to:to,from:!to,off:amb,dev:Math.max(-VORFS,Math.min(VORFS,dev)),
+    full:Math.abs(dev)>=VORFS,exacto:dev,puntos:Math.round(dev/VORDOT)}}
+
+/* ¿hacia qué lado corrige el piloto? En el HSI siempre el lado de la aguja;
+   en el CDI convencional se invierte si vuelas a más de 90° del OBS. */
+function vorCorrige(ind,rumbo,obs,esHSI){
+  if(Math.abs(ind.dev)<.25)return 0;
+  const s=ind.dev>0?1:-1;
+  return (esHSI||Math.abs(nrm180(rumbo-obs))<90)?s:-s}
+
+/* ¿me acerco a la estación con este rumbo? Sí si vuelo a menos de 90° del QDM. */
+const vorAcerca=(radial,rumbo)=>Math.abs(nrm180(rumbo-(radial+180)))<90;
+/* el radial crece (gira en sentido horario alrededor de la estación) si sin(rumbo−radial)>0 */
+const vorGiro=(radial,rumbo)=>Math.sin((rumbo-radial)*Math.PI/180);
+/* ¿este rumbo me lleva a interceptar el radial objetivo, o me aleja de él? */
+function vorIntercepta(radial,rumbo,objetivo){
+  const falta=nrm180(objetivo-radial),g=vorGiro(radial,rumbo);
+  if(Math.abs(falta)<.5)return 0;                /* ya estás en él */
+  return (falta>0?g>0:g<0)?1:-1}
+/* rumbo de interceptación con corte de A grados */
+function vorCorte(radial,objetivo,haciaEstacion,A){
+  const s=nrm180(radial-objetivo)>0?1:-1;
+  return haciaEstacion?nrm(objetivo+180+A*s):nrm(objetivo-A*s)}
+/* marcación relativa: dónde te queda la estación */
+const SECT=[[20,"al frente"],[70,"adelante a la derecha"],[110,"por tu través derecho"],
+            [160,"atrás a la derecha"],[200,"a la cola"],[250,"atrás a la izquierda"],
+            [290,"por tu través izquierdo"],[340,"adelante a la izquierda"],[360,"al frente"]];
+function vorSector(radial,rumbo){const rb=nrm(radial+180-rumbo);
+  for(const s of SECT)if(rb<=s[0])return s[1];return "al frente"}
+
+/* ============ ENTRADAS EN ESPERA ============
+   Reparto 180° directa / 110° paralela / 70° gota, derivado de la geometría
+   (no copiado de fuentes secundarias, que se contradicen entre sí):
+   la entrada directa vale mientras el viraje hacia el tramo de alejamiento
+   no pase de 180°, y eso da exactamente la mitad del círculo.
+   Δ = rumbo al cruzar el fijo − rumbo de acercamiento, en 0…360.
+     estándar (derecha):  [0,180) directa · [180,250] gota · (250,360) paralela
+     no estándar:         espejo exacto
+   En ±5° de cada límite valen las dos: ahí no hay respuesta única. */
+const ENTRADAS={d:"Directa",p:"Paralela",g:"Gota"};
+function esperaEntrada(acerc,rumbo,derecha){
+  const D=derecha?nrm(rumbo-acerc):nrm(acerc-rumbo);
+  const tipo=D<180?"d":D<=250?"g":"p";
+  const lim=[0,180,250].map(x=>Math.min(Math.abs(D-x),Math.abs(D-x-360),Math.abs(D-x+360)));
+  return{tipo:tipo,delta:D,limite:Math.min.apply(null,lim)<=5}}
+
+/* ============ INSTRUMENTOS ============ */
+/* HSI: la rosa gira con el rumbo, así que la aguja de curso y la barra de
+   desvío quedan SIEMPRE bien sentidas respecto al avión. Por eso no hay
+   sentido inverso: la diferencia con el CDI es solo de presentación. */
+function navHSI(rumbo,obs,ind,brg){let t="";
+  t+='<g transform="rotate('+(-rumbo)+' 120 120)">';
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
+    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
+    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
+      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
+  /* aguja de curso + barra de desvío, girando con la rosa */
+  t+='<g transform="rotate('+obs+' 120 120)">';
+  t+='<path d="M120 38 l7 12 h-14 z" fill="#d9b77e"/>';
+  t+='<line x1="120" y1="50" x2="120" y2="74" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>';
+  t+='<line x1="120" y1="166" x2="120" y2="196" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>';
+  for(let k=-2;k<=2;k++)if(k)t+='<circle cx="'+(120+k*17)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.55)"/>';
+  const off=ind.dev/VORFS*34;
+  t+='<line x1="'+(120+off)+'" y1="78" x2="'+(120+off)+'" y2="162" stroke="'+(ind.off?"#8a93a6":"#d9b77e")+
+     '" stroke-width="4" stroke-linecap="round"/>';
+  if(!ind.off)t+=ind.to?'<path d="M120 96 l6 10 h-12 z" fill="#f4efe6"/>':'<path d="M120 144 l6 -10 h-12 z" fill="#f4efe6"/>';
+  t+='</g>';
+  if(brg!=null)t+='<g transform="rotate('+brg+' 120 120)">'+
+    '<path d="M120 24 l5 9 h-10 z" fill="#9cc5a1"/><line x1="120" y1="33" x2="120" y2="207" stroke="#9cc5a1" stroke-width="1.6"/>'+
+    '<circle cx="120" cy="212" r="4" fill="none" stroke="#9cc5a1" stroke-width="1.6"/></g>';
+  t+='</g>';
+  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
+  t+='<path d="M104 120 h32 M120 108 v30" stroke="#f0d6a6" stroke-width="2.6" stroke-linecap="round"/>';
+  t+='<circle cx="120" cy="120" r="3" fill="#f0d6a6"/>';
+  if(ind.off)t+='<text x="120" y="196" font-size="11" text-anchor="middle" letter-spacing="2" fill="#de8f7b">OFF</text>';
+  return instSVG(t)}
+
+/* CDI convencional: la rosa la mueve el OBS, NO el rumbo. El instrumento no
+   sabe hacia dónde vuelas, y de ahí sale el sentido inverso. */
+function navCDI(obs,ind){let t="";
+  t+='<g transform="rotate('+(-obs)+' 120 120)">';
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
+    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
+    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
+      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
+  t+='</g>';
+  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
+  for(let k=-5;k<=5;k++)if(k)t+='<circle cx="'+(120+k*12)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.5)"/>';
+  const off=ind.dev/VORFS*60;
+  t+='<line x1="'+(120+off)+'" y1="58" x2="'+(120+off)+'" y2="182" stroke="'+(ind.off?"#8a93a6":"#f4efe6")+
+     '" stroke-width="3.6" stroke-linecap="round"/>';
+  if(ind.off)t+='<text x="120" y="92" font-size="12" text-anchor="middle" letter-spacing="3" fill="#de8f7b">OFF</text>';
+  else{t+=ind.to?'<path d="M120 80 l7 12 h-14 z" fill="#9cc5a1"/><text x="120" y="76" font-size="9.5" text-anchor="middle" letter-spacing="2" fill="#9cc5a1">TO</text>'
+                :'<path d="M120 160 l7 -12 h-14 z" fill="#d9b77e"/><text x="120" y="174" font-size="9.5" text-anchor="middle" letter-spacing="2" fill="#d9b77e">FROM</text>'}
+  t+='<text x="120" y="214" font-size="9" text-anchor="middle" letter-spacing="2.4" fill="rgba(232,226,214,.5)">OBS '+hdg(obs)+'</text>';
+  return instSVG(t)}
+
+/* RMI: rosa girando con el rumbo, la cabeza apunta a la estación (QDM),
+   la cola lee el radial. */
+function navRMI(rumbo,qdm,qdm2){let t="";
+  t+='<g transform="rotate('+(-rumbo)+' 120 120)">';
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
+    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
+    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
+      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
+  t+='<g transform="rotate('+qdm+' 120 120)"><path d="M120 30 l7 13 h-14 z" fill="#d9b77e"/>'+
+     '<line x1="120" y1="43" x2="120" y2="197" stroke="#d9b77e" stroke-width="2.6"/>'+
+     '<path d="M113 197 h14" stroke="#d9b77e" stroke-width="2.6"/></g>';
+  if(qdm2!=null)t+='<g transform="rotate('+qdm2+' 120 120)"><path d="M120 34 l6 11 h-12 z" fill="#9cc5a1"/>'+
+     '<line x1="120" y1="45" x2="120" y2="195" stroke="#9cc5a1" stroke-width="1.8" stroke-dasharray="5 4"/></g>';
+  t+='</g>';
+  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
+  t+='<circle cx="120" cy="120" r="7" fill="#0c1322" stroke="rgba(217,183,126,.5)"/>';
+  return instSVG(t)}
+
+/* ============ VISTA CENITAL · la clase que da cada pregunta ============ */
+const navPlane=(x,y,h,col,s)=>'<g transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+
+  Math.round(h)+') scale('+(s||.42)+') translate(-120 -120)">'+
+  '<path d="M120 94 L123 108 L146 118 L146 124 L123 118 L123 136 L131 142 L131 146 L120 143'+
+  ' L109 146 L109 142 L117 136 L117 118 L94 124 L94 118 L117 108 Z" fill="'+col+'"/></g>';
+const navVOR=(x,y)=>'<g><circle cx="'+x+'" cy="'+y+'" r="9" fill="none" stroke="#9cc5a1" stroke-width="1.4"/>'+
+  '<path d="M'+(x-7.8)+' '+(y-4.5)+' L'+x+' '+(y-9)+' L'+(x+7.8)+' '+(y-4.5)+' L'+(x+7.8)+' '+(y+4.5)+
+  ' L'+x+' '+(y+9)+' L'+(x-7.8)+' '+(y+4.5)+' Z" fill="none" stroke="#9cc5a1" stroke-width="1.4"/>'+
+  '<circle cx="'+x+'" cy="'+y+'" r="1.8" fill="#9cc5a1"/></g>';
+function navLine(cx,cy,b,r0,r1,col,dash,lb){const a=polar(cx,cy,r0,b),z=polar(cx,cy,r1,b);
+  let s='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+z[0].toFixed(1)+'" y2="'+z[1].toFixed(1)+
+    '" stroke="'+col+'" stroke-width="1.5"'+(dash?' stroke-dasharray="5 4"':'')+'/>';
+  if(lb){const p=polar(cx,cy,r1+9,b);
+    /* la etiqueta se queda dentro del lienzo: pegada al borde se cortaba */
+    const lx=Math.max(20,Math.min(220,p[0])),ly=Math.max(14,Math.min(226,p[1]+3.5));
+    s+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="10" text-anchor="middle" fill="'+col+'">'+lb+'</text>'}
+  return s}
+/* o = {radial, rumbo, obs, objetivo, dist} */
+function navPlan(o){const cx=120,cy=118,D=o.dist||66;let t="";
+  for(let i=0;i<12;i++)t+=instTK(i*30,104,99,1,"rgba(232,226,214,.3)").replace(/120 120/g,cx+" "+cy)
+    .replace(/x1="120"/,'x1="'+cx+'"').replace(/x2="120"/,'x2="'+cx+'"')
+    .replace(/y1="(\d+)"/,function(m,v){return 'y1="'+(cy-(120-(+v)))+'"'})
+    .replace(/y2="(\d+)"/,function(m,v){return 'y2="'+(cy-(120-(+v)))+'"'});
+  t+='<text x="'+cx+'" y="'+(cy-108)+'" font-size="9" text-anchor="middle" letter-spacing="2" fill="rgba(232,226,214,.45)">N</text>';
+  if(o.objetivo!=null)t+=navLine(cx,cy,o.objetivo,10,92,"#9cc5a1",true,"R-"+hdg(o.objetivo));
+  if(o.obs!=null)t+=navLine(cx,cy,o.obs,10,92,"#d9b77e",false,hdg(o.obs));
+  t+=navLine(cx,cy,o.radial,10,D-14,"rgba(244,239,230,.5)",true,null);
+  t+=navVOR(cx,cy);
+  const p=polar(cx,cy,D,o.radial);
+  t+=navPlane(p[0],p[1],o.rumbo,"#f0d6a6",.46);
+  const q=polar(cx,cy,D+22,o.radial);
+  t+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+3).toFixed(1)+'" font-size="9.5" text-anchor="middle" fill="#f0d6a6">R-'+hdg(o.radial)+'</text>';
+  return '<svg class="ap-inst nav-plan" viewBox="0 0 240 240">'+t+'</svg>'}
+/* vista cenital de la espera: circuito, sectores y por dónde llegas */
+function navPlanEspera(acerc,derecha,rumbo,sectores){const cx=120,cy=116;let t="";
+  const s=derecha?1:-1,out=nrm(acerc+180);
+  /* Los sectores se miden sobre el RUMBO de llegada, pero el avión se dibuja en la
+     marcación de la que viene (rumbo+180). Por eso la base del abanico es acerc+180:
+     así el avión cae siempre dentro de su propio sector. */
+  const base=nrm(acerc+180);
+  if(sectores){[[0,180,"rgba(156,197,161,.2)","#9cc5a1"],[180,250,"rgba(217,183,126,.22)","#d9b77e"],
+    [250,360,"rgba(222,143,123,.2)","#de8f7b"]].forEach(function(k){
+    const a0=nrm(base+s*k[0]),a1=nrm(base+s*k[1]),p0=polar(cx,cy,104,a0),p1=polar(cx,cy,104,a1);
+    const big=Math.abs(k[1]-k[0])>180?1:0;
+    t+='<path d="M'+cx+' '+cy+' L'+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+' A104 104 0 '+big+' '+(derecha?1:0)+' '+
+      p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' Z" fill="'+k[2]+'"/>';
+    t+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p0[0].toFixed(1)+'" y2="'+p0[1].toFixed(1)+
+      '" stroke="'+k[3]+'" stroke-width="1" stroke-dasharray="3 3" opacity=".6"/>'})}
+  /* el circuito: a lo largo del alejamiento, desplazado al lado del viraje
+     (a la derecha del rumbo de acercamiento en patrón estándar) */
+  const L=62,W=34;
+  const ux=Math.sin(out*Math.PI/180),uy=-Math.cos(out*Math.PI/180);
+  const lado=nrm(acerc+s*90),vx=Math.sin(lado*Math.PI/180),vy=-Math.cos(lado*Math.PI/180);
+  const P=(a,b)=>[(cx+ux*a+vx*b).toFixed(1),(cy+uy*a+vy*b).toFixed(1)];
+  const A=P(0,0),B=P(L,0),C=P(L,W),Dp=P(0,W);
+  t+='<path d="M'+A[0]+' '+A[1]+' L'+B[0]+' '+B[1]+' A'+(W/2)+' '+(W/2)+' 0 0 '+(derecha?0:1)+' '+C[0]+' '+C[1]+
+     ' L'+Dp[0]+' '+Dp[1]+' A'+(W/2)+' '+(W/2)+' 0 0 '+(derecha?0:1)+' '+A[0]+' '+A[1]+'" '+
+     'fill="none" stroke="#d9b77e" stroke-width="2.2"/>';
+  /* flecha del tramo de acercamiento, entrando al fijo */
+  const ent=polar(cx,cy,42,nrm(acerc+180));
+  t+='<line x1="'+ent[0].toFixed(1)+'" y1="'+ent[1].toFixed(1)+'" x2="'+cx+'" y2="'+cy+
+     '" stroke="rgba(244,239,230,.45)" stroke-width="1.3" stroke-dasharray="4 4"/>';
+  t+=navVOR(cx,cy);
+  const llega=polar(cx,cy,88,nrm(rumbo+180));
+  t+=navPlane(llega[0],llega[1],rumbo,"#f4efe6",.5);
+  if(sectores)t+='<text x="'+cx+'" y="232" font-size="9" text-anchor="middle" letter-spacing="1.4">'+
+    '<tspan fill="#9cc5a1">DIRECTA</tspan><tspan fill="rgba(232,226,214,.4)"> · </tspan>'+
+    '<tspan fill="#d9b77e">GOTA</tspan><tspan fill="rgba(232,226,214,.4)"> · </tspan>'+
+    '<tspan fill="#de8f7b">PARALELA</tspan></text>';
+  return '<svg class="ap-inst nav-plan" viewBox="0 0 240 240">'+t+'</svg>'}
+
+/* ============ GENERADORES ============ */
+const navOpts=(arr,ok)=>{const o=shuf(arr.slice());return{o:o,ok:o.indexOf(ok)}};
+function navIns(){const c=aptCfg("nav","ins");return c==="mix"?pickR(["hsi","cdi","rmi"]):c}
+
+/* A1 · ¿en qué radial estás? */
+function navA1(){
+  const rad=R(1,36)*10,k=pickR([0,0,2,4,6,-2,-4,-6]),to=Math.random()<.5;
+  const obs=nrm(to?rad+180+k*(to?-1:1):rad+k);
+  const ind=vorInd(rad,obs),rumbo=nrm((to?rad+180:rad)+R(-25,25));
+  const ins=navIns()==="rmi"?"hsi":navIns();
+  const svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind);
+  const op=navOpts([r360(rad),r360(rad+180),r360(rad+2*(k||10)),r360(rad-(k||10)-10)].map(hdg),hdg(rad));
+  return{ins:ins,svg:svg,q:"Con el OBS en <em>"+hdg(obs)+"</em>, ¿en qué radial estás?",
+    o:op.o.map(x=>"Radial "+x),ok:op.ok,
+    exp:"La bandera marca <b>"+(ind.to?"TO":"FROM")+"</b>, así que el OBS "+hdg(obs)+" corresponde al radial "+
+      hdg(ind.to?obs+180:obs)+". La barra está "+(Math.abs(ind.dev)<.5?"centrada":
+      Math.abs(ind.puntos)+" punto"+(Math.abs(ind.puntos)===1?"":"s")+" a la "+(ind.dev>0?"derecha":"izquierda")+
+      " (2° por punto), y el curso queda a esa mano")+": estás en el radial <b>"+hdg(rad)+"</b>.",
+    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+
+/* A2 · ¿dónde te queda la estación? */
+function navA2(){
+  const rad=R(1,36)*10,rumbo=R(1,36)*10,qdm=nrm(rad+180);
+  if(Math.abs(nrm180(qdm-rumbo))%90<8)return navA2();
+  const sec=vorSector(rad,rumbo),todos=SECT.map(s=>s[1]).filter((v,i,a)=>a.indexOf(v)===i);
+  const mal=shuf(todos.filter(x=>x!==sec)).slice(0,3);
+  const op=navOpts([sec].concat(mal),sec);
+  return{ins:"rmi",svg:navRMI(rumbo,qdm),q:"Vuelas rumbo <em>"+hdg(rumbo)+"</em>. ¿Dónde te queda la estación?",
+    o:op.o,ok:op.ok,
+    exp:"La cabeza de la aguja marca el QDM <b>"+hdg(qdm)+"</b> y la cola el radial "+hdg(rad)+
+      ". Con rumbo "+hdg(rumbo)+", la marcación relativa es "+hdg(qdm-rumbo)+"°: la estación te queda <b>"+sec+"</b>.",
+    plan:{radial:rad,rumbo:rumbo}}}
+
+/* B · sentido de la aguja: el CDI convencional miente si vuelas al revés */
+function navB(){
+  const rad=R(1,36)*10,k=pickR([4,6,8,-4,-6,-8]),obs=nrm(rad+k);
+  const rumbo=nrm(obs+180+R(-35,35));                     /* vuelas CONTRA el OBS */
+  const ind=vorInd(rad,obs),lado=vorCorrige(ind,rumbo,obs,false);
+  const op=navOpts(["A la izquierda","A la derecha","Ya estás en el curso","No se puede saber"],
+    lado<0?"A la izquierda":"A la derecha");
+  return{ins:"cdi",svg:navCDI(obs,ind),
+    q:"OBS en <em>"+hdg(obs)+"</em> y vuelas rumbo <em>"+hdg(rumbo)+"</em>. Para volver al curso, ¿hacia dónde corriges?",
+    o:op.o,ok:op.ok,
+    exp:"Sentido inverso: vuelas a "+Math.round(Math.abs(nrm180(rumbo-obs)))+"° del OBS, más de 90°, así que el CDI "+
+      "convencional indica al revés. La barra está a la <b>"+(ind.dev>0?"derecha":"izquierda")+
+      "</b>, pero tú tienes que corregir a la <b>"+(lado<0?"izquierda":"derecha")+
+      "</b>. En un HSI esto no pasa: la rosa gira con el rumbo y la aguja siempre está bien sentida.",
+    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+
+/* C1 · ¿me acerco o me alejo de la estación? */
+function navC1(){
+  const rad=R(1,36)*10,rumbo=R(1,36)*10;
+  if(Math.abs(Math.abs(nrm180(rumbo-(rad+180)))-90)<12)return navC1();
+  const ac=vorAcerca(rad,rumbo);
+  const op=navOpts(["Te acercas","Te alejas","Mantienes la distancia","Depende del OBS"],ac?"Te acercas":"Te alejas");
+  return{ins:"rmi",svg:navRMI(rumbo,nrm(rad+180)),
+    q:"Estás en el radial <em>"+hdg(rad)+"</em> con rumbo <em>"+hdg(rumbo)+"</em>. ¿Qué pasa con la distancia?",
+    o:op.o,ok:op.ok,
+    exp:"El QDM es "+hdg(rad+180)+" y tu rumbo "+hdg(rumbo)+": la diferencia es "+
+      Math.round(Math.abs(nrm180(rumbo-(rad+180))))+"°. Por debajo de 90° te acercas, por encima te alejas. Aquí <b>"+
+      (ac?"te acercas":"te alejas")+"</b>. Fíjate en que el OBS no pinta nada en esto.",
+    plan:{radial:rad,rumbo:rumbo}}}
+
+/* C2 · la trampa: TO no significa acercarse */
+function navC2(){
+  const rad=R(1,36)*10,obs=nrm(rad+180+pickR([0,2,-2,4,-4]));
+  const rumbo=nrm(rad+R(-50,50));                         /* vuelas alejándote */
+  const ind=vorInd(rad,obs),ac=vorAcerca(rad,rumbo);
+  if(ac)return navC2();
+  const op=navOpts(["Te alejas: el TO solo dice de qué lado del VOR estás",
+    "Te acercas: el TO lo confirma","Te acercas, pero despacio","No se puede saber sin el DME"],
+    "Te alejas: el TO solo dice de qué lado del VOR estás");
+  return{ins:"cdi",svg:navCDI(obs,ind),
+    q:"El indicador marca <em>TO</em> y vuelas rumbo <em>"+hdg(rumbo)+"</em>. ¿Te acercas a la estación?",
+    o:op.o,ok:op.ok,
+    exp:"La bandera TO/FROM depende solo de dónde estás respecto al curso seleccionado, <b>no de tu rumbo</b>. "+
+      "Estás en el radial "+hdg(rad)+" y vuelas "+hdg(rumbo)+", a "+
+      Math.round(Math.abs(nrm180(rumbo-(rad+180))))+"° del QDM: te estás <b>alejando</b> con el TO puesto.",
+    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+
+/* D1 · rumbo de interceptación */
+function navD1(){
+  const obj=R(1,36)*10,dif=pickR([20,30,40,50,60])*pickR([1,-1]),rad=nrm(obj+dif);
+  const hacia=Math.random()<.5,A=pickR([20,30,45]);
+  const ok=vorCorte(rad,obj,hacia,A);
+  const op=navOpts([ok,nrm(hacia?obj+180-A*(dif>0?1:-1):obj+A*(dif>0?1:-1)),
+    nrm(ok+180),nrm(hacia?obj+180:obj)].map(hdg),hdg(ok));
+  return{ins:"hsi",svg:navHSI(nrm(rad+(hacia?180:0)),obj,vorInd(rad,hacia?nrm(obj+180):obj)),
+    q:"Estás en el radial <em>"+hdg(rad)+"</em>. Quieres interceptar el radial <em>"+hdg(obj)+
+      "</em> "+(hacia?"hacia":"alejándote de")+" la estación con <em>"+A+"° de corte</em>. ¿Qué rumbo tomas?",
+    o:op.o.map(x=>"Rumbo "+x),ok:op.ok,
+    exp:"El curso que quieres volar es <b>"+hdg(hacia?obj+180:obj)+"</b>. Estás "+Math.abs(dif)+"° "+
+      (dif>0?"en sentido horario":"en sentido antihorario")+" del radial objetivo, así que el corte va hacia el otro lado: "+
+      "rumbo <b>"+hdg(ok)+"</b>.",
+    plan:{radial:rad,rumbo:ok,obs:hacia?nrm(obj+180):obj,objetivo:obj}}}
+
+/* D2 · ¿este rumbo intercepta, o te aleja? */
+function navD2(){
+  const rad=R(1,36)*10,dif=pickR([20,30,40,50])*pickR([1,-1]),obj=nrm(rad+dif);
+  const rumbo=R(1,36)*10,v=vorIntercepta(rad,rumbo,obj);
+  if(Math.abs(vorGiro(rad,rumbo))<.2)return navD2();
+  const op=navOpts(["Lo interceptas","Te alejas de él","Te quedas paralelo","Hace falta saber la distancia"],
+    v>0?"Lo interceptas":"Te alejas de él");
+  return{ins:"rmi",svg:navRMI(rumbo,nrm(rad+180)),
+    q:"Radial <em>"+hdg(rad)+"</em>, rumbo <em>"+hdg(rumbo)+"</em>. ¿Qué pasa con el radial <em>"+hdg(obj)+"</em>?",
+    o:op.o,ok:op.ok,
+    exp:"Con rumbo "+hdg(rumbo)+" desde el radial "+hdg(rad)+", tu radial "+
+      (vorGiro(rad,rumbo)>0?"va aumentando (giras en sentido horario alrededor de la estación)":
+       "va disminuyendo (giras en sentido antihorario)")+", y el radial "+hdg(obj)+" te queda "+
+      (dif>0?"en sentido horario":"en sentido antihorario")+": <b>"+(v>0?"lo interceptas":"te alejas de él")+"</b>.",
+    plan:{radial:rad,rumbo:rumbo,objetivo:obj}}}
+
+/* E · entrada en espera */
+function navE(){
+  const acerc=R(1,36)*10,der=Math.random()<.65,rumbo=R(1,36)*10;
+  const e=esperaEntrada(acerc,rumbo,der);
+  if(e.limite)return navE();
+  const op=navOpts(["Directa","Paralela","Gota"].concat(["Depende del viento"]),ENTRADAS[e.tipo]);
+  return{ins:"esp",svg:navPlanEspera(acerc,der,rumbo,false),
+    q:"Espera en el radial <em>"+hdg(acerc+180)+"</em>, acercamiento <em>"+hdg(acerc)+
+      "</em>, virajes a la <em>"+(der?"derecha":"izquierda")+"</em>. Llegas al fijo con rumbo <em>"+
+      hdg(rumbo)+"</em>. ¿Qué entrada?",
+    o:op.o,ok:op.ok,
+    exp:"Δ = rumbo "+hdg(rumbo)+" − acercamiento "+hdg(acerc)+" = <b>"+Math.round(e.delta)+"°</b>"+
+      (der?"":" (medido al revés, por ser virajes a la izquierda)")+
+      ". De 0 a 180 directa, de 180 a 250 gota, de 250 a 360 paralela: <b>"+ENTRADAS[e.tipo]+"</b>.",
+    plan:null,espera:{acerc:acerc,der:der,rumbo:rumbo}}}
+
+const NAVFAM={orient:[navA1,navA2,navB,navC1,navC2],cortes:[navD1,navD2],esperas:[navE]};
+function navPool(){const f=aptCfg("nav","foco");
+  return f==="todo"?NAVFAM.orient.concat(NAVFAM.cortes,NAVFAM.esperas,NAVFAM.orient):NAVFAM[f]}
+
+navA1.fam="Situación";navA2.fam="Situación";navB.fam="Sentido de la aguja";
+navC1.fam="Acercarse o alejarse";navC2.fam="Acercarse o alejarse";
+navD1.fam="Cortes de ruta";navD2.fam="Cortes de ruta";navE.fam="Entradas en espera";
+const NAVNOM={hsi:"HSI",cdi:"CDI convencional",rmi:"RMI",esp:"Circuito de espera"};
+
+function navBegin(){dr.tot=aptCfg("nav","n");dr.lim=aptCfg("nav","lim");dr.fam={};navNext()}
+function navNext(){if(!dr||dr.fin)return;
+  if(dr.n>=dr.tot)return aptEnd();
+  const g=pickR(navPool()),it=g();it.fam=g.fam;
+  dr.cur=it;dr.tq=Date.now();dr.lock=false;
+  aptItems(dr.n+1,dr.tot);
+  $("aptStage").innerHTML=
+    '<div>'+it.svg+'<div class="ap-instname">'+NAVNOM[it.ins]+'</div></div>'+
+    '<div class="ap-panel" style="padding:15px 18px"><div class="ap-q" style="font-size:17.5px">'+it.q+'</div></div>'+
+    '<div class="ap-ops one">'+it.o.map((v,i)=>
+      '<button class="ap-op txt" onclick="navAns('+i+')">'+v+'</button>').join("")+'</div>';
+  if(dr.lim){dr.left=dr.lim;$("aptClock").textContent=dr.lim+" s";$("aptClock").classList.remove("low");
+    dr.iv=setInterval(function(){if(!dr||dr.fin)return;dr.left--;
+      $("aptClock").textContent=Math.max(0,dr.left)+" s";$("aptClock").classList.toggle("low",dr.left<=5);
+      if(dr.left<=0){clearInterval(dr.iv);navAns(-1)}},1000)}
+  else $("aptClock").textContent="—"}
+
+function navAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
+  const it=dr.cur,ok=i===it.ok;
+  dr.n++;if(ok)dr.ok++;if(i>=0)dr.rt.push(Date.now()-dr.tq);
+  const f=dr.fam[it.fam]||(dr.fam[it.fam]={n:0,ok:0});f.n++;if(ok)f.ok++;
+  aptFlash(ok);
+  const ops=[].slice.call(document.querySelectorAll("#aptStage .ap-op"));
+  ops.forEach((o,k)=>o.classList.add(k===it.ok?"ok":k===i?"ko":"dim"));
+  dr.to=setTimeout(function(){if(dr&&!dr.fin)navExp(ok,i<0)},ok?420:780)}
+
+/* la vista cenital: esto es la clase, no un adorno */
+function navExp(ok,fuera){if(!dr||dr.fin)return;const it=dr.cur;
+  const plan=it.espera?navPlanEspera(it.espera.acerc,it.espera.der,it.espera.rumbo,true)
+            :it.plan?navPlan(it.plan):it.svg;
+  $("aptClock").textContent="—";$("aptClock").classList.remove("low");
+  $("aptStage").innerHTML=
+    '<div>'+plan+'<div class="ap-instname">Vista desde arriba</div></div>'+
+    '<div class="ap-panel nav-exp '+(ok?"ok":"ko")+'" style="padding:15px 18px">'+
+      '<span class="tag">'+(fuera?"Se acabó el tiempo":ok?"Correcto":"La respuesta era: "+it.o[it.ok])+'</span>'+
+      '<div class="nav-txt">'+it.exp+'</div></div>'+
+    '<button class="cta" onclick="navNext()"><span>Siguiente</span>'+
+      '<span class="arrow"><svg><use href="#arrow"/></svg></span></button>'}
+
+/* ============ BANCO DE PRUEBAS DEL MOTOR ============
+   Casos resueltos a mano. Si alguno falla, el motor miente y no se publica.
+   window.NAV_TEST() en la consola devuelve los fallos. */
+function navTest(){const f=[];
+  const eq=(nom,a,b)=>{if(String(a)!==String(b))f.push(nom+": esperaba "+b+", dio "+a)};
+  let x;
+  x=vorInd(90,90);   eq("R090/OBS090 bandera",x.to?"TO":"FROM","FROM"); eq("R090/OBS090 desvío",x.dev,0);
+  x=vorInd(90,270);  eq("R090/OBS270 bandera",x.to?"TO":"FROM","TO");   eq("R090/OBS270 desvío",x.dev,0);
+  x=vorInd(100,90);  eq("R100/OBS090 bandera",x.to?"TO":"FROM","FROM"); eq("R100/OBS090 desvío",x.dev,-10);
+  x=vorInd(100,270); eq("R100/OBS270 bandera",x.to?"TO":"FROM","TO");   eq("R100/OBS270 desvío",x.dev,10);
+  x=vorInd(10,360);  eq("R010/OBS360 desvío",x.dev,-10);
+  x=vorInd(350,360); eq("R350/OBS360 desvío",x.dev,10);
+  x=vorInd(94,90);   eq("R094/OBS090 puntos",x.puntos,-2);
+  x=vorInd(90,180);  eq("R090/OBS180 ambigua",x.off,true);
+  eq("CDI sentido inverso",vorCorrige({dev:5},270,90,false),-1);
+  eq("HSI sentido directo",vorCorrige({dev:5},270,90,true),1);
+  eq("CDI bien sentido",vorCorrige({dev:5},80,90,false),1);
+  eq("acerca R090 rumbo 270",vorAcerca(90,270),true);
+  eq("aleja R090 rumbo 090",vorAcerca(90,90),false);
+  eq("corte R120→R090 hacia 30°",vorCorte(120,90,true,30),300);
+  eq("corte R060→R090 hacia 30°",vorCorte(60,90,true,30),240);
+  eq("corte R120→R090 desde 30°",vorCorte(120,90,false,30),60);
+  eq("corte R060→R090 desde 30°",vorCorte(60,90,false,30),120);
+  eq("intercepta R120 rbo330 → R090",vorIntercepta(120,330,90),1);
+  eq("no intercepta R120 rbo150 → R090",vorIntercepta(120,150,90),-1);
+  eq("sector frente",vorSector(90,270),"al frente");
+  eq("sector través izq",vorSector(90,360),"por tu través izquierdo");
+  eq("espera 180/180 der",esperaEntrada(180,180,true).tipo,"d");
+  eq("espera 180/270 der",esperaEntrada(180,270,true).tipo,"d");
+  eq("espera 180/090 der",esperaEntrada(180,90,true).tipo,"p");
+  eq("espera 180/360 der",esperaEntrada(180,360,true).tipo,"g");
+  eq("espera 360/180 der",esperaEntrada(360,180,true).tipo,"g");
+  eq("espera 360/270 der",esperaEntrada(360,270,true).tipo,"p");
+  eq("espera 360/090 der",esperaEntrada(360,90,true).tipo,"d");
+  eq("espera 180/090 izq",esperaEntrada(180,90,false).tipo,"d");
+  eq("espera 180/270 izq",esperaEntrada(180,270,false).tipo,"p");
+  eq("espera 180/360 izq",esperaEntrada(180,360,false).tipo,"g");
+  /* coherencia: el dibujo del HSI y el del CDI salen del mismo desvío */
+  for(let k=0;k<300;k++){const rad=R(0,359),obs=R(0,359),i1=vorInd(rad,obs);
+    const rec=i1.to?nrm(obs+180):obs,i2=vorInd(rad,rec);
+    if(!i1.off&&Math.abs(nrm180(rec-rad))<89&&i2.to)f.push("coherencia TO/FROM en R"+rad+"/OBS"+obs)}
+  return f}
+window.NAV_TEST=navTest;
+
+/* ============================================================
    MARCADOR
    ============================================================ */
 let drRes=null;
@@ -2070,6 +2719,22 @@ function aptEnd(){if(!dr)return;
     extra=dr.fa>3?"Demasiados toques en indicadores que estaban en banda":
       alAcc<.7?"Se te escapan avisos: barre los indicadores por costumbre, no cuando te acuerdes":
       cAcc<.6?"Vigilas bien pero el cálculo se cae: ahí está el reparto":""}
+  if(ex==="trk"){const onp=dr.tt?dr.on/dr.tt:0,cAcc=dr.n?dr.ok/dr.n:null;
+    score=Math.round(cAcc===null?onp*100:(.6*onp+.4*cAcc)*100);unit="";
+    const rms=dr.tt?Math.sqrt(dr.se/dr.tt):0;
+    rows=[["En tolerancia",Math.round(onp*100)+" %"],["Error medio",Math.round(rms*100)+" %"],
+          ["Peor desvío",Math.round(dr.mx*100)+" %"],
+          cAcc===null?["Ejes",dr.dos?"Dos":"Uno"]:["Cálculo",Math.round(cAcc*100)+" %"]];
+    extra=onp<.45?"Se te va el punto: estás corrigiendo cuando ya se ha ido, no cuando empieza a irse":
+      rms>.3?"Mucho péndulo: corriges de más y vuelves a salir por el otro lado":
+      cAcc!==null&&cAcc<.6?"Pilotas bien pero el cálculo se cae; ese reparto es justo lo que miden":
+      onp>.8?"Muy centrado. Sube la dificultad o mete el cálculo":""}
+  if(ex==="nav"){score=acc;unit="%";
+    rows=[["Acierto",acc+" %"],["Preguntas",dr.n],["Aciertos",dr.ok],["Por pregunta",art+" s"]];
+    let peor=null;
+    for(const k in dr.fam){const v=dr.fam[k];if(v.n>=2&&(!peor||v.ok/v.n<peor.r))peor={k:k,r:v.ok/v.n}}
+    extra=peor&&peor.r<.75?"Donde más se te escapa: "+peor.k.toLowerCase()+" ("+Math.round(peor.r*100)+
+      " %). Sácalo suelto desde el enfoque del ejercicio.":""}
   const prev=(S.apt.runs||[]).filter(x=>x.e===ex).slice(-1)[0];
   const best=S.apt.best[ex];
   const rec=best===undefined||score>best;

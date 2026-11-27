@@ -668,6 +668,54 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
   background:var(--gold);box-shadow:0 0 10px var(--gold);transition:none}
 .vl-bank span{position:absolute;left:50%;top:-7px;width:1px;height:18px;margin-left:-.5px;background:var(--dash)}
 
+/* --- instrumentos de cabina: se separan del fondo editorial de la app --- */
+.inst-pro{width:min(100%,268px);filter:drop-shadow(0 24px 40px rgba(0,0,0,.75))}
+.ap-stage.scroll-y .inst-pro{width:min(100%,252px)}
+.inst-read{display:flex;justify-content:center;gap:18px;margin-top:12px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute2)}
+.inst-read b{font-size:13px;letter-spacing:.02em;font-weight:500}
+.inst-read .crs b{color:#e45cc8}
+.inst-read .hdg b{color:#5ccfe6}
+
+/* --- situación espacial en horizontal --- */
+.app.wide{max-width:none}
+.lx-stage{justify-content:stretch;overflow:visible;padding:0}
+.lx{display:flex;gap:16px;flex:1;min-height:0;width:100%}
+.lx-ins{flex:0 0 42%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
+.lx-ins .ap-inst{width:auto;height:auto;max-height:calc(100% - 24px);max-width:100%;aspect-ratio:1}
+.lx-task{flex:1;display:flex;flex-direction:column;min-height:0;gap:9px}
+.lx-q{font-family:var(--serif);font-size:17px;line-height:1.3;text-wrap:pretty}
+.lx-q em{font-style:italic;color:var(--gold2)}
+.lx-w{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
+.lx-plan{height:100%;max-height:200px;width:auto;aspect-ratio:1;touch-action:none;
+  border-radius:14px;background:radial-gradient(70% 70% at 50% 40%,#0d1118,#06080b);
+  box-shadow:0 0 0 1px rgba(217,183,126,.18) inset}
+.lx-read{display:flex;gap:14px;margin-top:6px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--mute2)}
+.lx-read b{color:#e45cc8;font-size:11.5px;letter-spacing:0}
+.lx-hint,.lx-dialhint{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mute2);text-align:center;margin-top:7px;line-height:1.7}
+.lx-num{font-family:var(--mono);font-size:26px;letter-spacing:.14em;color:var(--mute2);margin-bottom:5px}
+.lx-num.listo{color:var(--gold2)}
+.lx-pad{display:grid;grid-template-columns:repeat(3,48px);gap:5px}
+.lx-pad button{height:30px;border-radius:8px;font-family:var(--mono);font-size:14px;color:var(--ivory);
+  box-shadow:0 0 0 1px var(--hair) inset;background:rgba(255,255,255,.015)}
+.lx-pad button:active{background:rgba(217,183,126,.1)}
+.lx-pad button.sec{color:var(--mute2);font-size:13px}
+.lx-ok{height:46px;flex:none}
+.lx-ver{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.lx-ver small{display:block;margin-top:4px;font-size:10px;letter-spacing:.1em;color:var(--mute)}
+.lx-ver.ok{color:var(--sage)}.lx-ver.casi{color:var(--gold)}.lx-ver.mal{color:var(--terra)}
+.lx-exp{flex:1;overflow-y:auto;scrollbar-width:none}
+.lx-exp::-webkit-scrollbar{display:none}
+.lx-gira{display:none}
+@media (orientation:portrait){
+  .lx-stage .lx{display:none}
+  .lx-stage .lx-gira{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    font-family:var(--serif);font-style:italic;font-size:21px;color:var(--gold2);text-align:center}
+  .lx-stage .lx-gira small{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    font-style:normal;color:var(--mute2)}
+}
+
 </style>
 </head>
 <body>
@@ -767,11 +815,6 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
     <button class="link-row" onclick="aptOpen('nav')">
       <span class="ic"><svg><use href="#vor"/></svg></span>
       <span><b>Radionavegación</b><span>VOR, HSI y RMI · cortes y entradas en espera</span></span>
-      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
-    </button>
-    <button class="link-row" onclick="aptOpen('vuelo')">
-      <span class="ic"><svg><use href="#wing"/></svg></span>
-      <span><b>Vuelo por radial</b><span>Intercepta y mantén, con mapa o a ciegas</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <button class="link-row" onclick="go('psico')">
@@ -1638,24 +1681,26 @@ const APTEX={
     tips:["Agrupa de dos en dos y dales sonido: K7 · M4 se retiene mejor cantado que leído.",
           "No memorices el orden si no te lo piden: memoriza la pareja.",
           "Si fallas, no persigas la ronda anterior; el nivel baja solo y vuelve a subir."]},
-  vuelo:{n:"Vuelo por radial",s:"Intercepta un radial y mantenlo, con mapa o a ciegas",ic:"wing",
+  vuelo:{n:"Vuelo por radial",s:"Juguete: volar un radial a mano. No entrena situación espacial",ic:"wing",
     unit:"% en ruta",timed:true,
     cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
          ["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"]],"hsi"],
          ["mapa","Mapa",[["si","Con mapa"],["no","Modo IMC"]],"si"],
          ["viento","Viento",[["no","Sin viento"],["ver","A la vista"],["ciego","Oculto"]],"no"]],
-    tips:["El pulgar manda alabeo, y del alabeo sale el viraje: 30° a 240 kt son 2,6°/s.",
+    tips:["Esto es un juguete, no un ejercicio de selección: interceptar y sostener un radial es pilotaje, no situación espacial. Está aquí porque entretiene y porque el motor ya lo permite.",
+          "El pulgar manda alabeo, y del alabeo sale el viraje: 30° a 240 kt son 2,6°/s.",
           "Con viento no basta con apuntar el morro al curso: hay que volar escorado al viento el ángulo justo, y la aguja es la que te dice si has acertado.",
           "Se intercepta anticipando: empieza a nivelar cuando quedan unos pocos grados, no cuando la barra ya está centrada.",
           "La puntuación es el porcentaje del tiempo TOTAL en ruta, así que capturar tarde también cuesta. No vale clavarla al final.",
           "Cuando te salga con mapa, quítalo. El modo IMC es el ejercicio de verdad: es lo que tendrás en el simulador."]},
-  nav:{n:"Radionavegación",s:"VOR, HSI y RMI: dónde estás, cortes y esperas",ic:"vor",
+  nav:{n:"Radionavegación",s:"Situación espacial con VOR, HSI, CDI y RMI",ic:"vor",
     unit:"% de acierto",
-    cfg:[["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"],["rmi","RMI"],["mix","Mezcla"]],"hsi"],
-         ["foco","Enfoque",[["todo","Todo"],["orient","Situación"],["cortes","Cortes"],["esperas","Esperas"],["viento","Viento"]],"todo"],
+    cfg:[         ["foco","Enfoque",[["todo","Todo"],["situacion","Dónde estoy"],["rumbo","Acercar / alejar"],["corte","Corte de ruta"],["ndb","NDB"],["ils","ILS"]],"todo"],
          ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
          ["lim","Límite",[[0,"Sin límite"],[30,"30 s"],[20,"20 s"]],30]],
-    tips:["Lee siempre en este orden: bandera, luego OBS, luego desvío. Si empiezas por la aguja te pierdes.",
+    tips:["Va en horizontal: el panel es ancho y así te quedan libres los dos pulgares.",
+          "No se elige entre opciones: colocas el avión, giras el bug o tecleas el rumbo. Se puntúa en grados, con ±2° bien y ±5° aceptable.",
+          "Lee siempre en este orden: bandera, luego OBS, luego desvío. Si empiezas por la aguja te pierdes.",
           "El CDI convencional no sabe hacia dónde vuelas: por eso miente si vuelas a más de 90° del OBS. El HSI no, y por eso el 737 lleva HSI.",
           "TO/FROM dice de qué lado del VOR estás respecto al curso, no si te acercas. Son dos preguntas distintas.",
           "En las esperas, Δ es rumbo menos acercamiento, siempre en ese orden, y medido al revés si los virajes son a la izquierda."]},
@@ -1762,7 +1807,7 @@ function aptStart(){const ex=S.apt.last||"calc";
   if(APTEX[ex].timed)dr.dur=aptCfg(ex,"dur")*1000;
   ({calc:calcBegin,inst:instBegin,mem:memBegin,dual:dualBegin,trk:trkBegin,nav:navBegin,vuelo:vueloBegin})[ex]();
   if(APTEX[ex].timed)aptTick()}
-function aptStop(){if(!dr)return;removeEventListener("resize",trkSize);
+function aptStop(){if(!dr)return;removeEventListener("resize",trkSize);$("app").classList.remove("wide");
   cancelAnimationFrame(dr.raf);cancelAnimationFrame(dr.raf2);
   clearTimeout(dr.to);clearInterval(dr.iv);dr.fin=true;dr=null}
 /* salir a medias: si ya hay recorrido se puntúa, si no se descarta */
@@ -2316,7 +2361,8 @@ function vorInd(radial,obs){
   const dev=to?nrm180(d-180):-d;
   return{to:to,from:!to,off:amb,dev:Math.max(-VORFS,Math.min(VORFS,dev)),
     full:Math.abs(dev)>=VORFS,exacto:dev,
-    puntos:Math.round(Math.max(-VORFS,Math.min(VORFS,dev))/VORDOT)}}
+    puntos:Math.round(Math.max(-VORFS,Math.min(VORFS,dev))/VORDOT),
+    puntos5:Math.round(Math.max(-VORFS,Math.min(VORFS,dev))/5)}}
 
 /* ¿hacia qué lado corrige el piloto? En el HSI siempre el lado de la aguja;
    en el CDI convencional se invierte si vuelas a más de 90° del OBS. */
@@ -2377,80 +2423,126 @@ function esperaEntrada(acerc,rumbo,derecha){
   const lim=[0,180,250].map(x=>Math.min(Math.abs(D-x),Math.abs(D-x-360),Math.abs(D-x+360)));
   return{tipo:tipo,delta:D,limite:Math.min.apply(null,lim)<=5}}
 
-/* ============ INSTRUMENTOS ============ */
-/* HSI: la rosa gira con el rumbo, así que la aguja de curso y la barra de
-   desvío quedan SIEMPRE bien sentidas respecto al avión. Por eso no hay
-   sentido inverso: la diferencia con el CDI es solo de presentación. */
-function navHSI(rumbo,obs,ind,brg){let t="";
-  t+='<g transform="rotate('+(-rumbo)+' 120 120)">';
-  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
-    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
-  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
-    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
-    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
-      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
-  /* aguja de curso + barra de desvío, girando con la rosa */
-  t+='<g transform="rotate('+obs+' 120 120)">';
-  t+='<path d="M120 38 l7 12 h-14 z" fill="#d9b77e"/>';
-  t+='<line x1="120" y1="50" x2="120" y2="74" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>';
-  t+='<line x1="120" y1="166" x2="120" y2="196" stroke="#d9b77e" stroke-width="3.4" stroke-linecap="round"/>';
-  for(let k=-2;k<=2;k++)if(k)t+='<circle cx="'+(120+k*17)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.55)"/>';
-  const off=ind.dev/VORFS*34;
-  t+='<line x1="'+(120+off)+'" y1="78" x2="'+(120+off)+'" y2="162" stroke="'+(ind.off?"#8a93a6":"#d9b77e")+
-     '" stroke-width="4" stroke-linecap="round"/>';
-  if(!ind.off)t+=ind.to?'<path d="M120 96 l6 10 h-12 z" fill="#f4efe6"/>':'<path d="M120 144 l6 -10 h-12 z" fill="#f4efe6"/>';
-  t+='</g>';
-  if(brg!=null)t+='<g transform="rotate('+brg+' 120 120)">'+
-    '<path d="M120 24 l5 9 h-10 z" fill="#9cc5a1"/><line x1="120" y1="33" x2="120" y2="207" stroke="#9cc5a1" stroke-width="1.6"/>'+
-    '<circle cx="120" cy="212" r="4" fill="none" stroke="#9cc5a1" stroke-width="1.6"/></g>';
-  t+='</g>';
-  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
-  t+='<path d="M104 120 h32 M120 108 v30" stroke="#f0d6a6" stroke-width="2.6" stroke-linecap="round"/>';
-  t+='<circle cx="120" cy="120" r="3" fill="#f0d6a6"/>';
-  if(ind.off)t+='<text x="120" y="196" font-size="11" text-anchor="middle" letter-spacing="2" fill="#de8f7b">OFF</text>';
-  return instSVG(t)}
+/* ============================================================
+   INSTRUMENTOS · fidelidad de cabina
+   Aquí NO manda la estética editorial de la app. La cara es negra,
+   las marcas blancas y el color es aeronáutico. Lo que sí se queda
+   del resto de Rumbo UX es el bisel cálido: instrumento oscuro en
+   montura de champán, que es como se ve un panel bueno.
+   Centro en 130,130 · cara de radio 113 · lienzo 260.
+   ============================================================ */
+const INS={face:"#06080b",mark:"#f6f6f4",dim:"rgba(246,246,244,.5)",dim2:"rgba(246,246,244,.28)",
+  mag:"#e45cc8",cyan:"#5ccfe6",green:"#73d08a",amber:"#e6b547",red:"#e05a4c",needle:"#f2f2ee"};
+const iTk=(deg,r1,r2,w,col)=>'<g transform="rotate('+deg+' 130 130)"><line x1="130" y1="'+(130-r1).toFixed(1)+
+  '" x2="130" y2="'+(130-r2).toFixed(1)+'" stroke="'+col+'" stroke-width="'+w+'"/></g>';
+const iTx=(x,y,s,col,txt,w)=>'<text x="'+x+'" y="'+y+'" font-size="'+s+'" text-anchor="middle" fill="'+col+
+  '" font-weight="'+(w||600)+'" font-family="var(--mono)">'+txt+'</text>';
 
-/* CDI convencional: la rosa la mueve el OBS, NO el rumbo. El instrumento no
-   sabe hacia dónde vuelas, y de ahí sale el sentido inverso. */
-function navCDI(obs,ind){let t="";
-  t+='<g transform="rotate('+(-obs)+' 120 120)">';
-  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
-    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
-  ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
-    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
-    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
-      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
-  t+='</g>';
-  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
-  for(let k=-5;k<=5;k++)if(k)t+='<circle cx="'+(120+k*12)+'" cy="120" r="3.1" fill="none" stroke="rgba(232,226,214,.5)"/>';
-  const off=ind.dev/VORFS*60;
-  t+='<line x1="'+(120+off)+'" y1="58" x2="'+(120+off)+'" y2="182" stroke="'+(ind.off?"#8a93a6":"#f4efe6")+
-     '" stroke-width="3.6" stroke-linecap="round"/>';
-  if(ind.off)t+='<text x="120" y="92" font-size="12" text-anchor="middle" letter-spacing="3" fill="#de8f7b">OFF</text>';
-  else{t+=ind.to?'<path d="M120 80 l7 12 h-14 z" fill="#9cc5a1"/><text x="120" y="76" font-size="9.5" text-anchor="middle" letter-spacing="2" fill="#9cc5a1">TO</text>'
-                :'<path d="M120 160 l7 -12 h-14 z" fill="#d9b77e"/><text x="120" y="174" font-size="9.5" text-anchor="middle" letter-spacing="2" fill="#d9b77e">FROM</text>'}
-  t+='<text x="120" y="214" font-size="9" text-anchor="middle" letter-spacing="2.4" fill="rgba(232,226,214,.5)">OBS '+hdg(obs)+'</text>';
-  return instSVG(t)}
+/* caja: placa, bisel cálido, cara negra y un reflejo de cristal muy contenido */
+function cajaPro(inner,etiqueta){
+  return '<svg class="ap-inst inst-pro" viewBox="0 0 260 260">'+
+  '<defs>'+
+   '<radialGradient id="ipFace" cx="36%" cy="26%" r="92%">'+
+     '<stop offset="0" stop-color="#11151b"/><stop offset=".55" stop-color="#090c11"/><stop offset="1" stop-color="#04060a"/></radialGradient>'+
+   '<linearGradient id="ipBez" x1="0" y1="0" x2=".35" y2="1">'+
+     '<stop offset="0" stop-color="#6b5a3d"/><stop offset=".18" stop-color="#3a3326"/>'+
+     '<stop offset=".55" stop-color="#1d1b17"/><stop offset="1" stop-color="#2c2720"/></linearGradient>'+
+   '<linearGradient id="ipPla" x1="0" y1="0" x2="0" y2="1">'+
+     '<stop offset="0" stop-color="#15181d"/><stop offset="1" stop-color="#0b0d11"/></linearGradient>'+
+   '<radialGradient id="ipGla" cx="30%" cy="18%" r="70%">'+
+     '<stop offset="0" stop-color="rgba(255,255,255,.085)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient>'+
+   '<clipPath id="ipClip"><circle cx="130" cy="130" r="113"/></clipPath>'+
+  '</defs>'+
+  '<rect x="3" y="3" width="254" height="254" rx="18" fill="url(#ipPla)" stroke="#272c34"/>'+
+  '<circle cx="130" cy="130" r="125" fill="url(#ipBez)"/>'+
+  '<circle cx="130" cy="130" r="125" fill="none" stroke="rgba(217,183,126,.28)" stroke-width="1"/>'+
+  '<circle cx="130" cy="130" r="115" fill="none" stroke="#000" stroke-width="4"/>'+
+  '<circle cx="130" cy="130" r="113" fill="url(#ipFace)"/>'+
+  '<g clip-path="url(#ipClip)">'+inner+'</g>'+
+  '<circle cx="130" cy="130" r="113" fill="url(#ipGla)" pointer-events="none"/>'+
+  '<circle cx="130" cy="130" r="113" fill="none" stroke="rgba(0,0,0,.6)" stroke-width="3" pointer-events="none"/>'+
+  (etiqueta?iTx(130,250,8.5,"rgba(217,183,126,.5)",etiqueta,500):'')+
+  '</svg>'}
 
-/* RMI: rosa girando con el rumbo, la cabeza apunta a la estación (QDM),
-   la cola lee el radial. */
-function navRMI(rumbo,qdm,qdm2){let t="";
-  t+='<g transform="rotate('+(-rumbo)+' 120 120)">';
-  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0;
-    t+=instTK(d,101,maj?89:96,maj?2.2:1.1,maj?"#e8e2d6":"rgba(232,226,214,.45)")}
+/* rosa de compás: 5° cortas, 10° medias, 30° largas con número */
+function rosaPro(compacta){let t="";
+  const r0=compacta?108:108,rM=compacta?97:92,rm=compacta?101:98,rc=compacta?104:103;
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0,med=d%10===0;
+    t+=iTk(d,r0,maj?rM:med?rm:rc,maj?3.2:med?1.9:1.2,maj?INS.mark:med?INS.dim:INS.dim2)}
+  const rt=compacta?85:78,fs=compacta?15:17,fc=compacta?18:21;
   ["N","3","6","E","12","15","S","21","24","W","30","33"].forEach(function(lb,i){
-    const d=i*30,p=polar(120,120,76,d),big=/^[NSEW]$/.test(lb);
-    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')"><text x="'+p[0].toFixed(1)+
-      '" y="'+(p[1]+(big?6.5:5.5)).toFixed(1)+'" font-size="'+(big?18:14)+'" text-anchor="middle">'+lb+'</text></g>'});
-  t+='<g transform="rotate('+qdm+' 120 120)"><path d="M120 30 l7 13 h-14 z" fill="#d9b77e"/>'+
-     '<line x1="120" y1="43" x2="120" y2="197" stroke="#d9b77e" stroke-width="2.6"/>'+
-     '<path d="M113 197 h14" stroke="#d9b77e" stroke-width="2.6"/></g>';
-  if(qdm2!=null)t+='<g transform="rotate('+qdm2+' 120 120)"><path d="M120 34 l6 11 h-12 z" fill="#9cc5a1"/>'+
-     '<line x1="120" y1="45" x2="120" y2="195" stroke="#9cc5a1" stroke-width="1.8" stroke-dasharray="5 4"/></g>';
-  t+='</g>';
-  t+='<path d="M120 10 l7 13 h-14 z" fill="#f0d6a6"/>';
-  t+='<circle cx="120" cy="120" r="7" fill="#0c1322" stroke="rgba(217,183,126,.5)"/>';
-  return instSVG(t)}
+    const d=i*30,p=polar(130,130,rt,d),card=/^[NSEW]$/.test(lb);
+    t+='<g transform="rotate('+d+' '+p[0].toFixed(1)+' '+p[1].toFixed(1)+')">'+
+      iTx(p[0].toFixed(1),(p[1]+(card?6.5:5.5)).toFixed(1),card?fc:fs,INS.mark,lb,card?700:600)+'</g>'});
+  return t}
+const lubber=()=>'<path d="M130 17 l7.5 14 h-15 z" fill="'+INS.mark+'"/>';
+/* símbolo de avión fijo del HSI */
+const avionHSI=(col)=>'<g transform="translate(130 130) scale(.72) translate(-130 -130)">'+
+  '<path d="M130 106 L133.5 124 L159 132 L159 137.5 L133.5 131 L133.5 145 L142 150.5 L142 155'+
+  ' L130 151.5 L118 155 L118 150.5 L126.5 145 L126.5 131 L101 137.5 L101 132 L126.5 124 Z" fill="none" stroke="'+
+  (col||INS.mark)+'" stroke-width="3.4" stroke-linejoin="round"/></g>';
+/* bug de rumbo: dos cuernos sobre la rosa */
+const bugRumbo=(deg,col)=>'<g transform="rotate('+deg+' 130 130)">'+
+  '<path d="M121 10 h7 l2 8.5 l2 -8.5 h7 v13 h-6.5 l-2.5 -5 l-2.5 5 H121 z" fill="'+(col||INS.cyan)+'"/></g>';
+
+/* ---------- HSI ---------- */
+function navHSI(rumbo,obs,ind,brg,bug){
+  let card='<g transform="rotate('+(-rumbo)+' 130 130)">'+rosaPro();
+  if(bug!=null)card+=bugRumbo(bug);
+  if(brg!=null)card+='<g transform="rotate('+brg+' 130 130)">'+
+    '<path d="M130 24 l6 11 h-12 z" fill="'+INS.green+'"/>'+
+    '<line x1="130" y1="35" x2="130" y2="95" stroke="'+INS.green+'" stroke-width="2"/>'+
+    '<line x1="130" y1="165" x2="130" y2="225" stroke="'+INS.green+'" stroke-width="2"/>'+
+    '<path d="M124 225 h12" stroke="'+INS.green+'" stroke-width="2.4"/></g>';
+  /* aguja de curso: cabeza hueca, cola y barra de desvío, todo girando con la rosa */
+  card+='<g transform="rotate('+obs+' 130 130)">'+
+    '<path d="M130 30 l9 16 h-18 z" fill="'+INS.mag+'"/>'+
+    '<line x1="130" y1="46" x2="130" y2="72" stroke="'+INS.mag+'" stroke-width="4.5"/>'+
+    '<line x1="130" y1="188" x2="130" y2="224" stroke="'+INS.mag+'" stroke-width="4.5"/>';
+  for(let k=-2;k<=2;k++)if(k)card+='<circle cx="'+(130+k*22)+'" cy="130" r="3.6" fill="none" stroke="'+INS.dim+'" stroke-width="1.4"/>';
+  const off=ind.dev/VORFS*44;                       /* 2 puntos por lado, 5° cada punto */
+  card+='<line x1="'+(130+off).toFixed(1)+'" y1="82" x2="'+(130+off).toFixed(1)+'" y2="178" stroke="'+
+    (ind.off?INS.dim2:INS.mag)+'" stroke-width="5" stroke-linecap="round"/>';
+  if(!ind.off)card+=ind.to?'<path d="M130 88 l8 14 h-16 z" fill="'+INS.mag+'"/>'
+                          :'<path d="M130 172 l8 -14 h-16 z" fill="'+INS.mag+'"/>';
+  card+='</g></g>';
+  let t=card+lubber()+avionHSI();
+  if(ind.off)t+='<rect x="162" y="150" width="34" height="16" rx="2" fill="'+INS.red+'"/>'+
+    iTx(179,162,10,"#0a0a0a","NAV",700);
+  return cajaPro(t,"HSI")}
+
+/* ---------- CDI · cabeza de VOR de carta fija ---------- */
+function navCDI(obs,ind){
+  let t='<g transform="rotate('+(-obs)+' 130 130)">'+rosaPro(true)+'</g>'+lubber();
+  for(let k=-5;k<=5;k++)if(k)t+='<circle cx="'+(130+k*12.5)+'" cy="130" r="3.2" fill="none" stroke="'+INS.dim+'" stroke-width="1.3"/>';
+  const off=ind.dev/VORFS*62.5;                     /* 5 puntos por lado, 2° cada punto */
+  t+='<line x1="'+(130+off).toFixed(1)+'" y1="78" x2="'+(130+off).toFixed(1)+'" y2="182" stroke="'+
+    (ind.off?INS.dim2:INS.needle)+'" stroke-width="4" stroke-linecap="round"/>';
+  t+='<circle cx="130" cy="130" r="3.6" fill="'+INS.mark+'"/>';
+  /* ventanilla TO/FROM, como la del instrumento real: no se pisa con la carta */
+  t+='<rect x="107" y="56" width="46" height="18" rx="2.5" fill="#0b0e13" stroke="'+INS.dim2+'"/>';
+  if(ind.off)t+='<rect x="107" y="56" width="46" height="18" rx="2.5" fill="'+INS.red+'"/>'+iTx(130,69.5,11,"#0a0a0a","NAV",700);
+  else if(ind.to)t+='<path d="M114 71 l7 -11 h-14 z" fill="'+INS.green+'"/>'+iTx(135,69.5,11,INS.green,"TO",700);
+  else t+='<path d="M114 60 l7 11 h-14 z" fill="'+INS.amber+'"/>'+iTx(137,69.5,10.5,INS.amber,"FR",700);
+  return cajaPro(t,"VOR / CDI")}
+
+/* ---------- RMI · doble aguja ---------- */
+function navRMI(rumbo,qdm,qdm2){
+  let t='<g transform="rotate('+(-rumbo)+' 130 130)">'+rosaPro();
+  /* aguja simple */
+  t+='<g transform="rotate('+qdm+' 130 130)">'+
+    '<path d="M130 26 l7 13 h-14 z" fill="'+INS.green+'"/>'+
+    '<line x1="130" y1="39" x2="130" y2="221" stroke="'+INS.green+'" stroke-width="2.6"/>'+
+    '<path d="M122 221 h16" stroke="'+INS.green+'" stroke-width="3"/></g>';
+  if(qdm2!=null)   /* aguja doble */
+    t+='<g transform="rotate('+qdm2+' 130 130)">'+
+      '<path d="M130 26 l7 13 h-14 z" fill="'+INS.cyan+'"/>'+
+      '<line x1="126.6" y1="39" x2="126.6" y2="221" stroke="'+INS.cyan+'" stroke-width="2.2"/>'+
+      '<line x1="133.4" y1="39" x2="133.4" y2="221" stroke="'+INS.cyan+'" stroke-width="2.2"/>'+
+      '<path d="M122 221 h16" stroke="'+INS.cyan+'" stroke-width="3"/></g>';
+  t+='</g>'+lubber();
+  t+='<circle cx="130" cy="130" r="9" fill="#0a0d12" stroke="'+INS.dim+'" stroke-width="1.2"/>';
+  return cajaPro(t,"RMI")}
 
 /* ============ VISTA CENITAL · la clase que da cada pregunta ============ */
 const navPlane=(x,y,h,col,s)=>'<g transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+
@@ -2525,239 +2617,430 @@ function navPlanEspera(acerc,derecha,rumbo,sectores){const cx=120,cy=116;let t="
 
 /* ============ GENERADORES ============ */
 const navOpts=(arr,ok)=>{const o=shuf(arr.slice());return{o:o,ok:o.indexOf(ok)}};
-function navIns(){const c=aptCfg("nav","ins");return c==="mix"?pickR(["hsi","cdi","rmi"]):c}
+/* ============================================================
+   SITUACIÓN ESPACIAL · respuesta por manipulación
+   No se elige entre opciones: se COLOCA el avión, se GIRA el OBS o el
+   bug, o se TECLEA el rumbo. Y se juzga en grados y millas con
+   tolerancia de cabina, no con un acierto binario.
+   ============================================================ */
+const TOL={rumbo:[2,5],marc:[5,10],dme:[1.5,3]};
+const errG=(a,b)=>Math.abs(nrm180(a-b));
+function nota(err,tol){return err<=tol[0]?1:err<=tol[1]?.5:0}
+const notaTxt=p=>p===1?"Dentro de tolerancia":p===.5?"Aceptable, pero ajusta":"Fuera";
 
-/* A1 · ¿en qué radial estás? */
-function navA1(){
-  const rad=R(1,36)*10,k=pickR([0,0,2,4,6,-2,-4,-6]),to=Math.random()<.5;
-  const obs=nrm(to?rad+180+k*(to?-1:1):rad+k);
-  const ind=vorInd(rad,obs),rumbo=nrm((to?rad+180:rad)+R(-25,25));
-  const ins=navIns()==="rmi"?"hsi":navIns();
-  const svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind);
-  const op=navOpts([r360(rad),r360(rad+180),r360(rad+2*(k||10)),r360(rad-(k||10)-10)].map(hdg),hdg(rad));
-  return{ins:ins,svg:svg,q:"Con el OBS en <em>"+hdg(obs)+"</em>, ¿en qué radial estás?",
-    o:op.o.map(x=>"Radial "+x),ok:op.ok,
-    exp:"La bandera marca <b>"+(ind.to?"TO":"FROM")+"</b>, así que el OBS "+hdg(obs)+" corresponde al radial "+
-      hdg(ind.to?obs+180:obs)+". La barra está "+(Math.abs(ind.dev)<.5?"centrada":
-      Math.abs(ind.puntos)+" punto"+(Math.abs(ind.puntos)===1?"":"s")+" a la "+(ind.dev>0?"derecha":"izquierda")+
-      " (2° por punto), y el curso queda a esa mano")+": estás en el radial <b>"+hdg(rad)+"</b>.",
-    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+/* ---------- geometría del puntero sobre un instrumento redondo ---------- */
+function angDe(el,ev){const r=el.getBoundingClientRect();
+  const dx=ev.clientX-(r.left+r.width/2),dy=ev.clientY-(r.top+r.height/2);
+  return nrm(Math.atan2(dx,-dy)*180/Math.PI)}
 
-/* A2 · ¿dónde te queda la estación? */
-function navA2(){
-  const rad=R(1,36)*10,rumbo=R(1,36)*10,qdm=nrm(rad+180);
-  if(Math.abs(nrm180(qdm-rumbo))%90<8)return navA2();
-  const sec=vorSector(rad,rumbo),todos=SECT.map(s=>s[1]).filter((v,i,a)=>a.indexOf(v)===i);
-  const mal=shuf(todos.filter(x=>x!==sec)).slice(0,3);
-  const op=navOpts([sec].concat(mal),sec);
-  return{ins:"rmi",svg:navRMI(rumbo,qdm),q:"Vuelas rumbo <em>"+hdg(rumbo)+"</em>. ¿Dónde te queda la estación?",
-    o:op.o,ok:op.ok,
-    exp:"La cabeza de la aguja marca el QDM <b>"+hdg(qdm)+"</b> y la cola el radial "+hdg(rad)+
-      ". Con rumbo "+hdg(rumbo)+", la marcación relativa es "+hdg(qdm-rumbo)+"°: la estación te queda <b>"+sec+"</b>.",
-    plan:{radial:rad,rumbo:rumbo}}}
+/* ---------- 1 · COLOCAR EL AVIÓN ---------- */
+function wColocar(conDME){
+  return '<div class="lx-w"><svg class="lx-plan" id="lxPlan" viewBox="0 0 240 240">'+
+    (function(){let t="";
+      for(let i=0;i<36;i++){const d=i*10,maj=d%30===0;
+        t+=instTK(d,112,maj?102:107,maj?1.8:1,maj?"rgba(246,246,244,.55)":"rgba(246,246,244,.25)")}
+      [["N",0],["03",30],["06",60],["E",90],["12",120],["15",150],["S",180],["21",210],["24",240],["W",270],["30",300],["33",330]]
+        .forEach(function(p){const q=polar(120,120,92,p[1]);
+          t+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+3.5).toFixed(1)+'" font-size="9.5" text-anchor="middle" fill="rgba(246,246,244,.5)" font-family="var(--mono)">'+p[0]+'</text>'});
+      for(let k=1;k<=3;k++)t+='<circle cx="120" cy="120" r="'+(k*28)+'" fill="none" stroke="rgba(246,246,244,.09)" stroke-dasharray="3 5"/>';
+      return t})()+
+    navVOR(120,120)+
+    '<g id="lxAv" style="cursor:grab">'+navPlane(120,60,0,"#e45cc8",.6)+'</g>'+
+    '</svg><div class="lx-read" id="lxRead"></div>'+
+    '<p class="lx-hint">Arrastra el avión a donde estás'+(conDME?" (la distancia cuenta)":" (solo cuenta la marcación)")+'</p></div>'}
+function bindColocar(){const sv=$("lxPlan"),av=$("lxAv");let drag=false;
+  const mover=function(ev){const r=sv.getBoundingClientRect(),k=240/r.width;
+    let x=(ev.clientX-r.left)*k,y=(ev.clientY-r.top)*k;
+    const dx=x-120,dy=y-120,m=Math.hypot(dx,dy);
+    if(m>104){x=120+dx*104/m;y=120+dy*104/m}
+    if(m<10)return;
+    dr.resp={marc:nrm(Math.atan2(x-120,-(y-120))*180/Math.PI),d:Math.hypot(x-120,y-120)/104*dr.escMax};
+    av.setAttribute("transform","translate("+(x-120).toFixed(1)+" "+(y-120).toFixed(1)+") rotate("+Math.round(dr.cur.rumbo)+" 120 60)");
+    $("lxRead").innerHTML='<span>MARCACIÓN <b>'+hdg(dr.resp.marc)+'</b></span><span>DIST <b>'+dr.resp.d.toFixed(1)+'</b> NM</span>'};
+  sv.addEventListener("pointerdown",function(e){e.preventDefault();drag=true;try{sv.setPointerCapture(e.pointerId)}catch(x){}mover(e)});
+  sv.addEventListener("pointermove",function(e){if(drag)mover(e)});
+  const up=function(){drag=false};
+  sv.addEventListener("pointerup",up);sv.addEventListener("pointercancel",up)}
 
-/* B · sentido de la aguja: el CDI convencional miente si vuelas al revés */
-function navB(){
-  const rad=R(1,36)*10,k=pickR([4,6,8,-4,-6,-8]),obs=nrm(rad+k);
-  const rumbo=nrm(obs+180+R(-35,35));                     /* vuelas CONTRA el OBS */
-  const ind=vorInd(rad,obs),lado=vorCorrige(ind,rumbo,obs,false);
-  const op=navOpts(["A la izquierda","A la derecha","Ya estás en el curso","No se puede saber"],
-    lado<0?"A la izquierda":"A la derecha");
-  return{ins:"cdi",svg:navCDI(obs,ind),
-    q:"OBS en <em>"+hdg(obs)+"</em> y vuelas rumbo <em>"+hdg(rumbo)+"</em>. Para volver al curso, ¿hacia dónde corriges?",
-    o:op.o,ok:op.ok,
-    exp:"Sentido inverso: vuelas a "+Math.round(Math.abs(nrm180(rumbo-obs)))+"° del OBS, más de 90°, así que el CDI "+
-      "convencional indica al revés. La barra está a la <b>"+(ind.dev>0?"derecha":"izquierda")+
-      "</b>, pero tú tienes que corregir a la <b>"+(lado<0?"izquierda":"derecha")+
-      "</b>. En un HSI esto no pasa: la rosa gira con el rumbo y la aguja siempre está bien sentida.",
-    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+/* ---------- 2 · TECLADO DE TRES DÍGITOS ---------- */
+function wTeclado(n){dr.teclaN=n||3;
+  let t='<div class="lx-w"><div class="lx-num" id="lxNum">—</div><div class="lx-pad">';
+  [1,2,3,4,5,6,7,8,9].forEach(n=>t+='<button onclick="teclaNav('+n+')">'+n+'</button>');
+  t+='<button class="sec" onclick="teclaNav(-1)">←</button><button onclick="teclaNav(0)">0</button>'+
+     '<button class="sec" onclick="teclaNav(-2)">C</button></div></div>';
+  return t}
+function teclaNav(n){if(!dr||dr.lock)return;let s=dr.tecla||"";
+  const N=dr.teclaN||3;
+  if(n===-2)s="";else if(n===-1)s=s.slice(0,-1);else if(s.length<N)s+=String(n);
+  dr.tecla=s;dr.resp=s.length===N?{rumbo:N===3?nrm(+s):+s}:null;
+  $("lxNum").textContent=s.length?s.padEnd(N,"·"):"—";
+  $("lxNum").classList.toggle("listo",s.length===N)}
 
-/* C1 · ¿me acerco o me alejo de la estación? */
-function navC1(){
-  const rad=R(1,36)*10,rumbo=R(1,36)*10;
-  if(Math.abs(Math.abs(nrm180(rumbo-(rad+180)))-90)<12)return navC1();
-  const ac=vorAcerca(rad,rumbo);
-  const op=navOpts(["Te acercas","Te alejas","Mantienes la distancia","Depende del OBS"],ac?"Te acercas":"Te alejas");
-  return{ins:"rmi",svg:navRMI(rumbo,nrm(rad+180)),
-    q:"Estás en el radial <em>"+hdg(rad)+"</em> con rumbo <em>"+hdg(rumbo)+"</em>. ¿Qué pasa con la distancia?",
-    o:op.o,ok:op.ok,
-    exp:"El QDM es "+hdg(rad+180)+" y tu rumbo "+hdg(rumbo)+": la diferencia es "+
-      Math.round(Math.abs(nrm180(rumbo-(rad+180))))+"°. Por debajo de 90° te acercas, por encima te alejas. Aquí <b>"+
-      (ac?"te acercas":"te alejas")+"</b>. Fíjate en que el OBS no pinta nada en esto.",
-    plan:{radial:rad,rumbo:rumbo}}}
+/* ---------- 3 · GIRAR EL BUG / EL OBS ---------- */
+function bindDial(modo){const box=$("lxIns");if(!box)return;
+  const sv=box.querySelector("svg");let drag=false,a0=0,v0=0;
+  const pinta=function(){
+    box.innerHTML=(modo==="bug"?navHSI(dr.cur.rumbo,dr.cur.obs,dr.cur.ind,null,dr.val):
+                   modo==="aguja"?navADF(dr.val):
+                   navCDI(dr.val,vorInd(dr.cur.radial,dr.val)))+
+      '<div class="inst-read">'+(modo==="bug"?'<span class="hdg">BUG <b>'+hdg(dr.val)+'</b></span>':
+                                 modo==="aguja"?'<span>RB <b>'+hdg(dr.val)+'</b></span>':
+                                 '<span class="crs">OBS <b>'+hdg(dr.val)+'</b></span>')+
+      '<span class="hdg">HDG <b>'+hdg(dr.cur.rumbo)+'</b></span></div>';
+    bindDial(modo)};
+  if(!sv)return;
+  sv.addEventListener("pointerdown",function(e){e.preventDefault();drag=true;try{sv.setPointerCapture(e.pointerId)}catch(x){}
+    a0=angDe(sv,e);v0=dr.val});
+  sv.addEventListener("pointermove",function(e){if(!drag)return;
+    dr.val=modo==="bug"?nrm(angDe(sv,e)+dr.cur.rumbo):
+           modo==="aguja"?angDe(sv,e):nrm(v0+(angDe(sv,e)-a0));
+    dr.resp=modo==="obs"?{obs:dr.val}:{rumbo:dr.val};pinta()});
+  const up=function(){drag=false};
+  sv.addEventListener("pointerup",up);sv.addEventListener("pointercancel",up)}
 
-/* C2 · la trampa: TO no significa acercarse */
-function navC2(){
-  const rad=R(1,36)*10,obs=nrm(rad+180+pickR([0,2,-2,4,-4]));
-  const rumbo=nrm(rad+R(-50,50));                         /* vuelas alejándote */
-  const ind=vorInd(rad,obs),ac=vorAcerca(rad,rumbo);
-  if(ac)return navC2();
-  const op=navOpts(["Te alejas: el TO solo dice de qué lado del VOR estás",
-    "Te acercas: el TO lo confirma","Te acercas, pero despacio","No se puede saber sin el DME"],
-    "Te alejas: el TO solo dice de qué lado del VOR estás");
-  return{ins:"cdi",svg:navCDI(obs,ind),
-    q:"El indicador marca <em>TO</em> y vuelas rumbo <em>"+hdg(rumbo)+"</em>. ¿Te acercas a la estación?",
-    o:op.o,ok:op.ok,
-    exp:"La bandera TO/FROM depende solo de dónde estás respecto al curso seleccionado, <b>no de tu rumbo</b>. "+
-      "Estás en el radial "+hdg(rad)+" y vuelas "+hdg(rumbo)+", a "+
-      Math.round(Math.abs(nrm180(rumbo-(rad+180))))+"° del QDM: te estás <b>alejando</b> con el TO puesto.",
-    plan:{radial:rad,rumbo:rumbo,obs:obs}}}
+/* ============================================================
+   LAS FAMILIAS
+   ============================================================ */
+/* 1 · DÓNDE ESTOY */
+function navP1(){
+  const ins=pickR(["hsi","cdi","rmi"]),rad=R(0,359),rumbo=R(0,359);
+  const conDME=Math.random()<.55,dist=R(8,36);
+  let svg,obs=null,ind=null;
+  if(ins==="rmi")svg=navRMI(rumbo,nrm(rad+180));
+  else{const to=Math.random()<.5,k=R(-8,8);
+    obs=nrm((to?rad+180:rad)+k);ind=vorInd(rad,obs);
+    svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind)}
+  return{fam:"Dónde estoy",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
+    lect:(obs!=null?'<span class="crs">'+(ins==="cdi"?"OBS":"CRS")+' <b>'+hdg(obs)+'</b></span>':'')+
+      '<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>'+(conDME?'<span>DME <b>'+dist.toFixed(1)+'</b></span>':''),
+    q:"Colócate. ¿Dónde estás respecto a la estación?",
+    modo:"colocar",conDME:conDME,dist:dist,
+    sol:{marc:rad,d:dist},
+    juzga:function(r){if(!r)return{p:0,t:"No colocaste el avión"};
+      const em=errG(r.marc,rad),ed=Math.abs(r.d-dist);
+      let p=nota(em,TOL.marc),t="Marcación: "+em.toFixed(0)+"° de error";
+      if(conDME){const pd=nota(ed,TOL.dme);p=(p+pd)/2;t+=" · distancia: "+ed.toFixed(1)+" NM"}
+      return{p:p,t:t}},
+    exp:(ins==="rmi"?"La cola de la aguja da el radial directamente: <b>"+hdg(rad)+"</b>.":
+      "La bandera marca <b>"+(ind.to?"TO":"FROM")+"</b>, así que el OBS "+hdg(obs)+" corresponde al radial "+
+      hdg(ind.to?obs+180:obs)+"; con la barra "+(Math.abs(ind.dev)<.5?"centrada":
+      "desviada "+Math.abs(ind.exacto).toFixed(0)+"°")+", estás en el radial <b>"+hdg(rad)+"</b>.")+
+      (conDME?" El DME te da la distancia: <b>"+dist.toFixed(1)+" NM</b>.":
+        " Sin DME no puedes saber la distancia, solo la marcación."),
+    plan:{radial:rad,rumbo:rumbo,obs:obs==null?undefined:obs}}}
 
-/* D1 · rumbo de interceptación */
-function navD1(){
-  const obj=R(1,36)*10,dif=pickR([20,30,40,50,60])*pickR([1,-1]),rad=nrm(obj+dif);
-  const hacia=Math.random()<.5,A=pickR([20,30,45]);
-  const ok=vorCorte(rad,obj,hacia,A);
-  const op=navOpts([ok,nrm(hacia?obj+180-A*(dif>0?1:-1):obj+A*(dif>0?1:-1)),
-    nrm(ok+180),nrm(hacia?obj+180:obj)].map(hdg),hdg(ok));
-  return{ins:"hsi",svg:navHSI(nrm(rad+(hacia?180:0)),obj,vorInd(rad,hacia?nrm(obj+180):obj)),
-    q:"Estás en el radial <em>"+hdg(rad)+"</em>. Quieres interceptar el radial <em>"+hdg(obj)+
-      "</em> "+(hacia?"hacia":"alejándote de")+" la estación con <em>"+A+"° de corte</em>. ¿Qué rumbo tomas?",
-    o:op.o.map(x=>"Rumbo "+x),ok:op.ok,
-    exp:"El curso que quieres volar es <b>"+hdg(hacia?obj+180:obj)+"</b>. Estás "+Math.abs(dif)+"° "+
-      (dif>0?"en sentido horario":"en sentido antihorario")+" del radial objetivo, así que el corte va hacia el otro lado: "+
-      "rumbo <b>"+hdg(ok)+"</b>.",
-    plan:{radial:rad,rumbo:ok,obs:hacia?nrm(obj+180):obj,objetivo:obj}}}
+/* 3 · RUMBO PARA ACERCARSE O ALEJARSE POR UN RADIAL */
+function navP3(){
+  const ins=pickR(["hsi","rmi","cdi"]),rad=R(0,359),rumbo=R(0,359),alejar=Math.random()<.5;
+  let svg,obs=null,ind=null;
+  if(ins==="rmi")svg=navRMI(rumbo,nrm(rad+180));
+  else{const to=Math.random()<.5;obs=nrm(to?rad+180:rad);ind=vorInd(rad,obs);
+    svg=ins==="cdi"?navCDI(obs,ind):navHSI(rumbo,obs,ind)}
+  const sol=alejar?rad:nrm(rad+180);
+  return{fam:"Acercarse o alejarse",ins:ins,svg:svg,radial:rad,rumbo:rumbo,obs:obs,ind:ind,
+    lect:(obs!=null?'<span class="crs">'+(ins==="cdi"?"OBS":"CRS")+' <b>'+hdg(obs)+'</b></span>':'')+
+      '<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>',
+    q:"Lee en qué radial estás. ¿Qué rumbo pones para <em>"+
+      (alejar?"alejarte por ese mismo radial":"acercarte a la estación por ese mismo radial")+"</em>?",
+    modo:"teclado",
+    sol:{rumbo:sol},
+    juzga:function(r){if(!r)return{p:0,t:"Sin respuesta"};
+      const e=errG(r.rumbo,sol);return{p:nota(e,TOL.rumbo),t:e.toFixed(0)+"° de error"}},
+    exp:"El radial se define siempre <b>desde</b> la estación. Volar el radial "+hdg(rad)+" hacia fuera es rumbo <b>"+
+      hdg(rad)+"</b>; volverlo hacia la estación es el recíproco, <b>"+hdg(rad+180)+"</b>. Aquí te piden "+
+      (alejar?"alejarte":"acercarte")+": rumbo <b>"+hdg(sol)+"</b>.",
+    plan:{radial:rad,rumbo:sol,obs:sol}}}
 
-/* D2 · ¿este rumbo intercepta, o te aleja? */
-function navD2(){
-  const rad=R(1,36)*10,dif=pickR([20,30,40,50])*pickR([1,-1]),obj=nrm(rad+dif);
-  const rumbo=R(1,36)*10,v=vorIntercepta(rad,rumbo,obj);
-  if(Math.abs(vorGiro(rad,rumbo))<.2)return navD2();
-  const op=navOpts(["Lo interceptas","Te alejas de él","Te quedas paralelo","Hace falta saber la distancia"],
-    v>0?"Lo interceptas":"Te alejas de él");
-  return{ins:"rmi",svg:navRMI(rumbo,nrm(rad+180)),
-    q:"Radial <em>"+hdg(rad)+"</em>, rumbo <em>"+hdg(rumbo)+"</em>. ¿Qué pasa con el radial <em>"+hdg(obj)+"</em>?",
-    o:op.o,ok:op.ok,
-    exp:"Con rumbo "+hdg(rumbo)+" desde el radial "+hdg(rad)+", tu radial "+
-      (vorGiro(rad,rumbo)>0?"va aumentando (giras en sentido horario alrededor de la estación)":
-       "va disminuyendo (giras en sentido antihorario)")+", y el radial "+hdg(obj)+" te queda "+
-      (dif>0?"en sentido horario":"en sentido antihorario")+": <b>"+(v>0?"lo interceptas":"te alejas de él")+"</b>.",
-    plan:{radial:rad,rumbo:rumbo,objetivo:obj}}}
-
-/* E · entrada en espera */
-function navE(){
-  const acerc=R(1,36)*10,der=Math.random()<.65,rumbo=R(1,36)*10;
-  const e=esperaEntrada(acerc,rumbo,der);
-  if(e.limite)return navE();
-  const op=navOpts(["Directa","Paralela","Gota"].concat(["Depende del viento"]),ENTRADAS[e.tipo]);
-  return{ins:"esp",svg:navPlanEspera(acerc,der,rumbo,false),
-    q:"Espera en el radial <em>"+hdg(acerc+180)+"</em>, acercamiento <em>"+hdg(acerc)+
-      "</em>, virajes a la <em>"+(der?"derecha":"izquierda")+"</em>. Llegas al fijo con rumbo <em>"+
-      hdg(rumbo)+"</em>. ¿Qué entrada?",
-    o:op.o,ok:op.ok,
-    exp:"Δ = rumbo "+hdg(rumbo)+" − acercamiento "+hdg(acerc)+" = <b>"+Math.round(e.delta)+"°</b>"+
-      (der?"":" (medido al revés, por ser virajes a la izquierda)")+
-      ". De 0 a 180 directa, de 180 a 250 gota, de 250 a 360 paralela: <b>"+ENTRADAS[e.tipo]+"</b>.",
-    plan:null,espera:{acerc:acerc,der:der,rumbo:rumbo}}}
-
-/* diagrama de viento: el curso y de dónde entra el viento, sin regalar el ángulo */
-function navPlanViento(curso,wd,ws){const cx=120,cy=120;let t="";
-  for(let i=0;i<12;i++)t+=instTK(i*30,106,100,1,"rgba(232,226,214,.25)");
-  t+='<text x="120" y="14" font-size="9" text-anchor="middle" fill="rgba(232,226,214,.45)">N</text>';
-  /* curso */
-  const p=polar(cx,cy,88,curso);
-  t+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+
-     '" stroke="#d9b77e" stroke-width="2"/>';
-  t+='<g transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+') rotate('+curso+')">'+
-     '<path d="M0 -9 l6 11 h-12 z" fill="#d9b77e"/></g>';
-  const lp=polar(cx,cy,74,nrm(curso+14));
-  t+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" font-size="10" text-anchor="middle" fill="#d9b77e">CURSO '+hdg(curso)+'</text>';
-  /* viento: entra DEL wd y sopla hacia el centro */
-  const a=polar(cx,cy,98,wd),b=polar(cx,cy,34,wd);
-  t+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+
-     '" stroke="#7fa6d8" stroke-width="2.4" stroke-dasharray="7 5"/>';
-  t+='<g transform="translate('+b[0].toFixed(1)+' '+b[1].toFixed(1)+') rotate('+nrm(wd+180)+')">'+
-     '<path d="M0 -10 l7 13 h-14 z" fill="#7fa6d8"/></g>';
-  const wp=polar(cx,cy,112,wd);
-  t+='<text x="'+Math.max(26,Math.min(214,wp[0])).toFixed(1)+'" y="'+Math.max(16,Math.min(228,wp[1])).toFixed(1)+
-     '" font-size="10.5" text-anchor="middle" fill="#7fa6d8">'+hdg(wd)+'/'+ws+'</text>';
-  t+='<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#f0d6a6"/>';
-  return '<svg class="ap-inst nav-plan" viewBox="0 0 240 240">'+t+'</svg>'}
-
-/* W1 · ángulo de corrección de deriva */
-function navW1(){const tas=240;let curso,wd,ws,wca,g=0;
-  do{curso=R(1,36)*10;wd=R(1,36)*10;ws=R(20,50);wca=vientoWCA(tas,curso,wd,ws);g++}
-  while(g<60&&(wca===null||Math.abs(wca)<4));
-  if(wca===null||Math.abs(wca)<4)return navW1();
-  const ok=r360(curso+wca),comp=vientoComp(curso,wd,ws);
-  const cand=[ok,r360(curso-wca),r360(curso),r360(curso+2*wca)],o=[];
-  cand.forEach(function(x){if(o.indexOf(x)<0)o.push(x)});
-  let d=5;while(o.length<4){const x=r360(curso+wca+d);if(o.indexOf(x)<0)o.push(x);d+=5}
-  const op=navOpts(o.map(hdg),hdg(ok));
-  return{ins:"vto",svg:navPlanViento(curso,wd,ws),
-    q:"Quieres mantener el <em>curso "+hdg(curso)+"</em> con <em>TAS 240</em>. ¿Qué rumbo vuelas?",
-    o:op.o.map(x=>"Rumbo "+x),ok:op.ok,
-    exp:"La componente cruzada es <b>"+Math.abs(comp.cruz).toFixed(0)+" kt</b> por la "+
-      (comp.cruz>0?"derecha":"izquierda")+". Con TAS 240, el ángulo de corrección sale de 60 × cruzada / TAS, "+
-      "o sea unos <b>"+Math.abs(wca).toFixed(0)+"°</b>, y hay que escorar HACIA el viento: rumbo <b>"+hdg(ok)+
-      "</b>. Volar el curso tal cual ("+hdg(curso)+") te saca del radial.",
-    plan:null,solo:true}}
-
-/* W2 · de dónde entra el viento, leyendo la aguja */
-function navW2(){const curso=R(1,36)*10,izq=Math.random()<.5;
-  /* vuelas el curso sin corregir y la barra se va despacio hacia un lado */
-  const rad=nrm(curso+(izq?4:-4));
+/* 4 · CORTE DE RUTA */
+function navP4(){
+  const obj=R(0,359),dif=pickR([20,30,40,50,60])*pickR([1,-1]),rad=nrm(obj+dif);
+  const hacia=Math.random()<.5,A=pickR([30,45]),rumbo=nrm(rad+R(-80,80));
+  const curso=hacia?nrm(obj+180):obj,sol=vorCorte(rad,obj,hacia,A);
   const ind=vorInd(rad,curso);
-  const op=navOpts(["Entra por la izquierda","Entra por la derecha","Es viento de cara","Es viento de cola"],
-    izq?"Entra por la izquierda":"Entra por la derecha");
-  return{ins:"hsi",svg:navHSI(curso,curso,ind),
-    q:"Vuelas <em>rumbo "+hdg(curso)+"</em>, igual que el curso, sin corregir nada, y la barra se va despacio hacia la <em>"+
-      (izq?"izquierda":"derecha")+"</em>. ¿De dónde entra el viento?",
-    o:op.o,ok:op.ok,
-    exp:"Si la barra se va a la "+(izq?"izquierda":"derecha")+", el curso te está quedando a esa mano: significa que "+
-      "has derivado hacia la <b>"+(izq?"derecha":"izquierda")+"</b>. Y se deriva <b>a favor</b> del viento, así que el viento "+
-      "<b>entra por la "+(izq?"izquierda":"derecha")+"</b>. Para sujetarlo hay que escorar hacia él.",
-    plan:{radial:rad,rumbo:curso,obs:curso}}}
+  return{fam:"Corte de ruta",ins:"hsi",svg:navHSI(rumbo,curso,ind,null,rumbo),
+    radial:rad,rumbo:rumbo,obs:curso,ind:ind,
+    lect:'<span class="crs">CRS <b>'+hdg(curso)+'</b></span><span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>',
+    q:"Intercepta el radial <em>"+hdg(obj)+"</em> "+(hacia?"en acercamiento":"en alejamiento")+
+      " con <em>"+A+"° de corte</em>. Pon el bug en el rumbo de interceptación.",
+    modo:"bug",valIni:rumbo,
+    sol:{rumbo:sol},
+    juzga:function(r){if(!r)return{p:0,t:"No moviste el bug"};
+      const e=errG(r.rumbo,sol);return{p:nota(e,TOL.rumbo),t:e.toFixed(0)+"° de error"}},
+    exp:"El curso que quieres volar es <b>"+hdg(curso)+"</b>. Estás "+Math.abs(dif)+"° "+
+      (dif>0?"en sentido horario":"en sentido antihorario")+" del radial objetivo, así que el corte va al otro lado: "+
+      "rumbo <b>"+hdg(sol)+"</b>.",
+    plan:{radial:rad,rumbo:sol,obs:curso,objetivo:obj}}}
 
-const NAVFAM={orient:[navA1,navA2,navB,navC1,navC2],cortes:[navD1,navD2],esperas:[navE],viento:[navW1,navW2]};
+
+/* ============ ADF / NDB ============
+   QDM = marcación magnética A la estación · QDR = radial, QDM ± 180
+   RB  = marcación relativa, lo que marca la aguja sobre carta fija
+   La identidad que lo gobierna todo:  QDM = RB + rumbo  */
+const adfRB=(qdm,rumbo)=>nrm(qdm-rumbo);
+const adfQDM=(rb,rumbo)=>nrm(rb+rumbo);
+
+/* ============ ILS ============
+   Localizador: fondo de escala 2,5° (0,5° por punto) — cuatro veces más
+   vivo que un VOR. Senda: 0,7° de fondo de escala sobre una senda de 3°. */
+const ILSLOC=2.5,ILSGS=0.7,ILSSENDA=3,FTNM=6076;
+const ilsLat=(dev,D)=>Math.tan(dev*Math.PI/180)*D;          /* separación lateral, NM */
+const ilsAlt=D=>Math.tan(ILSSENDA*Math.PI/180)*D*FTNM;      /* altura en senda, ft */
+const ilsDev=(lat,D)=>Math.atan2(lat,D)*180/Math.PI;        /* la inversa */
+
+/* --- ADF de carta fija: el cero arriba y la aguja en marcación relativa --- */
+function navADF(rb){let t="";
+  for(let i=0;i<72;i++){const d=i*5,maj=d%30===0,med=d%10===0;
+    t+=iTk(d,108,maj?92:med?98:103,maj?3.2:med?1.9:1.2,maj?INS.mark:med?INS.dim:INS.dim2)}
+  for(let i=0;i<12;i++){const d=i*30,p=polar(130,130,78,d);
+    t+=iTx(p[0].toFixed(1),(p[1]+6.5).toFixed(1),i%3===0?19:16,INS.mark,i===0?"0":String(i*3),i%3===0?700:600)}
+  t+='<g transform="rotate('+rb+' 130 130)">'+
+     '<path d="M130 26 l7.5 14 h-15 z" fill="'+INS.amber+'"/>'+
+     '<line x1="130" y1="40" x2="130" y2="220" stroke="'+INS.amber+'" stroke-width="2.8"/>'+
+     '<path d="M121 220 h18" stroke="'+INS.amber+'" stroke-width="3.2"/></g>';
+  t+=lubber()+'<circle cx="130" cy="130" r="8" fill="#0a0d12" stroke="'+INS.dim+'" stroke-width="1.2"/>';
+  return cajaPro(t,"ADF · CARTA FIJA")}
+
+/* --- cenital de aproximación: pista, eje del localizador y arcos de DME --- */
+function planILS(curso,escMax){const cx=120,cy=150;let t="";
+  const u=[Math.sin(curso*Math.PI/180),-Math.cos(curso*Math.PI/180)];
+  /* eje extendido hacia atrás (de donde vienes) */
+  const fin=[cx-u[0]*140,cy-u[1]*140];
+  t+='<line x1="'+cx+'" y1="'+cy+'" x2="'+fin[0].toFixed(1)+'" y2="'+fin[1].toFixed(1)+
+     '" stroke="'+INS.mag+'" stroke-width="1.6" stroke-dasharray="7 5"/>';
+  for(let k=1;k<=3;k++){const r=k/3*126;
+    t+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r.toFixed(1)+'" fill="none" stroke="rgba(246,246,244,.1)" stroke-dasharray="3 6"/>';
+    const q=[cx-u[0]*r,cy-u[1]*r];
+    t+='<text x="'+(q[0]+9).toFixed(1)+'" y="'+(q[1]-4).toFixed(1)+'" font-size="8.5" fill="rgba(246,246,244,.4)" font-family="var(--mono)">'+
+      Math.round(k/3*escMax)+'</text>'}
+  /* pista */
+  t+='<g transform="translate('+cx+' '+cy+') rotate('+curso+')">'+
+     '<rect x="-4" y="-2" width="8" height="26" rx="1" fill="rgba(246,246,244,.85)"/>'+
+     '<line x1="0" y1="24" x2="0" y2="2" stroke="#0b0e13" stroke-width="1.2" stroke-dasharray="3 3"/></g>';
+  t+=iTx(cx,cy+40,9,"rgba(246,246,244,.45)","RWY "+pad(Math.round(nrm(curso)/10)||36),600);
+  return t}
+
+/* ============================================================
+   FAMILIAS NDB E ILS
+   ============================================================ */
+/* N1 · dónde estoy respecto al NDB, con carta fija */
+function navN1(){
+  const rumbo=R(0,359),qdr=R(0,359),dist=R(8,34),conDME=Math.random()<.5;
+  const qdm=nrm(qdr+180),rb=adfRB(qdm,rumbo);
+  return{fam:"NDB",ins:"adf",svg:navADF(rb),radial:qdr,rumbo:rumbo,obs:null,
+    lect:'<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span><span>RB <b>'+hdg(rb)+
+      '</b></span>'+(conDME?'<span>DME <b>'+dist.toFixed(1)+'</b></span>':''),
+    q:"Carta fija: la aguja marca relativos. Colócate respecto al NDB.",
+    modo:"colocar",conDME:conDME,dist:dist,
+    sol:{marc:qdr,d:dist},
+    juzga:function(r){if(!r)return{p:0,t:"No colocaste el avión"};
+      const em=errG(r.marc,qdr),ed=Math.abs(r.d-dist);
+      let p=nota(em,TOL.marc),t="Marcación: "+em.toFixed(0)+"° de error";
+      if(conDME){p=(p+nota(ed,TOL.dme))/2;t+=" · distancia: "+ed.toFixed(1)+" NM"}
+      return{p:p,t:t}},
+    exp:"QDM = RB + rumbo = "+hdg(rb)+" + "+hdg(rumbo)+" = <b>"+hdg(qdm)+"</b>. Eso es la marcación <i>a</i> la "+
+      "estación; tú estás en la contraria, el QDR <b>"+hdg(qdr)+"</b>."+
+      (conDME?" El DME da la distancia: <b>"+dist.toFixed(1)+" NM</b>.":" Sin DME, la distancia no se puede saber."),
+    plan:{radial:qdr,rumbo:rumbo}}}
+
+/* N2 · giro mental: qué marcará la aguja después de virar */
+function navN2(){
+  const r1=R(0,359),rb1=R(10,350),r2=nrm(r1+pickR([40,60,80,100,130,160])*pickR([1,-1]));
+  const qdm=adfQDM(rb1,r1),rb2=adfRB(qdm,r2);
+  return{fam:"NDB",ins:"adf",svg:navADF(rb1),radial:nrm(qdm+180),rumbo:r1,obs:null,
+    lect:'<span class="hdg">HDG <b>'+hdg(r1)+'</b></span><span>RB <b>'+hdg(rb1)+'</b></span>',
+    q:"Viras a rumbo <em>"+hdg(r2)+"</em> manteniendo la posición. Lleva la aguja a donde quedará.",
+    modo:"aguja",valIni:rb1,
+    sol:{rumbo:rb2},
+    juzga:function(r){if(!r)return{p:0,t:"No moviste la aguja"};
+      const e=errG(r.rumbo,rb2);return{p:nota(e,TOL.marc),t:e.toFixed(0)+"° de error"}},
+    exp:"La estación no se mueve: el QDM sigue siendo <b>"+hdg(qdm)+"</b> (RB "+hdg(rb1)+" + rumbo "+hdg(r1)+
+      "). Con el rumbo nuevo, RB = QDM − rumbo = "+hdg(qdm)+" − "+hdg(r2)+" = <b>"+hdg(rb2)+"</b>. "+
+      "La aguja gira lo mismo que tú, pero al revés.",
+    plan:{radial:nrm(qdm+180),rumbo:r2}}}
+
+/* N3 · QDM y QDR */
+function navN3(){
+  const rumbo=R(0,359),rb=R(0,359),qdm=adfQDM(rb,rumbo),pideQDR=Math.random()<.5;
+  const sol=pideQDR?nrm(qdm+180):qdm;
+  return{fam:"NDB",ins:"adf",svg:navADF(rb),radial:nrm(qdm+180),rumbo:rumbo,obs:null,
+    lect:'<span class="hdg">HDG <b>'+hdg(rumbo)+'</b></span>',
+    q:"¿Cuál es el <em>"+(pideQDR?"QDR":"QDM")+"</em>?",
+    modo:"teclado",
+    sol:{rumbo:sol},
+    juzga:function(r){if(!r)return{p:0,t:"Sin respuesta"};
+      const e=errG(r.rumbo,sol);return{p:nota(e,TOL.rumbo),t:e.toFixed(0)+"° de error"}},
+    exp:"QDM = RB + rumbo = "+hdg(rb)+" + "+hdg(rumbo)+" = <b>"+hdg(qdm)+"</b>"+
+      (pideQDR?", y el QDR es su recíproco: <b>"+hdg(qdm+180)+"</b>.":"."),
+    plan:{radial:nrm(qdm+180),rumbo:rumbo}}}
+
+
+/* --- indicador de ILS: aguja de localizador y aguja de senda --- */
+function navILS(curso,devL,devG,sinGS){
+  let t='<g transform="rotate('+(-curso)+' 130 130)">'+rosaPro(true)+'</g>'+lubber();
+  for(let k=-5;k<=5;k++)if(k){
+    t+='<circle cx="'+(130+k*12.5)+'" cy="130" r="3" fill="none" stroke="'+INS.dim+'" stroke-width="1.2"/>';
+    if(!sinGS)t+='<circle cx="130" cy="'+(130+k*10)+'" r="2.6" fill="none" stroke="'+INS.dim+'" stroke-width="1.1"/>'}
+  const ox=Math.max(-1,Math.min(1,devL/ILSLOC))*62.5;
+  t+='<line x1="'+(130+ox).toFixed(1)+'" y1="72" x2="'+(130+ox).toFixed(1)+'" y2="188" stroke="'+INS.mag+
+     '" stroke-width="4.2" stroke-linecap="round"/>';
+  if(!sinGS){const oy=Math.max(-1,Math.min(1,devG/ILSGS))*50;
+    t+='<line x1="72" y1="'+(130+oy).toFixed(1)+'" x2="188" y2="'+(130+oy).toFixed(1)+'" stroke="'+INS.mag+
+       '" stroke-width="4.2" stroke-linecap="round"/>'}
+  t+='<circle cx="130" cy="130" r="3.4" fill="'+INS.mark+'"/>';
+  return cajaPro(t,"ILS")}
+
+/* --- perfil lateral de la senda --- */
+function perfilILS(D,escMax){const x0=28,x1=232,y0=196;let t="";
+  const px=d=>x1-(d/escMax)*(x1-x0);
+  t+='<rect x="3" y="3" width="254" height="254" rx="18" fill="#0b0d11" stroke="#272c34"/>';
+  t+='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y0+'" stroke="rgba(246,246,244,.5)" stroke-width="1.6"/>';
+  t+='<rect x="'+(x1-14)+'" y="'+(y0-4)+'" width="18" height="8" rx="1" fill="rgba(246,246,244,.85)"/>';
+  t+=iTx(x1-4,y0+18,8.5,"rgba(246,246,244,.45)","UMBRAL",600);
+  const h=d=>y0-(ilsAlt(d)/ilsAlt(escMax))*132;
+  t+='<line x1="'+x1+'" y1="'+y0+'" x2="'+px(escMax).toFixed(1)+'" y2="'+h(escMax).toFixed(1)+
+     '" stroke="'+INS.mag+'" stroke-width="2"/>';
+  t+=iTx(px(escMax*.72)+2,h(escMax*.72)-9,9.5,INS.mag,"SENDA 3,0°",600);
+  for(let d=2;d<=escMax;d+=2){t+='<line x1="'+px(d).toFixed(1)+'" y1="'+y0+'" x2="'+px(d).toFixed(1)+'" y2="'+(y0+5)+
+    '" stroke="rgba(246,246,244,.35)"/>'+iTx(px(d).toFixed(1),y0+16,8,"rgba(246,246,244,.4)",d,500)}
+  t+='<g transform="translate('+px(D).toFixed(1)+' '+h(D).toFixed(1)+')">'+
+     navPlane(0,0,90,INS.amber,.5).replace("translate(0.0 0.0)","translate(0 0)")+'</g>';
+  t+='<line x1="'+px(D).toFixed(1)+'" y1="'+h(D).toFixed(1)+'" x2="'+px(D).toFixed(1)+'" y2="'+y0+
+     '" stroke="'+INS.amber+'" stroke-width="1" stroke-dasharray="3 4"/>';
+  t+=iTx(px(D).toFixed(1),h(D)-22,20,INS.amber,"?",700);
+  return '<svg class="ap-inst inst-pro" viewBox="0 0 260 260">'+t+'</svg>'}
+
+/* I1 · altura en senda a una distancia */
+function navI1(){
+  const D=pickR([3,4,5,6,7,8,9,10]),alt=Math.round(ilsAlt(D)/50)*50;
+  return{fam:"ILS",ins:"perfil",svg:perfilILS(D,12),radial:0,rumbo:0,obs:null,
+    lect:'<span>DME <b>'+D+'</b></span><span class="crs">SENDA <b>3,0°</b></span>',
+    q:"Estás a <em>"+D+" DME</em> del umbral, en senda de <em>3°</em>. ¿Qué altura sobre el umbral te corresponde?",
+    modo:"teclado4",
+    sol:{rumbo:alt},
+    juzga:function(r){if(!r)return{p:0,t:"Sin respuesta"};
+      const e=Math.abs(r.rumbo-alt);return{p:e<=100?1:e<=250?.5:0,t:Math.round(e)+" ft de error"}},
+    exp:"Una senda de 3° son <b>318 ft por milla</b>; la regla de cabina redondea a 300. A "+D+" millas: "+D+
+      " × 318 = <b>"+Math.round(ilsAlt(D))+" ft</b> sobre el umbral.",
+    plan:null,sinPlan:true}}
+
+/* I2 · dónde estás en la aproximación */
+function navI2(){
+  const curso=R(0,359),D=R(4,11),ptos=pickR([1,2,3])*pickR([1,-1]);
+  const devL=ptos*(ILSLOC/5),lat=-ilsLat(devL,D);   /* aguja a la derecha = tú a la izquierda */
+  return{fam:"ILS",ins:"ils",svg:navILS(curso,devL,0,true),curso:curso,D:D,lat:lat,
+    radial:0,rumbo:curso,obs:null,escMax:14,
+    lect:'<span class="crs">LOC <b>'+hdg(curso)+'</b></span><span>DME <b>'+D+'</b></span>',
+    q:"Colócate respecto al eje del localizador.",
+    modo:"colocarILS",
+    sol:{lat:lat,D:D},
+    juzga:function(r){if(!r)return{p:0,t:"No colocaste el avión"};
+      const el=Math.abs(r.lat-lat),ed=Math.abs(r.D-D);
+      return{p:(nota(el,[.15,.4])+nota(ed,TOL.dme))/2,
+        t:"Lateral: "+(el*FTNM).toFixed(0)+" ft · distancia: "+ed.toFixed(1)+" NM"}},
+    exp:"Cada punto del localizador son <b>0,5°</b>, no 2° como en el VOR: va cuatro veces más vivo. "+
+      Math.abs(ptos)+" punto"+(Math.abs(ptos)>1?"s":"")+" son "+Math.abs(devL).toFixed(1)+"°, y a "+D+
+      " millas eso son <b>"+Math.abs(lat*FTNM).toFixed(0)+" ft</b> ("+Math.abs(lat).toFixed(2)+" NM). "+
+      "La aguja se va a la <b>"+(ptos>0?"derecha":"izquierda")+"</b>, así que el eje está a esa mano y tú estás a la <b>"+
+      (ptos>0?"izquierda":"derecha")+"</b>.",
+    plan:null,sinPlan:true}}
+
+/* --- widget: colocarse en la aproximación --- */
+function wColocarILS(it){
+  return '<div class="lx-w"><svg class="lx-plan" id="lxPlan" viewBox="0 0 240 240">'+
+    planILS(it.curso,it.escMax)+
+    '<g id="lxAv">'+navPlane(120,40,it.curso,"#e45cc8",.6)+'</g></svg>'+
+    '<div class="lx-read" id="lxRead"></div>'+
+    '<p class="lx-hint">Arrastra al punto donde estás</p></div>'}
+function bindColocarILS(it){const sv=$("lxPlan"),av=$("lxAv");let drag=false;
+  const u=[Math.sin(it.curso*Math.PI/180),-Math.cos(it.curso*Math.PI/180)];
+  const v=[Math.sin((it.curso+90)*Math.PI/180),-Math.cos((it.curso+90)*Math.PI/180)];
+  const mover=function(ev){const r=sv.getBoundingClientRect(),k=240/r.width;
+    let x=(ev.clientX-r.left)*k,y=(ev.clientY-r.top)*k;
+    const dx=x-120,dy=y-150,m=Math.hypot(dx,dy);
+    if(m>126){x=120+dx*126/m;y=150+dy*126/m}
+    const px=x-120,py=y-150,esc=it.escMax/126;
+    const alo=-(px*u[0]+py*u[1])*esc, lat=(px*v[0]+py*v[1])*esc;
+    dr.resp={lat:lat,D:Math.max(0,alo)};
+    av.setAttribute("transform","translate("+(x-120).toFixed(1)+" "+(y-40).toFixed(1)+")");
+    $("lxRead").innerHTML='<span>DME <b>'+Math.max(0,alo).toFixed(1)+'</b></span><span>EJE <b>'+
+      Math.abs(lat*FTNM).toFixed(0)+'</b> ft '+(lat>0?'DCHA':'IZQDA')+'</span>'};
+  sv.addEventListener("pointerdown",function(e){e.preventDefault();drag=true;try{sv.setPointerCapture(e.pointerId)}catch(x){}mover(e)});
+  sv.addEventListener("pointermove",function(e){if(drag)mover(e)});
+  const up=function(){drag=false};
+  sv.addEventListener("pointerup",up);sv.addEventListener("pointercancel",up)}
+
+/* --- la explicación de ILS usa su propia cenital --- */
+function navPlanILSSol(it){
+  const u=[Math.sin(it.curso*Math.PI/180),-Math.cos(it.curso*Math.PI/180)];
+  const v=[Math.sin((it.curso+90)*Math.PI/180),-Math.cos((it.curso+90)*Math.PI/180)];
+  const esc=126/it.escMax,px=120-u[0]*it.D*esc+v[0]*it.lat*esc,py=150-u[1]*it.D*esc+v[1]*it.lat*esc;
+  return '<svg class="ap-inst nav-plan" viewBox="0 0 240 240">'+planILS(it.curso,it.escMax)+
+    navPlane(px,py,it.curso,"#f0d6a6",.6)+'</svg>'}
+
+/* ============ RECORRIDO DEL EJERCICIO ============ */
 function navPool(){const f=aptCfg("nav","foco");
-  return f==="todo"?NAVFAM.orient.concat(NAVFAM.cortes,NAVFAM.esperas,NAVFAM.viento,NAVFAM.orient):NAVFAM[f]}
+  return f==="situacion"?[navP1]:f==="rumbo"?[navP3]:f==="corte"?[navP4]:
+         f==="ndb"?[navN1,navN2,navN3]:f==="ils"?[navI1,navI2]:
+         [navP1,navP1,navP3,navP4,navP4,navN1,navN2,navN3,navI1,navI2]}
+const NAVNOM={hsi:"HSI",cdi:"VOR / CDI",rmi:"RMI",adf:"ADF de carta fija",ils:"ILS",perfil:"Perfil de la senda"};
 
-navA1.fam="Situación";navA2.fam="Situación";navB.fam="Sentido de la aguja";
-navW1.fam="Corrección de deriva";navW2.fam="Corrección de deriva";
-navC1.fam="Acercarse o alejarse";navC2.fam="Acercarse o alejarse";
-navD1.fam="Cortes de ruta";navD2.fam="Cortes de ruta";navE.fam="Entradas en espera";
-const NAVNOM={hsi:"HSI",cdi:"CDI convencional",rmi:"RMI",esp:"Circuito de espera",vto:"Curso y viento"};
+function navBegin(){dr.tot=aptCfg("nav","n");dr.lim=aptCfg("nav","lim");dr.fam={};
+  $("app").classList.add("wide");navNext()}
 
-function navBegin(){dr.tot=aptCfg("nav","n");dr.lim=aptCfg("nav","lim");dr.fam={};navNext()}
 function navNext(){if(!dr||dr.fin)return;
   if(dr.n>=dr.tot)return aptEnd();
-  const g=pickR(navPool()),it=g();it.fam=g.fam;
-  dr.cur=it;dr.tq=Date.now();dr.lock=false;
+  const it=pickR(navPool())();
+  dr.cur=it;dr.tq=Date.now();dr.lock=false;dr.resp=null;dr.tecla="";
+  dr.escMax=46;                                   /* la cenital abarca 46 NM de radio */
+  if(it.modo==="bug")dr.val=it.valIni;
   aptItems(dr.n+1,dr.tot);
+  $("aptStage").className="ap-stage lx-stage";
   $("aptStage").innerHTML=
-    '<div>'+it.svg+'<div class="ap-instname">'+NAVNOM[it.ins]+'</div></div>'+
-    '<div class="ap-panel" style="padding:15px 18px"><div class="ap-q" style="font-size:17.5px">'+it.q+'</div></div>'+
-    '<div class="ap-ops one">'+it.o.map((v,i)=>
-      '<button class="ap-op txt" onclick="navAns('+i+')">'+v+'</button>').join("")+'</div>';
+    '<div class="lx">'+
+      '<div class="lx-ins" id="lxIns">'+it.svg+'<div class="inst-read">'+it.lect+'</div></div>'+
+      '<div class="lx-task"><div class="lx-q">'+it.q+'</div>'+
+        (it.modo==="colocar"?wColocar(it.conDME):
+         it.modo==="colocarILS"?wColocarILS(it):
+         it.modo==="teclado"?wTeclado(3):
+         it.modo==="teclado4"?wTeclado(4):
+         '<div class="lx-w lx-dialhint">Arrastra sobre el instrumento<br>para llevar '+
+           (it.modo==="aguja"?"la aguja a su sitio":"el bug al rumbo")+'</div>')+
+        '<button class="cta lx-ok" onclick="navCheck()"><span>Comprobar</span>'+
+          '<span class="arrow"><svg><use href="#arrow"/></svg></span></button>'+
+      '</div></div>'+
+    '<div class="lx-gira">Gira el teléfono<small>Este ejercicio va en horizontal</small></div>';
+  if(it.modo==="colocar")bindColocar();
+  if(it.modo==="colocarILS")bindColocarILS(it);
+  if(it.modo==="bug")bindDial("bug");
+  if(it.modo==="aguja")bindDial("aguja");
   if(dr.lim){dr.left=dr.lim;$("aptClock").textContent=dr.lim+" s";$("aptClock").classList.remove("low");
     dr.iv=setInterval(function(){if(!dr||dr.fin)return;dr.left--;
       $("aptClock").textContent=Math.max(0,dr.left)+" s";$("aptClock").classList.toggle("low",dr.left<=5);
-      if(dr.left<=0){clearInterval(dr.iv);navAns(-1)}},1000)}
+      if(dr.left<=0){clearInterval(dr.iv);navCheck()}},1000)}
   else $("aptClock").textContent="—"}
 
-function navAns(i){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
-  const it=dr.cur,ok=i===it.ok;
-  dr.n++;if(ok)dr.ok++;if(i>=0)dr.rt.push(Date.now()-dr.tq);
-  const f=dr.fam[it.fam]||(dr.fam[it.fam]={n:0,ok:0});f.n++;if(ok)f.ok++;
-  aptFlash(ok);
-  const ops=[].slice.call(document.querySelectorAll("#aptStage .ap-op"));
-  ops.forEach((o,k)=>o.classList.add(k===it.ok?"ok":k===i?"ko":"dim"));
-  dr.to=setTimeout(function(){if(dr&&!dr.fin)navExp(ok,i<0)},ok?420:780)}
+function navCheck(){if(!dr||dr.fin||dr.lock)return;dr.lock=true;clearInterval(dr.iv);
+  const it=dr.cur,j=it.juzga(dr.resp);
+  dr.n++;dr.ok+=j.p;dr.rt.push(Date.now()-dr.tq);
+  const f=dr.fam[it.fam]||(dr.fam[it.fam]={n:0,ok:0});f.n++;f.ok+=j.p;
+  aptFlash(j.p>=1);
+  navExp(j)}
 
-/* la vista cenital: esto es la clase, no un adorno */
-function navExp(ok,fuera){if(!dr||dr.fin)return;const it=dr.cur;
-  const plan=it.espera?navPlanEspera(it.espera.acerc,it.espera.der,it.espera.rumbo,true)
-            :it.plan?navPlan(it.plan):it.svg;
+function navExp(j){if(!dr||dr.fin)return;const it=dr.cur;
   $("aptClock").textContent="—";$("aptClock").classList.remove("low");
+  $("aptStage").className="ap-stage lx-stage";
   $("aptStage").innerHTML=
-    '<div>'+plan+'<div class="ap-instname">Vista desde arriba</div></div>'+
-    '<div class="ap-panel nav-exp '+(ok?"ok":"ko")+'" style="padding:15px 18px">'+
-      '<span class="tag">'+(fuera?"Se acabó el tiempo":ok?"Correcto":"La respuesta era: "+it.o[it.ok])+'</span>'+
-      '<div class="nav-txt">'+it.exp+'</div></div>'+
-    '<button class="cta" onclick="navNext()"><span>Siguiente</span>'+
-      '<span class="arrow"><svg><use href="#arrow"/></svg></span></button>'}
+    '<div class="lx">'+
+      '<div class="lx-ins">'+(it.modo==="colocarILS"?navPlanILSSol(it):it.sinPlan?it.svg:navPlan(it.plan))+
+        '<div class="inst-read"><span>'+(it.sinPlan&&it.modo!=="colocarILS"?"El dato de partida":"Vista desde arriba")+'</span></div></div>'+
+      '<div class="lx-task">'+
+        '<div class="lx-ver '+(j.p>=1?"ok":j.p>0?"casi":"mal")+'">'+notaTxt(j.p)+
+          '<small>'+j.t+'</small></div>'+
+        '<div class="nav-txt lx-exp">'+it.exp+'</div>'+
+        '<button class="cta lx-ok" onclick="navNext()"><span>Siguiente</span>'+
+          '<span class="arrow"><svg><use href="#arrow"/></svg></span></button>'+
+      '</div></div>'+
+    '<div class="lx-gira">Gira el teléfono<small>Este ejercicio va en horizontal</small></div>'}
 
 /* ============ BANCO DE PRUEBAS DEL MOTOR ============
    Casos resueltos a mano. Si alguno falla, el motor miente y no se publica.
@@ -2796,6 +3079,21 @@ function navTest(){const f=[];
   eq("espera 180/090 izq",esperaEntrada(180,90,false).tipo,"d");
   eq("espera 180/270 izq",esperaEntrada(180,270,false).tipo,"p");
   eq("espera 180/360 izq",esperaEntrada(180,360,false).tipo,"g");
+  /* --- ADF / NDB --- */
+  eq("RB con QDM 090 rumbo 360",adfRB(90,360),90);
+  eq("RB con QDM 090 rumbo 180",adfRB(90,180),270);
+  eq("QDM = RB + rumbo",adfQDM(40,70),110);
+  eq("QDM envolvente",adfQDM(340,80),60);
+  for(let k=0;k<300;k++){const q=R(0,359),m=R(0,359);
+    if(adfQDM(adfRB(q,m),m)!==nrm(q))f.push("ida y vuelta ADF en QDM "+q+" rumbo "+m)}
+  /* --- ILS --- */
+  eq("altura en senda a 1 NM",Math.round(ilsAlt(1)),318);
+  eq("altura en senda a 3 NM",Math.round(ilsAlt(3)),955);
+  eq("altura en senda a 10 NM",Math.round(ilsAlt(10)),3184);
+  eq("lateral 1 grado a 6 NM (ft)",Math.round(ilsLat(1,6)*FTNM),636);
+  eq("un punto de localizador",ILSLOC/5,0.5);
+  for(let k=0;k<200;k++){const D=R(2,12),lat=(R(-80,80)/100);
+    if(Math.abs(ilsLat(ilsDev(lat,D),D)-lat)>1e-9)f.push("ida y vuelta ILS a "+D+" NM")}
   /* --- viento --- */
   const vv=(tas,rb,wd,ws)=>vientoVector(tas,rb,wd,ws);
   let w;

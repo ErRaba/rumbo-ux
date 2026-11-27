@@ -651,6 +651,8 @@ html[data-theme=day] .ap-g.warn{background:rgba(176,90,69,.14)}
 .nav-exp.ko .tag{color:var(--terra)}
 .nav-txt{font-size:13.5px;line-height:1.52;color:rgba(244,239,230,.84);margin-top:3px}
 .nav-txt b{color:var(--gold2);font-weight:600}
+.vl-wind{margin-top:5px;opacity:.85}
+.vl-wind b{color:#7fa6d8}
 
 /* --- cabina viva --- */
 .vl-top{flex:none}
@@ -1640,15 +1642,17 @@ const APTEX={
     unit:"% en ruta",timed:true,
     cfg:[["dur","Duración",[[120,"2 min"],[180,"3 min"],[240,"4 min"]],180],
          ["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"]],"hsi"],
-         ["mapa","Mapa",[["si","Con mapa"],["no","Modo IMC"]],"si"]],
-    tips:["El pulgar manda alabeo, y del alabeo sale el viraje: 25° a 180 kt son 3°/s, un viraje normalizado.",
+         ["mapa","Mapa",[["si","Con mapa"],["no","Modo IMC"]],"si"],
+         ["viento","Viento",[["no","Sin viento"],["ver","A la vista"],["ciego","Oculto"]],"no"]],
+    tips:["El pulgar manda alabeo, y del alabeo sale el viraje: 30° a 240 kt son 2,6°/s.",
+          "Con viento no basta con apuntar el morro al curso: hay que volar escorado al viento el ángulo justo, y la aguja es la que te dice si has acertado.",
           "Se intercepta anticipando: empieza a nivelar cuando quedan unos pocos grados, no cuando la barra ya está centrada.",
           "La puntuación es el porcentaje del tiempo TOTAL en ruta, así que capturar tarde también cuesta. No vale clavarla al final.",
           "Cuando te salga con mapa, quítalo. El modo IMC es el ejercicio de verdad: es lo que tendrás en el simulador."]},
   nav:{n:"Radionavegación",s:"VOR, HSI y RMI: dónde estás, cortes y esperas",ic:"vor",
     unit:"% de acierto",
     cfg:[["ins","Instrumento",[["hsi","HSI"],["cdi","CDI"],["rmi","RMI"],["mix","Mezcla"]],"hsi"],
-         ["foco","Enfoque",[["todo","Todo"],["orient","Situación"],["cortes","Cortes"],["esperas","Esperas"]],"todo"],
+         ["foco","Enfoque",[["todo","Todo"],["orient","Situación"],["cortes","Cortes"],["esperas","Esperas"],["viento","Viento"]],"todo"],
          ["n","Preguntas",[[10,"10"],[20,"20"],[30,"30"]],20],
          ["lim","Límite",[[0,"Sin límite"],[30,"30 s"],[20,"20 s"]],30]],
     tips:["Lee siempre en este orden: bandera, luego OBS, luego desvío. Si empiezas por la aguja te pierdes.",
@@ -2341,6 +2345,22 @@ const SECT=[[20,"al frente"],[70,"adelante a la derecha"],[110,"por tu través d
 function vorSector(radial,rumbo){const rb=nrm(radial+180-rumbo);
   for(const s of SECT)if(rb<=s[0])return s[1];return "al frente"}
 
+/* ============ VIENTO ============
+   El avión apunta a RUMBO con su velocidad verdadera; el viento lo empuja; lo
+   que queda sobre el suelo es la DERROTA, a otra velocidad. Viento "de 270"
+   significa que viene del 270 y sopla hacia el 090, de ahí el signo menos. */
+function vientoVector(tas,rumbo,wd,ws){
+  const gx=tas*Math.sin(rumbo*Math.PI/180)-ws*Math.sin(wd*Math.PI/180);
+  const gy=tas*Math.cos(rumbo*Math.PI/180)-ws*Math.cos(wd*Math.PI/180);
+  return{gx:gx,gy:gy,gs:Math.hypot(gx,gy),derrota:nrm(Math.atan2(gx,gy)*180/Math.PI)}}
+/* ángulo de corrección de deriva para MANTENER una derrota: rumbo = derrota + WCA */
+function vientoWCA(tas,derrota,wd,ws){
+  const s=ws/tas*Math.sin((wd-derrota)*Math.PI/180);
+  return Math.abs(s)>=1?null:Math.asin(s)*180/Math.PI}
+/* componente cruzada y de cara (negativa = de cola) respecto a una derrota */
+function vientoComp(derrota,wd,ws){
+  return{cruz:ws*Math.sin((wd-derrota)*Math.PI/180),cara:ws*Math.cos((wd-derrota)*Math.PI/180)}}
+
 /* ============ ENTRADAS EN ESPERA ============
    Reparto 180° directa / 110° paralela / 70° gota, derivado de la geometría
    (no copiado de fuentes secundarias, que se contradicen entre sí):
@@ -2631,14 +2651,74 @@ function navE(){
       ". De 0 a 180 directa, de 180 a 250 gota, de 250 a 360 paralela: <b>"+ENTRADAS[e.tipo]+"</b>.",
     plan:null,espera:{acerc:acerc,der:der,rumbo:rumbo}}}
 
-const NAVFAM={orient:[navA1,navA2,navB,navC1,navC2],cortes:[navD1,navD2],esperas:[navE]};
+/* diagrama de viento: el curso y de dónde entra el viento, sin regalar el ángulo */
+function navPlanViento(curso,wd,ws){const cx=120,cy=120;let t="";
+  for(let i=0;i<12;i++)t+=instTK(i*30,106,100,1,"rgba(232,226,214,.25)");
+  t+='<text x="120" y="14" font-size="9" text-anchor="middle" fill="rgba(232,226,214,.45)">N</text>';
+  /* curso */
+  const p=polar(cx,cy,88,curso);
+  t+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+
+     '" stroke="#d9b77e" stroke-width="2"/>';
+  t+='<g transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+') rotate('+curso+')">'+
+     '<path d="M0 -9 l6 11 h-12 z" fill="#d9b77e"/></g>';
+  const lp=polar(cx,cy,74,nrm(curso+14));
+  t+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" font-size="10" text-anchor="middle" fill="#d9b77e">CURSO '+hdg(curso)+'</text>';
+  /* viento: entra DEL wd y sopla hacia el centro */
+  const a=polar(cx,cy,98,wd),b=polar(cx,cy,34,wd);
+  t+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+
+     '" stroke="#7fa6d8" stroke-width="2.4" stroke-dasharray="7 5"/>';
+  t+='<g transform="translate('+b[0].toFixed(1)+' '+b[1].toFixed(1)+') rotate('+nrm(wd+180)+')">'+
+     '<path d="M0 -10 l7 13 h-14 z" fill="#7fa6d8"/></g>';
+  const wp=polar(cx,cy,112,wd);
+  t+='<text x="'+Math.max(26,Math.min(214,wp[0])).toFixed(1)+'" y="'+Math.max(16,Math.min(228,wp[1])).toFixed(1)+
+     '" font-size="10.5" text-anchor="middle" fill="#7fa6d8">'+hdg(wd)+'/'+ws+'</text>';
+  t+='<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#f0d6a6"/>';
+  return '<svg class="ap-inst nav-plan" viewBox="0 0 240 240">'+t+'</svg>'}
+
+/* W1 · ángulo de corrección de deriva */
+function navW1(){const tas=240;let curso,wd,ws,wca,g=0;
+  do{curso=R(1,36)*10;wd=R(1,36)*10;ws=R(20,50);wca=vientoWCA(tas,curso,wd,ws);g++}
+  while(g<60&&(wca===null||Math.abs(wca)<4));
+  if(wca===null||Math.abs(wca)<4)return navW1();
+  const ok=r360(curso+wca),comp=vientoComp(curso,wd,ws);
+  const cand=[ok,r360(curso-wca),r360(curso),r360(curso+2*wca)],o=[];
+  cand.forEach(function(x){if(o.indexOf(x)<0)o.push(x)});
+  let d=5;while(o.length<4){const x=r360(curso+wca+d);if(o.indexOf(x)<0)o.push(x);d+=5}
+  const op=navOpts(o.map(hdg),hdg(ok));
+  return{ins:"vto",svg:navPlanViento(curso,wd,ws),
+    q:"Quieres mantener el <em>curso "+hdg(curso)+"</em> con <em>TAS 240</em>. ¿Qué rumbo vuelas?",
+    o:op.o.map(x=>"Rumbo "+x),ok:op.ok,
+    exp:"La componente cruzada es <b>"+Math.abs(comp.cruz).toFixed(0)+" kt</b> por la "+
+      (comp.cruz>0?"derecha":"izquierda")+". Con TAS 240, el ángulo de corrección sale de 60 × cruzada / TAS, "+
+      "o sea unos <b>"+Math.abs(wca).toFixed(0)+"°</b>, y hay que escorar HACIA el viento: rumbo <b>"+hdg(ok)+
+      "</b>. Volar el curso tal cual ("+hdg(curso)+") te saca del radial.",
+    plan:null,solo:true}}
+
+/* W2 · de dónde entra el viento, leyendo la aguja */
+function navW2(){const curso=R(1,36)*10,izq=Math.random()<.5;
+  /* vuelas el curso sin corregir y la barra se va despacio hacia un lado */
+  const rad=nrm(curso+(izq?4:-4));
+  const ind=vorInd(rad,curso);
+  const op=navOpts(["Entra por la izquierda","Entra por la derecha","Es viento de cara","Es viento de cola"],
+    izq?"Entra por la izquierda":"Entra por la derecha");
+  return{ins:"hsi",svg:navHSI(curso,curso,ind),
+    q:"Vuelas <em>rumbo "+hdg(curso)+"</em>, igual que el curso, sin corregir nada, y la barra se va despacio hacia la <em>"+
+      (izq?"izquierda":"derecha")+"</em>. ¿De dónde entra el viento?",
+    o:op.o,ok:op.ok,
+    exp:"Si la barra se va a la "+(izq?"izquierda":"derecha")+", el curso te está quedando a esa mano: significa que "+
+      "has derivado hacia la <b>"+(izq?"derecha":"izquierda")+"</b>. Y se deriva <b>a favor</b> del viento, así que el viento "+
+      "<b>entra por la "+(izq?"izquierda":"derecha")+"</b>. Para sujetarlo hay que escorar hacia él.",
+    plan:{radial:rad,rumbo:curso,obs:curso}}}
+
+const NAVFAM={orient:[navA1,navA2,navB,navC1,navC2],cortes:[navD1,navD2],esperas:[navE],viento:[navW1,navW2]};
 function navPool(){const f=aptCfg("nav","foco");
-  return f==="todo"?NAVFAM.orient.concat(NAVFAM.cortes,NAVFAM.esperas,NAVFAM.orient):NAVFAM[f]}
+  return f==="todo"?NAVFAM.orient.concat(NAVFAM.cortes,NAVFAM.esperas,NAVFAM.viento,NAVFAM.orient):NAVFAM[f]}
 
 navA1.fam="Situación";navA2.fam="Situación";navB.fam="Sentido de la aguja";
+navW1.fam="Corrección de deriva";navW2.fam="Corrección de deriva";
 navC1.fam="Acercarse o alejarse";navC2.fam="Acercarse o alejarse";
 navD1.fam="Cortes de ruta";navD2.fam="Cortes de ruta";navE.fam="Entradas en espera";
-const NAVNOM={hsi:"HSI",cdi:"CDI convencional",rmi:"RMI",esp:"Circuito de espera"};
+const NAVNOM={hsi:"HSI",cdi:"CDI convencional",rmi:"RMI",esp:"Circuito de espera",vto:"Curso y viento"};
 
 function navBegin(){dr.tot=aptCfg("nav","n");dr.lim=aptCfg("nav","lim");dr.fam={};navNext()}
 function navNext(){if(!dr||dr.fin)return;
@@ -2716,6 +2796,24 @@ function navTest(){const f=[];
   eq("espera 180/090 izq",esperaEntrada(180,90,false).tipo,"d");
   eq("espera 180/270 izq",esperaEntrada(180,270,false).tipo,"p");
   eq("espera 180/360 izq",esperaEntrada(180,360,false).tipo,"g");
+  /* --- viento --- */
+  const vv=(tas,rb,wd,ws)=>vientoVector(tas,rb,wd,ws);
+  let w;
+  w=vv(240,360,0,0);    eq("sin viento GS",Math.round(w.gs),240); eq("sin viento derrota",r360(w.derrota),360);
+  w=vv(240,360,360,40); eq("viento de cara GS",Math.round(w.gs),200); eq("viento de cara derrota",r360(w.derrota),360);
+  w=vv(240,360,180,40); eq("viento de cola GS",Math.round(w.gs),280); eq("viento de cola derrota",r360(w.derrota),360);
+  w=vv(240,90,90,40);   eq("cara rumbo 090 GS",Math.round(w.gs),200);
+  eq("WCA cruzado derecho",Math.round(vientoWCA(240,360,90,30)*10)/10,7.2);
+  eq("WCA cruzado izquierdo",Math.round(vientoWCA(240,360,270,30)*10)/10,-7.2);
+  eq("WCA viento de cara",Math.round(vientoWCA(240,360,360,30)),0);
+  eq("WCA derrota 090 viento norte",Math.round(vientoWCA(240,90,360,40)*10)/10,-9.6);
+  /* el cierre del circulo: si vuelo el rumbo que dice vientoWCA, la derrota
+     que sale de vientoVector tiene que ser EXACTAMENTE la que pedi */
+  for(let k=0;k<400;k++){const tas=240,der=R(0,359),wd=R(0,359),ws=R(5,60);
+    const wca=vientoWCA(tas,der,wd,ws);
+    if(wca===null)continue;
+    const d2=vientoVector(tas,nrm(der+wca),wd,ws).derrota;
+    if(Math.abs(nrm180(d2-der))>.05)f.push("redondeo de viento: pedi derrota "+der+" y sale "+Math.round(d2))}
   /* coherencia: el dibujo del HSI y el del CDI salen del mismo desvío */
   for(let k=0;k<300;k++){const rad=R(0,359),obs=R(0,359),i1=vorInd(rad,obs);
     const rec=i1.to?nrm(obs+180):obs,i2=vorInd(rad,rec);
@@ -2746,12 +2844,14 @@ const VLGS=240;            /* velocidad respecto al suelo, kt */
    el ejercicio era materialmente imposible. De 6 a 11 NM, 240 kt y un desvío
    inicial de 10 a 20°, con el corte ya establecido, cierra en menos de un
    minuto y deja tiempo de sobra para sujetarlo. */
-function vueloEscenario(){
+function vueloEscenario(viento){
   const T=R(1,36)*10,hacia=Math.random()<.5,obs=hacia?nrm(T+180):T;
   const sgn=pickR([1,-1]),off=R(10,20)*sgn,rad0=nrm(T+off),d0=R(6,11),corte=R(30,50);
-  return{T:T,hacia:hacia,obs:obs,gs:VLGS,
+  const hayV=viento&&viento!=="no";
+  return{T:T,hacia:hacia,obs:obs,tas:VLGS,
+    wd:hayV?R(0,35)*10:0,ws:hayV?R(15,45):0,verViento:viento==="ver",
     px:d0*Math.sin(rad0*Math.PI/180),py:d0*Math.cos(rad0*Math.PI/180),esc:72/d0,
-    hd:nrm(hacia?obs+corte*sgn:obs-corte*sgn),
+    hd:nrm(hacia?obs+corte*sgn:obs-corte*sgn),gs:VLGS,derrota:0,
     bank:0,sx:0,sy:0,sid:null,dos:false,lt:0,last:0,
     on:0,tt:0,sd:0,sn:0,cap:null,inside:null}}
 
@@ -2760,25 +2860,28 @@ function vueloPaso(dt){
   const pide=dr.sid!=null?dr.sx*VLBANK:0;
   const paso=(dr.sid!=null?60:VLNIVELA)*dt;
   dr.bank+=Math.max(-paso,Math.min(paso,pide-dr.bank));
-  dr.hd=nrm(dr.hd+1091*Math.tan(dr.bank*Math.PI/180)/dr.gs*dt);
-  const v=dr.gs/3600*dt;
-  dr.px+=v*Math.sin(dr.hd*Math.PI/180);dr.py+=v*Math.cos(dr.hd*Math.PI/180);
+  /* el régimen de viraje depende de la velocidad VERDADERA, no de la del suelo */
+  dr.hd=nrm(dr.hd+1091*Math.tan(dr.bank*Math.PI/180)/dr.tas*dt);
+  const w=vientoVector(dr.tas,dr.hd,dr.wd||0,dr.ws||0);
+  dr.gs=w.gs;dr.derrota=w.derrota;
+  const v=dt/3600;dr.px+=w.gx*v;dr.py+=w.gy*v;
   const radial=nrm(Math.atan2(dr.px,dr.py)*180/Math.PI),dist=Math.hypot(dr.px,dr.py);
   const ind=vorInd(radial,dr.obs);
   dr.tt+=dt;
   const enRuta=Math.abs(ind.exacto)<=VLTOL&&!ind.off;
   if(enRuta){dr.on+=dt;if(dr.cap===null)dr.cap=dr.tt}
   if(dr.cap!==null){dr.sd+=Math.abs(ind.exacto)*dt;dr.sn+=dt}
-  return{radial:radial,dist:dist,ind:ind,enRuta:enRuta}}
+  return{radial:radial,dist:dist,ind:ind,enRuta:enRuta,gs:w.gs,derrota:w.derrota}}
 
 function vueloBegin(){
-  Object.assign(dr,vueloEscenario());
+  Object.assign(dr,vueloEscenario(aptCfg("vuelo","viento")));
   dr.mapa=aptCfg("vuelo","mapa")==="si";
   const ins=aptCfg("vuelo","ins");dr.ins=ins;
   $("aptStage").className="ap-stage";
   $("aptStage").innerHTML=
     '<div class="vl-top">'+(ins==="cdi"?navCDILive():navHSILive())+
-      '<div class="vl-read" id="vlRead"></div></div>'+
+      '<div class="vl-read" id="vlRead"></div>'+
+      '<div class="vl-read vl-wind" id="vlRead2"></div></div>'+
     (dr.mapa?'<div class="vl-map" id="vlMap">'+vueloMapa(dr.T)+'</div>':
       '<div class="vl-imc">Modo IMC · sin mapa. Solo el instrumento.</div>')+
     '<div class="ap-stick" id="apStick"><span class="lb">Apoya el pulgar · izquierda y derecha = alabeo</span>'+
@@ -2841,6 +2944,14 @@ function vueloPinta(e,now){
     if(r)r.innerHTML='<span>DME <b>'+e.dist.toFixed(1)+'</b></span><span>R <b>'+hdg(e.radial)+
       '</b></span><span>RBO <b>'+hdg(dr.hd)+'</b></span><span>EN RUTA <b>'+
       (dr.tt?Math.round(dr.on/dr.tt*100):0)+'</b>%</span>';
+    const r2=$("vlRead2");
+    if(r2){const dv=nrm180(e.derrota-dr.hd);
+      r2.innerHTML=(dr.ws&&dr.verViento?'<span>VIENTO <b>'+hdg(dr.wd)+'/'+Math.round(dr.ws)+'</b></span>':
+          dr.ws?'<span>VIENTO <b>oculto</b></span>':'')+
+        /* con el viento oculto tampoco se ense\u00f1a la deriva: con deriva y GS se deduce
+           el viento, y entonces no estar\u00eda oculto. Queda la aguja, que es el ejercicio. */
+        (dr.ws&&dr.verViento?'<span>DERIVA <b>'+(dv>0?"+":"")+dv.toFixed(0)+'\u00b0</b></span>':'')+
+        '<span>GS <b>'+Math.round(e.gs)+'</b></span>'}
     const b=$("vlBank");if(b)b.style.transform="translateX("+(dr.bank/VLBANK*46).toFixed(1)+"px)";
     $("aptCount").innerHTML="<b>"+(dr.tt?Math.round(dr.on/dr.tt*100):0)+"</b> %"}
   /* mapa: escala fija desde el arranque para que no dé saltos; si el avión se
@@ -2860,9 +2971,9 @@ function vueloLoop(){if(!dr||dr.fin)return;
    Vuela el ejercicio completo con un piloto proporcional. Si un automático
    sencillo no captura, el escenario no es interceptable y no vale de nada.
    window.VUELO_TEST() devuelve el resumen. */
-function vueloTest(n,dur){const guarda=dr,res=[];
+function vueloTest(n,dur,viento){const guarda=dr,res=[];
   for(let s=0;s<(n||30);s++){
-    dr=Object.assign({fin:false},vueloEscenario());
+    dr=Object.assign({fin:false},vueloEscenario(viento));
     dr.sid=1;
     const dt=1/30,pasos=(dur||180)/dt;
     for(let i=0;i<pasos;i++){
@@ -2921,7 +3032,7 @@ function aptEnd(){if(!dr)return;
     rows=[["En ruta",Math.round(frac*100)+" %"],
           ["Capturas en",dr.cap==null?"—":aptMMSS(Math.round(dr.cap))],
           ["Desvío medio",med==null?"—":med.toFixed(1)+"°"],
-          ["Curso",hdg(dr.obs)]];
+          dr.ws?["Viento",hdg(dr.wd)+"/"+Math.round(dr.ws)]:["Curso",hdg(dr.obs)]];
     extra=dr.cap==null?"No llegaste a centrar la barra. Mete corte: con 30° o 45° se cierra mucho más rápido que persiguiéndola de lado.":
       med!=null&&med>4?"Capturas pero no la sujetas: estás corrigiendo de más. Alabeos pequeños, de 5° a 10°, una vez en ruta.":
       dr.cap>dr.tt*.5?"Tardaste más de medio ejercicio en capturar: el corte inicial se te quedó corto.":

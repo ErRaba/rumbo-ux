@@ -453,6 +453,43 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .hard .q{font-family:var(--serif);font-size:16.5px;line-height:1.35;margin-top:6px}
 .hard .x{font-family:var(--mono);font-size:11px;color:var(--terra)}
 .empty{padding:26px 0;color:var(--mute);font-family:var(--serif);font-style:italic;font-size:16px}
+.dk{margin-top:6px;padding:18px 18px 16px;border-radius:18px;box-shadow:0 0 0 1px var(--hair2) inset;background:rgba(255,255,255,.015)}
+.dk+.dk{margin-top:12px}
+.dk h3{font-family:var(--serif);font-weight:400;font-size:21px;display:flex;align-items:baseline;gap:10px}
+.dk h3 .label{margin-left:auto}
+.dk .kp{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px}
+.dk .kp div+div{border-left:1px solid var(--hair2);padding-left:12px}
+.dk .kp b{display:block;font-family:var(--serif);font-weight:350;font-size:30px;letter-spacing:-.02em;margin-top:4px}
+.dk .kp b sup{font-size:13px;color:var(--mute);font-family:var(--mono);margin-left:2px;vertical-align:8px}
+.dk .kp .label{font-size:9px;letter-spacing:.14em}
+.dk .proj{margin-top:14px;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.45;color:var(--mute)}
+.dk .proj b{font-style:normal;font-weight:500;color:var(--ivory)}
+.st4{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px;margin-top:14px;background:var(--hair2)}
+.st4 i{height:100%}
+.st4l{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--mute)}
+.st4l span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:0;background:var(--c)}
+.trow .tr{font-family:var(--mono);font-size:10px;margin-left:6px}
+.trow .sub{margin:7px 0 0 42px;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--mute2)}
+.trow .sub .few{color:var(--gold)}
+.trow .st4{margin:9px 0 0 42px;height:4px}
+.boost{margin-top:14px;width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;box-shadow:0 0 0 1px rgba(217,183,126,.35) inset;text-align:left}
+.boost:active{background:rgba(217,183,126,.06)}
+.boost b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);font-weight:500}
+.boost span{font-size:12.5px;color:var(--mute)}
+.boost svg{width:16px;height:16px;color:var(--gold);flex:none;margin-left:auto}
+.exh{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:8px}
+.exh div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;max-width:34px}
+.exh i{width:100%;border-radius:6px 6px 2px 2px;min-height:3px}
+.exh span{font-family:var(--mono);font-size:9px;color:var(--mute)}
+.exh small{font-family:var(--mono);font-size:9.5px;color:var(--ivory)}
+.exrow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--hair2);font-size:13.5px}
+.exrow .pc{margin-left:auto;font-family:var(--mono);font-size:13px}
+.exq{padding:14px 0;border-bottom:1px solid var(--hair2)}
+.exq .q{font-family:var(--serif);font-size:15.5px;line-height:1.35;margin-top:6px}
+.exq .a{margin-top:8px;font-size:13px;color:var(--sage)}.exq .a s{color:var(--terra);text-decoration-thickness:1px}
+.exbig{font-family:var(--serif);font-weight:250;font-size:96px;line-height:.9;letter-spacing:-.05em;margin-top:18px}
+.exbig small{font-size:36px;letter-spacing:0}
+.verdict{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase}
 .danger{margin-top:30px;width:100%;padding:16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--mute2)}
 
 /* ===== MODO DÍA: papel marfil y tinta azul marino; tarjetas y botones lacados se mantienen ===== */
@@ -545,7 +582,7 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     </div>
     <div class="stats-grid">
       <div><span class="label">Racha</span><b id="kStreak">0<sup>días</sup></b></div>
-      <div><span class="label">Acierto</span><b id="kAcc">—</b></div>
+      <div><span class="label">Acierto 30 días</span><b id="kAcc">—</b></div>
       <div><span class="label">Consolidadas</span><b id="kMast">0</b></div>
       <div><span class="label">A reforzar</span><b class="sm" id="kWeak">—</b></div>
     </div>
@@ -558,6 +595,11 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
     <button class="link-row" onclick="quickFails()">
       <span class="ic"><svg><use href="#target"/></svg></span>
       <span><b>Repasar mis fallos</b><span id="failCount">Tarjetas que aún no dominas</span></span>
+      <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
+    </button>
+    <button class="link-row" onclick="go('examset')">
+      <span class="ic"><svg><use href="#target"/></svg></span>
+      <span><b>Simulacro de examen</b><span id="examSub">Sin ver la solución hasta el final</span></span>
       <svg class="chev" width="16" height="16"><use href="#arrow"/></svg>
     </button>
     <button class="link-row" onclick="quickLeech()">
@@ -649,6 +691,21 @@ html.theming,html.theming *{transition:background-color .45s,color .45s,border-c
 </section>
 
 <!-- ================= STATS ================= -->
+<section class="screen" id="examset">
+  <div class="nav">
+    <button class="circle-btn" onclick="go('home')" aria-label="Volver"><svg><use href="#back"/></svg></button>
+    <span class="label">Simulacro</span><span style="width:42px"></span>
+  </div>
+  <div class="scroll" id="examSetBody"></div>
+  <div class="footer"><button class="cta" onclick="startExam()"><span>Empezar simulacro<small id="exSub"></small></span><span class="arrow"><svg><use href="#plane"/></svg></span></button></div>
+</section>
+<section class="screen" id="examres">
+  <div class="nav">
+    <button class="circle-btn" onclick="go('home')" aria-label="Volver"><svg><use href="#back"/></svg></button>
+    <span class="label">Resultado del simulacro</span><span style="width:42px"></span>
+  </div>
+  <div class="scroll" id="examResBody"></div>
+</section>
 <section class="screen" id="stats">
   <div class="nav">
     <button class="circle-btn" onclick="go('home')" aria-label="Volver"><svg><use href="#back"/></svg></button>
@@ -679,7 +736,7 @@ const qHTML=s=>{const L=String(s).split(String.fromCharCode(10)),out=[],items=[]
 
 /* ============ ESTADO ============ */
 const KEY="atplflash.v1";
-const DEF={cards:{},days:{},bestCombo:0,goal:30,settings:{deck:"atpl",topics:{},variant:"all",mode:"smart",len:20,newDay:20,timer:false,time:15,sound:true,haptic:true,theme:"auto"}};
+const DEF={cards:{},days:{},bestCombo:0,goal:30,settings:{deck:"atpl",topics:{},variant:"all",mode:"smart",len:20,newDay:20,exN:50,exTime:true,timer:false,time:15,sound:true,haptic:true,theme:"auto"}};
 let S;try{S=Object.assign(structuredClone(DEF),JSON.parse(localStorage.getItem(KEY)||"{}"));S.settings=Object.assign({},DEF.settings,S.settings)}catch(e){S=structuredClone(DEF)}
 /* migración: la versión de demo guardaba los temas como lista */
 if(Array.isArray(S.settings.topics)||typeof S.settings.topics!=="object")S.settings.topics={};
@@ -739,6 +796,9 @@ window.RUMBO_USO=()=>{let ok=0,ko=0,vistas=0,dom=0,apr=0,fal=0,last=S.uso.at||0;
     progreso:Math.round(progress()*1000)/10,racha:streak(),combo:S.bestCombo,objetivo:S.goal,diasActivos:Object.values(S.days).filter(v=>v.seen||v.ms).length,dias,
     temas:Object.keys(ts).filter(t=>ts[t].ok+ts[t].ko).map(t=>({c:tCode(t),n:tName(t),ok:ts[t].ok,ko:ts[t].ko,tot:ts[t].total,dom:ts[t].mast})),
     dificiles:Q.filter(q=>S.cards[q.id]?.ko).sort((a,b)=>S.cards[b.id].ko-S.cards[a.id].ko).slice(0,8).map(q=>({t:tCode(q.t),q:String(q.q).slice(0,160),ko:S.cards[q.id].ko,ok:S.cards[q.id].ok})),
+    mazos:Object.fromEntries(Object.keys(DECKS).map(d=>{const m=metrics(deckQs(d));return[d,{n:DECKS[d].name,cons:m.cons,tot:m.tot,ret:m.ret==null?null:Math.round(m.ret*100),cob:Math.round(m.cov*100)}]})),
+    acc30:(a=>a.n?Math.round(a.acc*100):null)(accWin(()=>true,0,29)),
+    examenes:(S.exams||[]).slice(-10).map(e=>({t:e.t,d:e.d,n:e.n,ok:e.ok,inc:!!e.inc})),
     ajustes:{modo:S.settings.mode,len:S.settings.len,timer:S.settings.timer,tema:S.settings.theme}}};
 
 /* rosa de los vientos: marcas */
@@ -746,7 +806,7 @@ window.RUMBO_USO=()=>{let ok=0,ko=0,vistas=0,dom=0,apr=0,fal=0,last=S.uso.at||0;
 
 /* ============ NAVEGACIÓN ============ */
 function go(id){stopTimer();document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
-  if(id==="home")renderHome();if(id==="setup")renderSetup();if(id==="stats")renderStats()}
+  if(id==="home")renderHome();if(id==="setup")renderSetup();if(id==="stats")renderStats();if(id==="examset")renderExamSet()}
 
 /* ============ HOME ============ */
 function streak(){let n=0;const d=new Date();if(!S.days[today()]?.seen)d.setDate(d.getDate()-1);while(S.days[dkey(d)]?.seen){n++;d.setDate(d.getDate()-1)}return n}
@@ -824,10 +884,11 @@ function renderHome(){
   drawGauge(Math.min(1,d/S.goal));
   $("kStreak").innerHTML=streak()+(streak()===1?"<sup>día</sup>":"<sup>días</sup>");
   let ok=0,ko=0,m=0;Object.values(S.cards).forEach(c=>{ok+=c.ok;ko+=c.ko;if(isCons(c))m++});
-  $("kAcc").innerHTML=ok+ko?Math.round(ok/(ok+ko)*100)+"<sup>%</sup>":"—";
+  const a30=accWin(()=>true,0,29);$("kAcc").innerHTML=a30.n?Math.round(a30.acc*100)+"<sup>%</sup>":ok+ko?Math.round(ok/(ok+ko)*100)+"<sup>%</sup>":"—";
   $("kMast").innerHTML=m+`<sup>/${Q.length}</sup>`;
-  const ts=topicStats();let w=null,wv=2;for(const t in ts){const s=ts[t];if(s.ok+s.ko>=3){const v=s.ok/(s.ok+s.ko);if(v<wv){wv=v;w=t}}}
-  $("kWeak").textContent=w?tName(w):"—";
+  const wt=weakTopics(S.settings.deck,1)[0];$("kWeak").textContent=wt?tName(wt.t):"—";
+  const le=(S.exams||[]).filter(e=>e.d===S.settings.deck).slice(-1)[0];
+  $("examSub").textContent=le?`Último: ${Math.round(le.ok/le.n*100)} % · ${new Date(le.t).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}`:"Sin ver la solución hasta el final";
   const f=Q.filter(q=>isFail(q.id)).length;
   $("failCount").textContent=f?`${f} tarjeta${f>1?"s":""} fallada${f>1?"s":""} la última vez`:"Nada fallado pendiente, impecable";
   const pl=planCount(),pd=$("planSub");
@@ -912,6 +973,7 @@ function startSession(custom,len,opt={}){
       intercalando una nueva cada 4; si no hay repasos, nuevas; y si tampoco, lo que vence antes */
 function pickCard(){
   const rl=ses.relearn.findIndex(r=>r.at<=ses.n);
+  if(ses.exam)return{q:ses.exam.qs[ses.exam.i]};
   if(rl>=0){const it=ses.relearn.splice(rl,1)[0];return{q:it.q,relearn:it}}
   const hold=new Set(ses.relearn.map(r=>r.q.id)),avoid=new Set(ses.recent.slice(-Math.min(8,ses.pool.length-1)));
   let cand=ses.pool.filter(q=>!avoid.has(q.id)&&!hold.has(q.id));if(!cand.length)cand=ses.pool.filter(q=>!hold.has(q.id));if(!cand.length)cand=ses.pool;
@@ -958,12 +1020,13 @@ function barcode(seed){let s="",x=seed*9301+49297;for(let i=0;i<34;i++){x=(x*930
 const flightNo=q=>"UX "+String(q.n).padStart(4,"0");
 const varLabel=q=>q.v?`<span class="vtag">${q.v==="MAX"?"737 MAX":"737-"+q.v}</span>`:"";
 function nextCard(){
+  if(ses.exam&&ses.exam.i>=ses.exam.qs.length)return finishExam(false);
   if(ses.len&&ses.n>=ses.len&&!ses.relearn.length)return finish();
   const{q,relearn}=pickCard();Object.assign(ses,{cur:q,flipped:false,locked:false,timedOut:false,choice:null,leaving:false,curRel:relearn||null,slow:false,trMs:0,guessed:false,snap:null});ses.recent.push(q.id);
   ses.perm=shuffleFor(q);const P=ses.perm;
   const c=S.cards[q.id];
-  const flag=relearn?'<span class="flag again">↻ De nuevo</span>':isLeech(c)?`<span class="flag leech">● Punto negro · ${c.ko} fallos</span>`:(isFail(q.id)?'<span class="flag">● Fallada la última vez</span>':"");
-  $("count").innerHTML=`<b>${pad(ses.n+1)}</b> / ${ses.len?pad(ses.len):"∞"}`;
+  const flag=ses.exam?"":relearn?'<span class="flag again">↻ De nuevo</span>':isLeech(c)?`<span class="flag leech">● Punto negro · ${c.ko} fallos</span>`:(isFail(q.id)?'<span class="flag">● Fallada la última vez</span>':"");
+  if(ses.exam)examClock();else $("count").innerHTML=`<b>${pad(ses.n+1)}</b> / ${ses.len?pad(ses.len):"∞"}`;
   const len=q.q.length+q.o.join("").length+(q.img?260:0),dens=len>560?"xdense":len>300?"dense":"";
   const el=document.createElement("div");el.className="card enter";
   el.innerHTML=`<div class="deck d2"></div><div class="deck"></div>
@@ -1015,7 +1078,7 @@ function moreState(el){const b=el.querySelector(".front .body"),m=el.querySelect
   m.innerHTML=below?"MÁS OPCIONES ↓":"↑ VER LA PREGUNTA"}
 function setHint(t){const h=$("hint");h.textContent=t;h.style.opacity=t?1:0}
 /* elegir opción: corrige al instante y gira la tarjeta */
-function choose(i){if(!ses||ses.flipped||ses.locked)return;ses.choice=i;
+function choose(i){if(!ses||ses.flipped||ses.locked)return;if(ses.exam)return examAnswer(i);ses.choice=i;
   const q=ses.cur,ok=ses.perm[i]===q.a,card=$("stage").firstChild;
   card.querySelectorAll(".op").forEach(b=>b.classList.toggle("picked",+b.dataset.i===i));
   tick(1300,.04);grade(ok,Date.now()-ses.t0-(ses.trMs||0)-(ses.trAt?Date.now()-ses.trAt:0));setTimeout(flip,280)}
@@ -1050,7 +1113,8 @@ function bindCard(el){
 function grade(ok,rt,quiet){
   if(!ses||ses.locked)return;ses.locked=true;stopTimer();
   const q=ses.cur,c=C(q.id),d=D(),wasNew=!seenC(c),wasCons=isCons(c),stBefore=stageIdx(progress());
-  ses.snap={c:JSON.stringify(c),d:JSON.stringify(d),k:[ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw,ses.relearn.length,S.bestCombo,S.rtk,S.rtn]};
+  ses.snap={c:JSON.stringify(c),d:JSON.stringify(d),k:[ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw,ses.relearn.length,S.bestCombo,S.rtk,S.rtn,(S.log||[]).length]};
+  logAns(q,ok,wasNew);
   ses.slow=ok&&!ses.timedOut&&isSlow(q,rt);
   c.seen++;c.last=Date.now();d.seen++;ses.n++;if(wasNew){ses.nw++;d.nw=(d.nw||0)+1}
   const cm=$("combo");ses.lastOk=ok;
@@ -1074,7 +1138,7 @@ function grade(ok,rt,quiet){
 /* "Lo adiviné": deshace el acierto y lo registra como fallo (sin sonidos ni confeti) */
 function guessed(){if(!ses||!ses.snap||!ses.lastOk||ses.guessed)return;
   const q=ses.cur,sn=ses.snap;S.cards[q.id]=JSON.parse(sn.c);S.days[today()]=JSON.parse(sn.d);
-  [ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw]=sn.k;ses.relearn.length=sn.k[6];S.bestCombo=sn.k[7];S.rtk=sn.k[8];S.rtn=sn.k[9];ses.n--;
+  [ses.ok,ses.ko,ses.combo,ses.best,ses.mastered,ses.nw]=sn.k;ses.relearn.length=sn.k[6];S.bestCombo=sn.k[7];S.rtk=sn.k[8];S.rtn=sn.k[9];if(S.log)S.log.length=sn.k[10];ses.n--;
   ses.locked=false;ses.guessed=true;ses.choice=null;grade(false,0,true);buzz(10);paintBack()}
 /* pasa a la siguiente tarjeta */
 function advance(dir){if(!ses||!ses.flipped||ses.leaving)return;ses.leaving=true;
@@ -1099,7 +1163,8 @@ document.addEventListener("keyup",e=>{if(e.key==="t"||e.key==="T")trSet(false)})
 window.addEventListener("blur",()=>trSet(false));
 /* visor de figuras */
 function openFig(k){const v=$("figView");v.querySelector("img").src=FIG[k];v.classList.add("open")}
-function endSession(){if(ses&&ses.n>0)finish();else go("home")}
+function endSession(){if(ses&&ses.exam){if(ses.exam.i&&confirm("¿Terminar el simulacro ahora? Se corregirá lo que hayas respondido."))return finishExam(false);if(!ses.exam.i){clearInterval(ses.exam.tick);ses=null;go("home")}return}
+  if(ses&&ses.n>0)finish();else go("home")}
 function finish(){stopTimer();const t=ses.ok+ses.ko,p=t?Math.round(ses.ok/t*100):0;
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="summary"));
   countUp($("sumPct"),p,"<small>%</small>");
@@ -1122,18 +1187,121 @@ function startTimer(){stopTimer();if(!S.settings.timer)return;
 }
 function stopTimer(){if(!tState)return;cancelAnimationFrame(tState.raf);clearTimeout(tState.to);tState=null}
 
+/* ============ MÉTRICAS HONESTAS ============
+   Retención estimada de una tarjeta: probabilidad de acertarla hoy. Vale 90 % el día que le toca repaso
+   y cae con el tiempo sin repasar (curva del olvido). Fallada la última vez: 30 %. Nueva: 0. */
+function logAns(q,ok,nw){const L=S.log||(S.log=[]);L.push([dayN(),q.t,ok?1:0,nw?1:0]);if(L.length>8000)L.splice(0,L.length-8000)}
+const lastRev=c=>c.rd??((c.dd??dayN())-(c.iv||0));
+function ret(c){if(!seenC(c))return 0;if(c.box===0)return .3;return Math.exp(Math.log(.9)*Math.max(0,dayN()-lastRev(c))/Math.max(1,c.iv||1))}
+/* métricas de un conjunto de preguntas */
+function metrics(qs){const m={tot:0,seen:0,cons:0,learn:0,due:0,new:0,rs:0,need:0};
+  for(const q of qs){const c=S.cards[q.id],st=cState(c);m.tot++;m[st]++;if(st!=="new"){m.seen++;const r=ret(c);m.rs+=r;m.need+=1-r}else m.need+=.35}
+  m.ret=m.seen?m.rs/m.seen:null;m.cov=m.tot?m.seen/m.tot:0;m.consP=m.tot?m.cons/m.tot:0;return m}
+/* acierto en una ventana de días (desde el registro de respuestas) */
+function accWin(fn,from,to){let n=0,ok=0;const t=dayN();for(const e of S.log||[]){const a=t-e[0];if(a<from||a>to||!fn(e[1]))continue;n++;ok+=e[2]}return{n,ok,acc:n?ok/n:null}}
+/* acierto reciente: últimos 30 días; con pocos datos, estado de la última respuesta de cada tarjeta vista */
+function recent(fn,qs){const w=accWin(fn,0,29);if(w.n>=8)return{acc:w.acc,n:w.n,src:"30d"};
+  let s=0,k=0;for(const q of qs){const c=S.cards[q.id];if(seenC(c)){k++;if(c.box>0)s++}}return{acc:k?s/k:null,n:k,src:"last"}}
+function trend(fn){const a=accWin(fn,0,6),b=accWin(fn,7,13);return a.n>=5&&b.n>=5?Math.round((a.acc-b.acc)*100):null}
+const deckQs=d=>Q.filter(q=>q.d===d&&(d!=="b737"||varOk(q)));
+const topicQs=t=>Q.filter(q=>q.t===t&&(TDECK[t]!=="b737"||varOk(q)));
+/* ritmo de tarjetas nuevas (últimos 14 días) y proyección */
+function projection(d,m){let nw=0;const t=dayN();for(const e of S.log||[])if(t-e[0]<14&&e[3]&&TDECK[e[1]]===d)nw++;
+  const days=Math.min(14,Math.max(1,t-((S.log&&S.log[0]&&S.log[0][0])??t)+1)),rate=nw/days;
+  if(!m.new)return m.cons===m.tot?"Todo consolidado. <b>Listo.</b>":`Ya has visto todo el banco. Ahora toca consolidar: <b>${m.tot-m.cons}</b> tarjetas siguen en repaso.`;
+  if(rate<.5)return`Aún no hay ritmo suficiente para estimar fechas. Con el plan del día (${S.settings.newDay||"todas las"} nuevas al día) se calcula solo.`;
+  const fd=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.toLocaleDateString("es-ES",{day:"numeric",month:"long"})};
+  const dAll=Math.ceil(m.new/rate);
+  return`A tu ritmo (<b>${rate<10?rate.toFixed(1).replace(".",","):Math.round(rate)}</b> nuevas al día) habrás visto todo el ${d==="b737"?"cuaderno":"banco"} el <b>${fd(dAll)}</b> y lo tendrás consolidado hacia el <b>${fd(dAll+40)}</b>.`}
+/* asignaturas más flojas: menor retención y acierto reciente entre las que ya tienen 5 tarjetas vistas */
+function weakTopics(d,k=3){return deckTopics(d).map(t=>{const qs=topicQs(t),m=metrics(qs),r=recent(x=>x===t,qs);
+    return{t,m,score:m.seen>=5?(m.ret*.5+(r.acc??m.ret)*.5):2}}).filter(x=>x.m.tot&&x.score<2).sort((a,b)=>a.score-b.score).slice(0,k)}
+function boost(d){const w=weakTopics(d).map(x=>x.t);if(!w.length){floatTxt("Aún no hay datos para elegir");return}
+  startSession(Q.filter(q=>w.includes(q.t)&&(d!=="b737"||varOk(q))))}
+const st4=m=>{const w=v=>m.tot?v/m.tot*100:0;return`<div class="st4"><i style="width:${w(m.cons)}%;background:var(--sage)"></i><i style="width:${w(m.learn)}%;background:var(--gold)"></i><i style="width:${w(m.due)}%;background:var(--terra)"></i></div>`};
+const pc=v=>v==null?"—":Math.round(v*100);
+
+/* ============ SIMULACRO DE EXAMEN ============
+   Preguntas al azar repartidas por asignaturas según su peso en el banco, sin ver la solución hasta el final.
+   Cuenta como repaso (lo fallado vuelve al plan), pero sin pistas: ni marcas de "fallada antes" ni sonidos. */
+const PASS=.75;
+function renderExamSet(){const st=S.settings,d=st.deck,ex=(S.exams||[]).filter(e=>e.d===d).slice(-12);
+  $("examSetBody").innerHTML=`
+   <h1 class="display title-xl">Simulacro de<br><em>examen</em></h1>
+   <p class="themenote" style="margin-top:14px">Preguntas al azar de todas las asignaturas, en la proporción del banco. No ves si aciertas hasta el final. Nota de corte de referencia: <b>75 %</b>.</p>
+   <div class="sect"><span class="label">Cuaderno</span></div>
+   <div class="seg" id="segExDeck"><span class="pill"></span>${Object.keys(DECKS).map(k=>`<button data-v="${k}">${DECKS[k].name}</button>`).join("")}</div>
+   <div class="sect"><span class="label">Preguntas</span></div>
+   <div class="seg" id="segExN"><span class="pill"></span><button data-v="20">20</button><button data-v="50">50</button><button data-v="100">100</button></div>
+   <div class="sect"><span class="label">Tiempo</span></div>
+   <div class="seg" id="segExT"><span class="pill"></span><button data-v="true">72 s por pregunta</button><button data-v="false">Sin límite</button></div>
+   <div class="sect"><span class="label">Tus simulacros · ${DECKS[d].name}</span></div>
+   ${ex.length?`<div class="exh">${ex.map(e=>{const p=e.ok/e.n;return`<div><small>${Math.round(p*100)}</small><i style="height:${Math.max(4,p*100)}%;background:${p>=PASS?"var(--sage)":p>=.6?"var(--gold)":"var(--terra)"}"></i><span>${new Date(e.t).toLocaleDateString("es-ES",{day:"numeric",month:"numeric"})}</span></div>`}).join("")}</div>
+     ${ex.slice().reverse().slice(0,6).map(e=>`<div class="exrow"><span>${new Date(e.t).toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})}</span><span class="label">${e.n} preg.${e.inc?" · incompleto":""}</span><span class="pc" style="color:${e.ok/e.n>=PASS?"var(--sage)":"var(--terra)"}">${Math.round(e.ok/e.n*100)}%</span></div>`).join("")}`
+   :'<div class="empty">Todavía no has hecho ningún simulacro de este cuaderno.</div>'}`;
+  seg("segExDeck","deck",String,()=>renderExamSet());seg("segExN","exN",Number,()=>updExSub());seg("segExT","exTime",v=>v==="true",()=>updExSub());updExSub()}
+function updExSub(){const st=S.settings;$("exSub").textContent=`· ${st.exN} preg.${st.exTime?` · ${Math.round(st.exN*72/60)} min`:""}`}
+function pickExam(d,n){const by={};for(const q of deckQs(d))(by[q.t]=by[q.t]||[]).push(q);
+  const tot=Object.values(by).reduce((a,b)=>a+b.length,0),out=[];
+  const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+  for(const t in by){sh(by[t]);out.push(...by[t].splice(0,Math.floor(n*by[t].length/tot)))}
+  const rest=sh(Object.values(by).flat());while(out.length<n&&rest.length)out.push(rest.pop());return sh(out).slice(0,n)}
+function startExam(){const st=S.settings,qs=pickExam(st.deck,st.exN);if(!qs.length)return;
+  ses={f0:progress(),pool:qs,n:0,ok:0,ko:0,combo:0,best:0,relearn:[],recent:[],mastered:0,len:qs.length,cur:null,flipped:false,locked:false,newLeft:0,nw:0,
+    exam:{d:st.deck,qs,i:0,ans:[],t0:Date.now(),lim:st.exTime?qs.length*72e3:0}};
+  go("study");$("combo").className="combo";$("prog").style.width="0";$("clock").classList.add("off");ac();
+  ses.exam.tick=setInterval(examClock,1000);setTimeout(nextCard,180)}
+function examClock(){const e=ses&&ses.exam;if(!e)return;const el=Date.now()-e.t0,left=e.lim?Math.max(0,e.lim-el):null,mm=v=>`${Math.floor(v/60000)}:${pad(Math.floor(v/1000)%60)}`;
+  $("count").innerHTML=`<b>${pad(Math.min(e.i+1,e.qs.length))}</b> / ${e.qs.length} · ${left!=null?mm(left):mm(el)}`;
+  if(left===0)finishExam(true)}
+function examAnswer(i){const e=ses.exam,q=ses.cur,j=ses.perm[i],ok=j===q.a;if(ses.locked)return;ses.locked=true;
+  e.ans.push({id:q.id,ok,ch:j,perm:ses.perm.join("")});
+  const c=C(q.id),wasNew=!seenC(c),d=D();c.seen++;c.last=Date.now();d.seen++;if(wasNew)d.nw=(d.nw||0)+1;logAns(q,ok,wasNew);
+  schedule(c,ok?"ok":"ko");if(ok){c.ok++;d.ok++;c.box=Math.min(c.box+1,5)}else{c.ko++;d.ko=(d.ko||0)+1;c.box=0;(c.wr||(c.wr={}))[j]=(c.wr[j]||0)+1}
+  save();e.i++;ses.n=e.i;$("prog").style.width=e.i/e.qs.length*100+"%";
+  const card=$("stage").firstChild;card.querySelectorAll(".op").forEach(b=>b.classList.toggle("picked",+b.dataset.i===i));tick(1300,.04);
+  setTimeout(()=>{trSet(false);card.classList.add("out-l");setTimeout(()=>e.i>=e.qs.length?finishExam(false):nextCard(),300)},260)}
+function finishExam(timeUp){const e=ses.exam;if(!e||e.done)return;e.done=true;clearInterval(e.tick);stopTimer();
+  const n=e.qs.length,ok=e.ans.filter(a=>a.ok).length,inc=e.ans.length<n,top={};
+  e.qs.forEach(q=>{const a=e.ans.find(x=>x.id===q.id),r=top[q.t]||(top[q.t]=[0,0]);r[1]++;if(a&&a.ok)r[0]++});
+  const rec={t:Date.now(),d:e.d,n,ok,ms:Date.now()-e.t0,top,inc:inc||undefined};(S.exams||(S.exams=[])).push(rec);if(S.exams.length>40)S.exams.shift();save();
+  const p=ok/n,fails=e.qs.filter(q=>{const a=e.ans.find(x=>x.id===q.id);return!a||!a.ok});ses.examFails=fails.map(q=>q.id);
+  const rows=Object.entries(top).map(([t,[o,k]])=>({t,o,k,p:o/k})).sort((a,b)=>a.p-b.p);
+  const col=a=>a<.5?"var(--terra)":a<PASS?"var(--gold)":"var(--sage)";
+  $("examResBody").innerHTML=`
+   <div style="text-align:center">
+     <div class="eyebrow" style="margin-top:14px">${DECKS[e.d].name} · ${n} preguntas · ${Math.round(rec.ms/60000)} min${timeUp?" · tiempo agotado":inc?" · incompleto":""}</div>
+     <div class="exbig" style="color:${col(p)}">${Math.round(p*100)}<small>%</small></div>
+     <div class="verdict" style="color:${col(p)}">${p>=PASS?"Por encima del corte":"Por debajo del corte del 75 %"}</div>
+     <div class="msg" style="font-family:var(--serif);font-style:italic;font-size:19px;margin-top:12px">${p>=.9?`Nivel de selección, ${PILOT}.`:p>=PASS?"Aprobado con margen. A consolidar lo flojo.":p>=.6?"Cerca. Las asignaturas en rojo marcan el camino.":"Hoy se mide; mañana se mejora."}</div>
+   </div>
+   <div class="stats-grid" style="margin-top:24px"><div><span class="label">Acertadas</span><b style="color:var(--sage)">${ok}</b></div><div><span class="label">Falladas</span><b style="color:var(--terra)">${e.ans.length-ok}</b></div>
+     <div><span class="label">Sin responder</span><b>${n-e.ans.length}</b></div><div><span class="label">Tiempo medio</span><b>${e.ans.length?Math.round(rec.ms/e.ans.length/1000):0}<sup>s</sup></b></div></div>
+   <div class="sect"><span class="label">Por asignatura · de peor a mejor</span></div>
+   ${rows.map(r=>`<div class="trow"><div class="row"><span class="code">${tCode(r.t)}</span><span>${tName(r.t)}</span><span class="pct" style="color:${col(r.p)}">${r.o}/${r.k}</span></div><div class="bar"><i style="width:${r.p*100}%;background:${col(r.p)}"></i></div></div>`).join("")}
+   ${fails.length?`<button class="boost" onclick="startSession(ses.examFails.map(id=>QBY[id]))"><div><b>Repasar las ${fails.length} falladas</b><span>Con solución y explicación, ahora mismo</span></div><svg><use href="#arrow"/></svg></button>
+   <div class="sect"><span class="label">Las que fallaste</span></div>
+   ${fails.map(q=>{const a=e.ans.find(x=>x.id===q.id);return`<div class="exq"><span class="label">${tCode(q.t)} · ${tName(q.t)}</span><div class="q">${esc(q.q)}</div>
+     <div class="a">${a?`<s>${esc(q.o[a.ch])}</s><br>`:'<span style="color:var(--mute)">Sin responder</span><br>'}✓ ${esc(q.o[q.a])}</div></div>`}).join("")}`:""}
+   <button class="ghost-btn" style="margin-top:22px" onclick="go('home')">Volver al inicio</button>`;
+  go("examres");$("examResBody").scrollTop=0;if(p>=PASS)setTimeout(()=>{confetti(60);sCombo(14)},400)}
+
 /* ============ ESTADÍSTICAS ============ */
 function renderStats(){
-  const ts=topicStats();let ok=0,ko=0;const boxes=[0,0,0,0,0,0];
-  const cnt={new:0,due:0,learn:0,cons:0};
-  Q.forEach(q=>{const c=S.cards[q.id];if(c){ok+=c.ok;ko+=c.ko}cnt[cState(c)]++});
-  const unseen=cnt.new,learning=cnt.learn,mast=cnt.cons;boxes[0]=cnt.due;
-  const rowsOf=d=>deckTopics(d).filter(t=>ts[t].total).map(t=>({t,...ts[t],acc:ts[t].ok+ts[t].ko?ts[t].ok/(ts[t].ok+ts[t].ko):null})).sort((a,b)=>(a.acc??2)-(b.acc??2));
+  let ok=0,ko=0;Q.forEach(q=>{const c=S.cards[q.id];if(c){ok+=c.ok;ko+=c.ko}});
+  const all=x=>true,a30=accWin(all,0,29),tg=trend(all);
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({l:"LMXJVSD"[(d.getDay()+6)%7],v:S.days[dkey(d)]?.seen||0,today:i===0})}
   const mx=Math.max(1,...days.map(d=>d.v));
-  const hard=Q.filter(q=>S.cards[q.id]?.ko).sort((a,b)=>S.cards[b.id].ko-S.cards[a.id].ko).slice(0,5);
+  const hard=Q.filter(q=>isLeech(S.cards[q.id])||S.cards[q.id]?.ko>1).sort((a,b)=>S.cards[b.id].ko-S.cards[a.id].ko).slice(0,5);
   const col=a=>a==null?"var(--mute2)":a<.5?"var(--terra)":a<.75?"var(--gold)":"var(--sage)";
-  const pct=n=>n/Q.length*100;
+  const arrow=v=>v==null?"":v>0?`<span class="tr" style="color:var(--sage)">↑${v}</span>`:v<0?`<span class="tr" style="color:var(--terra)">↓${-v}</span>`:`<span class="tr" style="color:var(--mute2)">=</span>`;
+  const deckBlock=d=>{const m=metrics(deckQs(d));return`<div class="dk"><h3>${DECKS[d].name}<span class="label">${m.tot} tarjetas</span></h3>
+     <div class="kp"><div><span class="label">Consolidado</span><b>${pc(m.consP)}<sup>%</sup></b></div><div><span class="label">Retención</span><b style="color:${col(m.ret)}">${pc(m.ret)}${m.ret==null?"":"<sup>%</sup>"}</b></div><div><span class="label">Cobertura</span><b>${pc(m.cov)}<sup>%</sup></b></div></div>
+     ${st4(m)}<div class="st4l"><span style="--c:var(--sage)">${m.cons} consolidadas</span><span style="--c:var(--gold)">${m.learn} aprendiendo</span><span style="--c:var(--terra)">${m.due} por repasar</span><span style="--c:var(--hair2)">${m.new} nuevas</span></div>
+     <p class="proj">${projection(d,m)}</p></div>`};
+  const topicRows=d=>deckTopics(d).map(t=>{const qs=topicQs(t);if(!qs.length)return null;const m=metrics(qs),r=recent(x=>x===t,qs);return{t,m,r,tr:trend(x=>x===t)}}).filter(Boolean)
+     .sort((a,b)=>{const k=x=>x.m.seen?(x.m.need-.35*x.m.new)/Math.sqrt(x.m.tot):-1/x.m.tot;return k(b)-k(a)});   // lo que más se está olvidando arriba; sin empezar, al final
+  const wk=d=>weakTopics(d);
   $("statsBody").innerHTML=`
    <h1 class="display title-xl">Rumbo a<br><em>Air Europa</em></h1>
    <div class="morph" id="morph" style="--e:116%;--eo:0">
@@ -1144,25 +1312,22 @@ function renderStats(){
      <div class="cap"><div id="capL"><span class="label">Hoy · Binter</span><b>Embraer E195-E2</b></div>
        <div class="r" id="capR"><span class="label">Objetivo · Air Europa</span><b>Boeing 737</b></div></div>
    </div>
-   <div class="morph-note"><p>Cada tarjeta dominada lo acerca un poco más.</p><span>← DESLIZA →</span></div>
-   <div class="sect"><span class="label">Escalas</span><span class="eyebrow" style="order:2">${Math.round(progress()*100)}%</span></div>
-   <div class="legs">${STAGES.map((s,i)=>{const f=progress(),cur=stageIdx(f),cls=i<cur||(i===cur&&f>=1)?"done":i===cur?"now":"";
-     const lg=i===0?logo("binter"):i===STAGES.length-1?logo("ae"):null;
-     return`<div class="leg ${cls}"><span class="dot"></span><div>${lg?`<img class="leg-logo" src="${lg}" alt="${s.n}">`:`<b>${s.n}</b>`}<span>${s.d}</span></div><span class="lp">${Math.round(s.p*100)}%</span></div>`}).join("")}</div>
-   <div class="stats-grid" style="margin-top:22px">
-     <div><span class="label">Respondidas</span><b>${ok+ko}</b></div><div><span class="label">Acierto</span><b>${ok+ko?Math.round(ok/(ok+ko)*100)+"<sup>%</sup>":"—"}</b></div>
+   <div class="morph-note"><p>Cada tarjeta consolidada lo acerca un poco más.</p><span>← DESLIZA →</span></div>
+   <div class="sect"><span class="label">Estado real</span></div>
+   ${Object.keys(DECKS).map(deckBlock).join("")}
+   <p class="themenote" style="margin-top:12px"><b>Consolidado</b>: superado un repaso tras 3 semanas o más. <b>Retención</b>: probabilidad estimada de acertar ahora lo que ya has visto (baja si no repasas). <b>Cobertura</b>: parte del banco que ya has visto.</p>
+   <div class="stats-grid" style="margin-top:18px">
+     <div><span class="label">Acierto 30 días</span><b>${a30.n?Math.round(a30.acc*100)+"<sup>%</sup>":"—"}${arrow(tg)}</b></div><div><span class="label">Respondidas</span><b>${ok+ko}</b></div>
      <div><span class="label">Racha</span><b>${streak()}<sup>${streak()===1?"día":"días"}</sup></b></div><div><span class="label">Mejor combo</span><b>×${S.bestCombo}</b></div></div>
    <div class="sect"><span class="label">Últimos 7 días</span></div>
    <div class="bars">${days.map(d=>`<div class="${d.today?"today":""}"><small>${d.v||""}</small><i class="${d.v?"":"zero"}" style="height:0" data-h="${d.v/mx*85}"></i><span>${d.l}</span></div>`).join("")}</div>
-   <div class="sect"><span class="label">Memorización</span></div>
-   <div class="levels"><div><b>${unseen}</b><span class="label">Nuevas</span></div><div><b style="color:var(--terra)">${boxes[0]}</b><span class="label">Por repasar</span></div>
-     <div><b style="color:var(--gold)">${learning}</b><span class="label">Aprendiendo</span></div><div><b style="color:var(--sage)">${mast}</b><span class="label">Consolidadas</span></div></div>
-   <div class="stack"><i style="width:${pct(mast)}%;background:var(--sage)"></i><i style="width:${pct(learning)}%;background:var(--gold)"></i><i style="width:${pct(boxes[0])}%;background:var(--terra)"></i><i style="flex:1;background:var(--hair2)"></i></div>
-   ${Object.keys(DECKS).map(d=>`<div class="sect"><span class="label">${DECKS[d].name} · de peor a mejor</span></div>
-   ${rowsOf(d).map(r=>`<div class="trow"><div class="row"><span class="code">${tCode(r.t)}</span><span>${tName(r.t)}</span><span class="pct" style="color:${col(r.acc)}">${r.acc==null?"—":Math.round(r.acc*100)+"%"}</span></div>
-     <div class="bar"><i style="width:0;background:${col(r.acc)}" data-w="${r.acc==null?0:r.acc*100}"></i></div></div>`).join("")}`).join("")}
-   <div class="sect"><span class="label">Tus tarjetas más difíciles</span></div>
-   ${hard.length?hard.map(q=>`<div class="hard"><div class="row between"><span class="label">${tCode(q.t)} · ${tName(q.t)}</span><span class="x">✕ ${S.cards[q.id].ko}</span></div><div class="q">${esc(q.q)}</div></div>`).join(""):'<div class="empty">Todavía no has fallado ninguna. Impecable.</div>'}
+   ${Object.keys(DECKS).map(d=>{const w=wk(d);return`<div class="sect"><span class="label">${DECKS[d].name} · por necesidad</span></div>
+   ${w.length?`<button class="boost" onclick="boost('${d}')"><div><b>Reforzar las ${w.length} más flojas</b><span>${w.map(x=>tName(x.t)).join(" · ")}</span></div><svg><use href="#arrow"/></svg></button>`:""}
+   ${topicRows(d).map(x=>`<div class="trow"><div class="row"><span class="code">${tCode(x.t)}</span><span>${tName(x.t)}</span><span class="pct" style="color:${col(x.r.acc)}">${x.r.acc==null?"—":Math.round(x.r.acc*100)+"%"}${arrow(x.tr)}</span></div>
+     ${st4(x.m)}<div class="sub">${x.m.cons} cons. · ${x.m.learn} apr. · ${x.m.due} repasar · ${x.m.new} nuevas${x.m.ret!=null?` · retención ${pc(x.m.ret)}%`:""}${x.m.tot<15?` · <span class="few">solo ${x.m.tot} preguntas</span>`:""}</div></div>`).join("")}`}).join("")}
+   <p class="themenote" style="margin-top:12px">El % de cada asignatura es el acierto de los últimos 30 días (si aún hay pocos datos, el de tu última respuesta a cada tarjeta). La flecha compara esta semana con la anterior.</p>
+   <div class="sect"><span class="label">Tus puntos negros</span></div>
+   ${hard.length?hard.map(q=>`<div class="hard"><div class="row between"><span class="label">${tCode(q.t)} · ${tName(q.t)}</span><span class="x">✕ ${S.cards[q.id].ko}</span></div><div class="q">${esc(q.q)}</div></div>`).join(""):'<div class="empty">Ninguna tarjeta se te resiste. Impecable.</div>'}
    <button class="danger" onclick="if(confirm('¿Borrar todo el progreso?')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}">REINICIAR PROGRESO</button>`;
   initMorph(progress());
   requestAnimationFrame(()=>requestAnimationFrame(()=>{

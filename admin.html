@@ -180,6 +180,8 @@ function renderUso() {
       </div>
       <div style="margin-top:16px" class="row"><span class="lbl grow">Rumbo a Air Europa · progreso</span><span class="code" style="font-size:15px">${String(main.progreso || 0).replace(".", ",")}%</span></div>
       <div class="prog"><i style="width:${main.progreso || 0}%"></i></div>
+      ${main.mazos ? `<div class="small" style="margin-top:12px;line-height:1.8">${Object.values(main.mazos).map(m => `<b style="color:var(--ink);font-weight:600">${esc(m.n)}</b> · consolidado ${m.tot ? Math.round(m.cons / m.tot * 100) : 0}% · retención ${m.ret == null ? "—" : m.ret + "%"} · cobertura ${m.cob}%`).join("<br>")}${main.acc30 != null ? `<br>Acierto últimos 30 días: <b style="color:var(--ink)">${main.acc30}%</b>` : ""}</div>` : ""}
+      ${(main.examenes || []).length ? `<div class="small" style="margin-top:6px">Simulacros: ${main.examenes.slice(-8).map(e => `<span style="color:${e.ok / e.n >= .75 ? "var(--sage)" : "var(--terra)"}">${Math.round(e.ok / e.n * 100)}%</span>`).join(" · ")}</div>` : ""}
       <div style="margin-top:18px" class="lbl">Tarjetas por día · últimas 3 semanas</div>
       <div class="chart">${bars.map((b, i) => `<div class="${i === 20 ? "t" : ""}" title="${b.d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" })}: ${b.v.n} tarjetas · ${Math.round(b.v.ms / 60000)} min · acierto ${pctS(b.v.ok, b.v.n - b.v.ok)}"><i class="${b.v.n ? "" : "z"}" style="height:${b.v.n / mx * 100}%"></i><span>${"LMXJVSD"[(b.d.getDay() + 6) % 7]}</span></div>`).join("")}</div>
       <div class="small" style="margin-top:12px;line-height:1.7">
